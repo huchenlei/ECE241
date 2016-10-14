@@ -15,16 +15,16 @@ module alu_v2(HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, LEDR, SW, KEY);
 	output [6:0] HEX5;
 
 	reg [9:0] temp;
-  wire [3:0] zero;
-	assign zero = 4'b0000;
+	parameter zero = 4'b0000;
+  parameter reset_zero = 8'b00000000;
 
-  // adder a1(SW, temp);
+  adder a1(SW, temp);
   reg [7:0] out; // declare the output signal for the always block
 	always @( * ) // declare always block
 		begin
 		case (KEY[3:1])  // A+B using rippleAdder
 	    3'b000: begin
-      // out = temp;
+        out = temp;
       end
 	    3'b001: begin //1--------A+B using operator
 			  out = regis[3:0] + SW[3:0];
@@ -36,13 +36,13 @@ module alu_v2(HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, LEDR, SW, KEY);
         if(|SW)
           out = 8'b10000001;
         else
-          out = 8'b00000000;
+          out = reset_zero;
 			end
 			3'b100: begin // case 4
         if(&SW)
           out = 8'b01111110;
         else
-          out = 8'b00000000;
+          out = reset_zero;
       end
 			3'b101: begin // 5
         SW[3:0] <<< regis[3:0];
@@ -51,17 +51,18 @@ module alu_v2(HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, LEDR, SW, KEY);
         out = SW[3:0] * regis[3:0];
       end
       3'b111: begin // 7
-
+        // do nothing
       end
 			default out = SW[0]; // default case
 		endcase
 	end
 
   reg[7:0] regis;
+  reg [3:0] = zero;
   // 8bit register
   always @ ( posedge KEY[0] ) begin
     if (SW[9] == 1'b0)
-      regis <= 0;
+      regis <= reset_zero;
     else
       regis <= out;
   end
