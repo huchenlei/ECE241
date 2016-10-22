@@ -46,7 +46,7 @@ module pulse_processor (data, light, clk_50, reset);
 
   assign enable_high = (high_f_reg == period)? 1'b1 : 1'b0;
   assign enable_low = (low_f_reg == max_count)? 1'b1 : 1'b0;
-  assign light = out;
+  assign light = data[11];
 
   // high frequency counter
   always @ (posedge clk_50) begin
@@ -59,9 +59,11 @@ module pulse_processor (data, light, clk_50, reset);
   // low frequency counter
   always @ (enable_high) begin
     if (enable_low == 1'b1 | reset == 1'b1)
+      data >> max_count;
       low_f_reg <= 0;
-    else if(enable_low == 1'b0)
+    else if(enable_low == 1'b0) begin
+      data << 1;
       low_f_reg <= low_f_reg + 1;
-      out = data[low_f_reg];
+    end
   end
-endmodule // digi_clock
+endmodule // pulse_processor

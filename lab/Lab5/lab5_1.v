@@ -23,7 +23,7 @@ endmodule // counter
 module counter_unit (enable, clk, reset, q, result);
   input enable, clk, reset;
   output q, result;
-  t_flip_flop t(enable, clk, reset, out);
+  t_flip_flop t(enable, clk, reset, result);
   assign q = result & enable;
 endmodule // counter_unit
 
