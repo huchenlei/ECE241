@@ -89,6 +89,8 @@ module control (
   // Next state logic table
   always @ ( * )
   begin: state_table
+    $display("[StateTable]The current state is %d", current_state);
+    $display("[StateTable]The loop count is %d", loop_count);
     case(current_state)
       S_LOAD_DATA: next_state = go ? S_LOAD_DATA_WAIT : S_LOAD_DATA;
       S_LOAD_DATA_WAIT: begin
@@ -110,6 +112,7 @@ module control (
       end
       default: next_state = S_LOAD_A;
     endcase
+    $display("[StateTable]The next state would be %d", next_state);
   end
 
   always @ ( * )
@@ -138,6 +141,12 @@ module control (
         set_q0 = 1'b1;
       end
     endcase
+
+    $display("[EnableSignals]");
+    $display("ld_data is %b", ld_data);
+    $display("ld_q0 is %b", ld_q0);
+    $display("set_q0 is %b", set_q0);
+    $display("alu_op is %b", alu_op);
   end
 endmodule // control
 
@@ -163,12 +172,14 @@ module datapath (
 
   always @ ( posedge clk ) begin
     if(!resetn) begin
+      $display("[Data Reset]Resetting all regs");
       divisor <= 4'b0;
       divident <= 4'b0;
       a <= 5'b0;
     end
     else begin
       if(ld_data) begin
+        $display("[Data Load]Loading data");
         divisor <= data_in[3:0];
         divident <= data_in[7:4];
       end
@@ -180,22 +191,41 @@ module datapath (
     if(!resetn) begin
       data_result <= 8'b0;
     end
-    else
-      if(ld_r) data_result <= {a[3:0], divident[3:0]};
+    else begin
+      if(ld_r) begin
+        data_result <= {a[3:0], divident[3:0]};
+        $display("[Result display] %b", data_result);
+      end
+    end
   end
 
   // q0
   always @ ( * ) begin
-    if(ld_q0) q0 <= a[4];
-    if(set_q0) divident[0] <= q0;
+    if(ld_q0) begin
+      q0 <= a[4];
+      $display("loading q0 %b", q0);
+    end
+    if(set_q0) begin
+      divident[0] <= q0;
+      $display("setting q0 %b", divident[0]);
+    end
   end
 
   // The alu
   always @ ( * ) begin
     case (alu_op)
-      2'd0: a = a + divisor;
-      2'd1: a = a - devisor;
-      2'd2: {a, devident} = {a, devident} << 1;
+      2'd0: begin
+        a = a + divisor;
+        $display("[ALU] a + divisor = %b", a);
+      end
+      2'd1: begin
+        a = a - devisor;
+        $display("[ALU] a - devisor = %b", a);
+      end
+      2'd2: begin
+        {a, devident} = {a, devident} << 1;
+        $display("[ALU] shifting result %b", {a, devident});
+      end
       default: a = 5'b0;
     endcase
   end
