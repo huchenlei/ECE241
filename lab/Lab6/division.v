@@ -9,7 +9,7 @@
 // HEX5 remainder
 // LEDR[3:0] quotient
 
-module division_top (SW, KEY, CLOCK_50, LEDR, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5);
+module division (SW, KEY, CLOCK_50, LEDR, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5);
   input [7:0] SW;
   input [1:0] KEY;
   input CLOCK_50;
@@ -126,10 +126,13 @@ module control (
     ld_data = 1'b0;
     ld_q0 = 1'b0;
     set_q0 = 1'b0;
-    alu_op = 2'b00;
+	 ld_end = 1'b0;
+	 ld_a = 1'b0;
+    alu_op = 2'b11;
+	
 
     case (current_state)
-      S_LOAD_DATA: ld_data = 1'b1;
+      S_LOAD_DATA_WAIT: ld_data = 1'b1;
       S_CYCLE_0: begin // do shifting left
         alu_op = 2'b10; // shifting
         ld_a = 1'b1;
@@ -141,7 +144,7 @@ module control (
         ld_a = 1'b1; // load result back to a
       end
       S_CYCLE_2: begin // if q0 == 1 then add back, else do nothing
-        if(q0 == 1'b1) begin
+        if(q0 == 1'b0) begin
           alu_op = 2'b00; // adding
           ld_a = 1'b1; // load result back to a
         end
@@ -151,21 +154,23 @@ module control (
       end
     endcase
 
-    // current_state registers
-    always@(posedge clk)
-    begin: state_FFs
-        if(!resetn)
-            current_state <= S_LOAD_A;
-        else
-            current_state <= next_state;
-    end // state_FFS
-
     $display("[EnableSignals]");
     $display("ld_data is %b", ld_data);
     $display("ld_q0 is %b", ld_q0);
     $display("set_q0 is %b", set_q0);
-    $display("alu_op is %b", alu_op);
+    $display("ld_a is %b", ld_a);
+	$display("ld_end is %b", ld_end);
   end
+  
+  
+  // current_state registers
+  always @(posedge clk)
+  begin: state_FFs
+      if(!resetn)
+            current_state <= S_LOAD_DATA;
+      else
+            current_state <= next_state;
+    end // state_FFS
 endmodule // control
 
 module datapath (
@@ -217,11 +222,11 @@ module datapath (
         a <= alu_a;
       end
       if(ld_q0) begin
-        $display("[Data Load] loading q0 %b", q0);
-        q0 <= a[4];
+        $display("[Data Load] loading q0 %b", alu_a[4]);
+        q0 <= ~alu_a[4];
       end
       if(set_q0) begin
-        $display("[Data Load] setting q0 %b", divident[0]);
+        $display("[Data Load] setting q0 %b", q0);
         divident[0] = q0;
       end
     end
@@ -235,7 +240,7 @@ module datapath (
     else begin
       if(ld_r) begin
         data_result <= {a[3:0], divident[3:0]};
-        $display("[Result display] %b", data_result);
+        $display("[Result display] %b", {a[3:0], divident[3:0]});
       end
     end
   end
@@ -245,15 +250,15 @@ module datapath (
     case (alu_op)
       2'd0: begin
         alu_a = a + divisor;
-        $display("[ALU] a + divisor = %b", a);
+        $display("[ALU] %b + %b = %b", a, divisor, alu_a);
       end
       2'd1: begin
         alu_a = a - divisor;
-        $display("[ALU] a - divisor = %b", a);
+        $display("[ALU] %b - %b = %b", a, divisor, alu_a);
       end
       2'd2: begin
         {alu_a, alu_b} = {a, divident} << 1;
-        $display("[ALU] shifting result %b", {a, divident});
+        $display("[ALU] shifting a: %b, divident: %b result %b", a, divident, {alu_a, alu_b});
       end
       default: begin
 		  alu_a = 5'b0;
