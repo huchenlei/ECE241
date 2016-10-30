@@ -176,6 +176,7 @@ module datapath (
       divisor <= 4'b0;
       divident <= 4'b0;
       a <= 5'b0;
+      q0 <= 1'b0;
     end
     else begin
       if(ld_data) begin
