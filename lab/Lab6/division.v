@@ -9,7 +9,7 @@
 // HEX5 remainder
 // LEDR[3:0] quotient
 
-module devision_top (SW, KEY, CLOCK_50, LEDR, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5);
+module division_top (SW, KEY, CLOCK_50, LEDR, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5);
   input [7:0] SW;
   input [1:0] KEY;
   input CLOCK_50;
@@ -18,7 +18,7 @@ module devision_top (SW, KEY, CLOCK_50, LEDR, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5
 
   wire go;
   wire resetn;
-  wire [7:0] data_result
+  wire [7:0] data_result;
 
   assign go = ~KEY[1];
   assign resetn = KEY[0];// active_high?
@@ -53,15 +53,18 @@ module devision_main (
 
   // control wires
   wire ld_data;
+  wire ld_r;
   wire ld_q0;
   wire set_q0;
+  wire ld_end;
+  wire ld_a;
   wire q0;
   wire [1:0] alu_op;
 
   control c0(clk, resetn, go, q0, ld_data, ld_q0, set_q0,
-            ld_r, alu_op);
+            ld_r, ld_end, ld_a, alu_op);
   datapath d0(clk, resetn, data_in, ld_data, alu_op,
-            set_q0, ld_q0, ld_r, q0, data_result);
+            set_q0, ld_q0, ld_r, ld_end, ld_a, q0, data_result);
 endmodule // devision_main
 
 module control (
@@ -73,7 +76,9 @@ module control (
   output reg ld_data,
   output reg ld_q0, set_q0,
   output reg ld_r,
-  output reg [1:0] alu_op;
+  output reg ld_end,
+  output reg ld_a,
+  output reg [1:0] alu_op
   );
 
   reg[1:0] loop_count;
@@ -102,7 +107,7 @@ module control (
       S_CYCLE_2: next_state = S_CYCLE_3;
       S_CYCLE_3: begin
         if(loop_count == 2'b11) begin
-          next_state = S_LOAD_A;
+          next_state = S_LOAD_DATA;
           ld_r = 1'b1;
         end
         else begin
@@ -110,7 +115,7 @@ module control (
           loop_count = loop_count + 1;
         end
       end
-      default: next_state = S_LOAD_A;
+      default: next_state = S_LOAD_DATA;
     endcase
     $display("[StateTable]The next state would be %d", next_state);
   end
@@ -127,20 +132,33 @@ module control (
       S_LOAD_DATA: ld_data = 1'b1;
       S_CYCLE_0: begin // do shifting left
         alu_op = 2'b10; // shifting
+        ld_a = 1'b1;
+        ld_end = 1'b1; // load result back to a and divident
       end
       S_CYCLE_1: begin // subtract devisor from reg A and get MSB to q0
         alu_op = 2'b01; // subtracting
         ld_q0 = 1'b1;
+        ld_a = 1'b1; // load result back to a
       end
       S_CYCLE_2: begin // if q0 == 1 then add back, else do nothing
         if(q0 == 1'b1) begin
           alu_op = 2'b00; // adding
+          ld_a = 1'b1; // load result back to a
         end
       end
       S_CYCLE_3: begin // set q0 to 0 or 1
         set_q0 = 1'b1;
       end
     endcase
+
+    // current_state registers
+    always@(posedge clk)
+    begin: state_FFs
+        if(!resetn)
+            current_state <= S_LOAD_A;
+        else
+            current_state <= next_state;
+    end // state_FFS
 
     $display("[EnableSignals]");
     $display("ld_data is %b", ld_data);
@@ -153,11 +171,13 @@ endmodule // control
 module datapath (
   input clk,
   input resetn,
-  input data_in,
+  input [7:0] data_in,
   input ld_data,
   input [1:0] alu_op,
   input set_q0, ld_q0,
   input ld_r,
+  input ld_end,
+  input ld_a,
 
   output reg q0,
   output reg [7:0] data_result
@@ -170,19 +190,39 @@ module datapath (
   // remainder holder
   reg [4:0] a;
 
+  // alu input signals
+  reg [4:0] alu_a;
+  reg [3:0] alu_b;
+
+  // load data
   always @ ( posedge clk ) begin
     if(!resetn) begin
       $display("[Data Reset]Resetting all regs");
       divisor <= 4'b0;
       divident <= 4'b0;
       a <= 5'b0;
-      q0 <= 1'b0;
     end
     else begin
       if(ld_data) begin
-        $display("[Data Load]Loading data");
+        $display("[Data Load] Loading data");
         divisor <= data_in[3:0];
         divident <= data_in[7:4];
+      end
+      if(ld_end) begin
+        $display("[Data Load] load divident %b", alu_b);
+        divident <= alu_b;
+      end
+      if(ld_a) begin
+        $display("[Data Load] load a %b", alu_a);
+        a <= alu_a;
+      end
+      if(ld_q0) begin
+        $display("[Data Load] loading q0 %b", q0);
+        q0 <= a[4];
+      end
+      if(set_q0) begin
+        $display("[Data Load] setting q0 %b", divident[0]);
+        divident[0] = q0;
       end
     end
   end
@@ -200,34 +240,25 @@ module datapath (
     end
   end
 
-  // q0
-  always @ ( * ) begin
-    if(ld_q0) begin
-      q0 <= a[4];
-      $display("loading q0 %b", q0);
-    end
-    if(set_q0) begin
-      divident[0] <= q0;
-      $display("setting q0 %b", divident[0]);
-    end
-  end
-
   // The alu
   always @ ( * ) begin
     case (alu_op)
       2'd0: begin
-        a = a + divisor;
+        alu_a = a + divisor;
         $display("[ALU] a + divisor = %b", a);
       end
       2'd1: begin
-        a = a - devisor;
-        $display("[ALU] a - devisor = %b", a);
+        alu_a = a - divisor;
+        $display("[ALU] a - divisor = %b", a);
       end
       2'd2: begin
-        {a, devident} = {a, devident} << 1;
-        $display("[ALU] shifting result %b", {a, devident});
+        {alu_a, alu_b} = {a, divident} << 1;
+        $display("[ALU] shifting result %b", {a, divident});
       end
-      default: a = 5'b0;
+      default: begin
+		  alu_a = 5'b0;
+		  alu_b = 4'b0;
+		end
     endcase
   end
 endmodule // datapath
