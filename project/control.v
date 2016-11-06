@@ -5,10 +5,12 @@ module control (
   input reset,
   input up, down, left, right,
   input select, deselect,
+  input [3:0] selected_piece,
 
   output reg [1:0] winning, // wining condition satisfied? | winning player
   output reg [3:0] piece_x, piece_y, // left down corner (0,0)
   output reg [3:0] move_x, move_y, // position piece is moving to
+  output reg [3:0] piece,
   output reg [3:0] box_x, box_y
   );
 
@@ -18,6 +20,7 @@ module control (
   reg winning;
   reg box_can_move;
   reg read_piece;
+
   reg [5:0] current_state, next_state;
 
   localparam  S_INIT = 6'd0,
@@ -27,7 +30,7 @@ module control (
               S_MOVE_BOX_2 = 6'd4,
               S_SELECT_DESTINATION = 6'd5,
               S_VALIDATE_DESTINATION = 6'd6,
-              S_CHECK_WINNING = 6'd7;
+              S_CHECK_WINNING = 6'd7,
               S_GAME_OVER = 6'd8;
 
 // state table
@@ -83,7 +86,7 @@ always @ ( * ) begin
   // by default set all signals to 0
   box_can_move = 1'b0;
   read_piece = 1'b0;
-  
+
   case(current_state)
     S_MOVE_BOX_1: begin
       box_can_move = 1'b1;
@@ -95,6 +98,15 @@ always @ ( * ) begin
       read_piece = 1'b1;
     end
   endcase
+end
+
+// validate move
+
+
+// validate selection
+always @ ( posedge clk ) begin
+  if(read_piece)
+    piece_valid <= (selected_piece == 4'b0) ? 1'b0 : 1'b1;
 end
 
 // setting state
@@ -125,8 +137,6 @@ always @ ( posedge clk ) begin
   end
   $display("[SelectBox] Current position [x:%d][y:%d]", box_x, box_y);
 end
-
-
 
 endmodule // control
 `endif
