@@ -6,6 +6,7 @@ module control (
   input up, down, left, right,
   input select, deselect,
   input [3:0] selected_piece,
+  input [3:0] validate_square,
 
   output reg [1:0] winning, // wining condition satisfied? | winning player
   output reg [3:0] piece_x, piece_y, // left down corner (0,0)

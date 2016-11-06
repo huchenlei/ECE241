@@ -1,5 +1,5 @@
 /*
-  piece loop-up table:
+  piece lookup table:
   Empty: 0
   Black:  Pawn: 1
           Knight: 2
@@ -24,16 +24,25 @@ module main (
   output VGA_HS,
   // etc...
   );
-  wire reset, up, down, left, right, select;
 
+  wire [5:0] address_control, address_datapath, address_validator;
+  wire [3:0] data_in_datapath;
+  wire control_read, validator_read, datapath_set;
+  wire writeEn;
+  wire [3:0] data_out_control, data_out_validator;
   // memory module
-  wire [5:0] address;
-  wire [3:0] x_coordinate, y_coordinate;
-  wire [3:0] piece_in, piece_out;
-  address_encoder a0(x_coordinate, y_coordinate, address);
-  board b(address, piece_in, writeEn, CLOCK_50, piece_out);
+  memory_access ma(
+    address_control, address_validator, address_datapath,
+    data_in_datapath,
+    CLOCK_50, writeEn,
+    control_read, validator_read, datapath_set,
+    data_out_control, data_out_validator
+    );
 
+  wire [3:0] box_x, box_y;
+  address_encoder ae0(box_x, box_y, address_control);
   // VGA module
+
 
   // control module
   control c0(
@@ -42,12 +51,13 @@ module main (
     // vim hjkl style moving
     .up(KEY[1]), .down(KEY[2]), .left(KEY[3]), .right(KEY[0]),
     .select(SW[0]), .deselect(SW[1]),
-    .piece_info(piece_out),
+    .selected_piece(data_out_control),
+    .validate_square(data_out_validator),
 
     .winning(),
-    .piece_x(x_coordinate), .piece_y(y_coordinate),
+    .piece_x(), .piece_y(),
     .move_x(), .move_y(),
-    .box_x(), .box_y()
+    .box_x(box_x), .box_y(box_y)
     );
   // datapath module
 
