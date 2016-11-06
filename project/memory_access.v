@@ -4,7 +4,10 @@ module memory_access (
   input clk,
   input writeEn,
   // control signals
-  input control_read, validator_read, datapath_set,
+  // 00: control
+  // 01: validator
+  // 10: datapath
+  input [1:0] control_signal,
 
   output reg [3:0] data_out_control, data_out_validator
   );
@@ -17,21 +20,21 @@ module memory_access (
   assign address = address_selected;
 
   // set address
-  always @ ( posedge clk ) begin
-    if(control_read)
-      address_selected <= address_control;
-    if(validator_read)
-      address_selected <= address_validator;
-    if(datapath_set && wirteEn) begin
-      address_selected <= address_datapath;
-    end
+  always @ ( * ) begin
+    case (control_signal)
+      2'd0: address_selected = address_control;
+      2'd1: address_selected = address_validator;
+      2'd2: address_selected = address_datapath;
+      default: address_selected = address_control;
+    endcase
   end
 
   // set output
-  always @ ( posedge clk ) begin
-    if(control_read)
-      data_out_control <= piece_out;
-    if(validator_read)
-      data_out_validator <= piece_out;
+  always @ ( * ) begin
+    case (control_signal)
+      2'd0: data_out_control = piece_out;
+      2'd1: data_out_validator = piece_out;
+      default: data_out_control = piece_out;
+    endcase
   end
 endmodule // memory_access

@@ -12,7 +12,9 @@ module control (
   output reg [3:0] piece_x, piece_y, // left down corner (0,0)
   output reg [3:0] move_x, move_y, // position piece is moving to
   output reg [3:0] piece,
-  output reg [3:0] box_x, box_y
+  output reg [3:0] box_x, box_y,
+  output reg [1:0] memory_manage,
+  output [3:0] validate_x, validate_y
   );
 
   // FSM
@@ -105,9 +107,9 @@ end
 
 
 // validate selection
-always @ ( posedge clk ) begin
+always @ ( * ) begin
   if(read_piece)
-    piece_valid <= (selected_piece == 4'b0) ? 1'b0 : 1'b1;
+    piece_valid = (selected_piece == 4'b0) ? 1'b0 : 1'b1;
 end
 
 // setting state

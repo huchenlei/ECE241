@@ -27,7 +27,7 @@ module main (
 
   wire [5:0] address_control, address_datapath, address_validator;
   wire [3:0] data_in_datapath;
-  wire control_read, validator_read, datapath_set;
+  wire [1:0] memory_manage;
   wire writeEn;
   wire [3:0] data_out_control, data_out_validator;
   // memory module
@@ -35,12 +35,14 @@ module main (
     address_control, address_validator, address_datapath,
     data_in_datapath,
     CLOCK_50, writeEn,
-    control_read, validator_read, datapath_set,
+    memory_manage,
     data_out_control, data_out_validator
     );
 
   wire [3:0] box_x, box_y;
+  wire [3:0] validate_x, validate_y;
   address_encoder ae0(box_x, box_y, address_control);
+  address_encoder ae1(validate_x, validate_y, address_validator);
   // VGA module
 
 
@@ -57,7 +59,9 @@ module main (
     .winning(),
     .piece_x(), .piece_y(),
     .move_x(), .move_y(),
-    .box_x(box_x), .box_y(box_y)
+    .box_x(box_x), .box_y(box_y),
+    .memory_manage(memory_manage),
+    .validate_x(validate_x), .validate_y(validate_y)
     );
   // datapath module
 
