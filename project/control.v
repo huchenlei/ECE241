@@ -39,7 +39,7 @@ module control (
 // state table
 always @ ( * ) begin
     case (current_state)
-      S_INIT: next_state = S_INIT;
+      S_INIT: next_state = S_MOVE_BOX_1;
       S_MOVE_BOX_1: begin
         next_state = select ? S_SELECT_PIECE : S_MOVE_BOX_1;
       end

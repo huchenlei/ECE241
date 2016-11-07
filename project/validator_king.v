@@ -10,9 +10,16 @@ module validator_king (
   assign product_dis = x_dis * y_dis;
 
   always @ ( * ) begin
-    if((product_dis == 4'd0) || (product_dis == 4'd1))
-      king_valid = 1'b1;
-    else
+    // staying in original position is not allowed
+    if((x_dis == 4'd0) && (y_dis == 4'd0)) begin
       king_valid = 1'b0;
+    end
+    else begin
+      if((product_dis == 4'd0) || (product_dis == 4'd1))
+        king_valid = 1'b1;
+      else
+        king_valid = 1'b0;
+    end
+    $display("[King] x_dis:%d y_dis:%d", x_dis, y_dis);
   end
 endmodule // validator_king
