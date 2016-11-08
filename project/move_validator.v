@@ -1,4 +1,6 @@
 module move_validator (
+  input clk,
+  input reset,
   // selected piece info
   input [3:0] selected_piece,
   input [3:0] piece_x, piece_y,

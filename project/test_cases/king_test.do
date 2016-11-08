@@ -2,6 +2,9 @@ vlib work
 vlog validator_king.v
 vsim validator_king
 
+log {/*}
+add wave {/*}
+
 # 2 valid move
 # set original position (0, 0)
 force {piece_x[0]} 0

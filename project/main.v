@@ -51,7 +51,7 @@ module main (
     .clk(CLOCK_50),
     .reset(SW[9]),
     // vim hjkl style moving
-    .up(KEY[1]), .down(KEY[2]), .left(KEY[3]), .right(KEY[0]),
+    .up(~KEY[1]), .down(~KEY[2]), .left(~KEY[3]), .right(~KEY[0]),
     .select(SW[0]), .deselect(SW[1]),
     .selected_piece(data_out_control),
     .validate_square(data_out_validator),
