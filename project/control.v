@@ -9,12 +9,12 @@ module control (
   input [3:0] validate_square,
 
   output reg [1:0] winning, // wining condition satisfied? | winning player
-  output reg [3:0] piece_x, piece_y, // left down corner (0,0)
-  output reg [3:0] move_x, move_y, // position piece is moving to
+  output reg [2:0] piece_x, piece_y, // left down corner (0,0)
+  output reg [2:0] move_x, move_y, // position piece is moving to
   output reg [3:0] piece,
-  output reg [3:0] box_x, box_y,
+  output reg [2:0] box_x, box_y,
   output reg [1:0] memory_manage,
-  output [3:0] validate_x, validate_y
+  output [2:0] validate_x, validate_y
   );
 
   // FSM
@@ -129,8 +129,8 @@ configrable_clock #(26'd1) c0(clk, reset, frame_clk);
 // select box
 always @ ( posedge clk ) begin
   if(current_state == S_INIT) begin
-    box_x <= 4'b0;
-    box_y <= 4'b0;
+    box_x <= 3'b0;
+    box_y <= 3'b0;
   end
   if(box_can_move && frame_clk) begin
     if(up) box_x <= box_x + 1;

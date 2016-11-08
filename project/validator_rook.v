@@ -1,24 +1,25 @@
 module validator_rook (
+  input clk,
   input memory_lock,
   input reset,
   // path info
-  input [3:0] piece_x, piece_y,
-  input [3:0] move_x, move_y,
+  input [2:0] piece_x, piece_y,
+  input [2:0] move_x, move_y,
   // memory access
-  input [3:0] validate_square,
-  output reg [3:0] validate_x, validate_y,
+  input [2:0] validate_square,
+  output reg [2:0] validate_x, validate_y,
   output reg rook_valid // result
   );
 
   // memory access signal
   reg validate_path, start_check, ld_result;
   wire path_validated;
-  wire [3:0] x_dis, y_dis, product_dis, move_dir_is_x, distance;
+  wire [2:0] x_dis, y_dis, product_dis, move_dir_is_x, distance;
   assign x_dis = (move_x > piece_x) ? (move_x - piece_x) : (piece_x - move_x);
   assign y_dis = (move_y > piece_y) ? (move_y - piece_y) : (piece_y - move_y);
   assign product_dis = x_dis * y_dis;
-  assign move_dir_is_x = (x_dis == 4'b0) ? 1'b0 : 1'b1;
-  assign distance = (x_dis == 4'b0) ? y_dis : x_dis;
+  assign move_dir_is_x = (x_dis == 3'b0) ? 1'b0 : 1'b1;
+  assign distance = (x_dis == 3'b0) ? y_dis : x_dis;
 
   reg [2:0] current_state, next_state;
   localparam  S_CHECK_MOVE = 3'd0;
@@ -66,24 +67,24 @@ module validator_rook (
   end
 
   always @ ( * ) begin
-    if((x_dis == 4'd0) && (y_dis == 4'd0)) begin
+    if((x_dis == 3'd0) && (y_dis == 3'd0)) begin
       validate_path = 1'b0;
     end
     else begin
-      if(product_dis == 4'd0) validate_path = 1'b1;
+      if(product_dis == 3'd0) validate_path = 1'b1;
     end
   end
 
   // test path
   // no other piece should appear on the path
   // between origin position and destination
-  reg [3:0] path_counter;
+  reg [2:0] path_counter;
   reg impedance_found;
   // loop control
   assign path_validated = (path_counter == (distance - 1)) ? 1'b1 : 1'b0;
   always @ ( posedge clk ) begin
     if(start_check)
-      path_counter <= 4'b0;
+      path_counter <= 3'b0;
     else
       path_counter <= path_counter + 1;
     $display("[path_counter] %d", path_counter);
@@ -104,7 +105,7 @@ module validator_rook (
   end
 
   always @ ( posedge clk ) begin
-    if(validate_square == 4'b0)
+    if(validate_square == 3'b0)
       impedance_found <= 1'b1;
     if(validate_path)
       impedance_found <= 1'b0;
