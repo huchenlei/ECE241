@@ -1,22 +1,50 @@
+`ifndef move_validator_m
+`define move_validator_m
 module move_validator (
   input clk,
   input reset,
   // selected piece info
   input [3:0] selected_piece,
-  input [3:0] piece_x, piece_y,
-  input [3:0] move_x, move_y,
+  input [2:0] piece_x, piece_y,
+  input [2:0] move_x, move_y,
   // validator select result
   input [3:0] validate_square,
   // validator select
-  output reg [3:0] validate_x, validate_y,
+  output reg [2:0] validate_x, validate_y,
   output reg move_valid
   );
 
   wire  w_pawn_valid, knight_valid, bishop_valid,
         rook_valid, queen_valid, king_valid, b_pawn_valid;
-  wire [3:0] knight_x, knight_y; // etc...
+  wire [2:0] knight_validate_x, knight_validate_y;
+  wire [2:0] king_validate_x, king_validate_y;
+  wire [2:0] queen_validate_x, queen_validate_y;
+  wire [2:0] bishop_validate_x, bishop_validate_y;
+  wire [2:0] rook_validate_x, rook_validate_y;
+  wire [2:0] pawn_w_validate_x, pawn_w_validate_y;
+  wire [2:0] pawn_b_validate_x, pawn_b_validate_y;
   // validator modules
-  validator_knight vkight(piece_x, piece_y, move_x, move_y, knight_valid);
+  // all validators will need to acess memory
+  // so that no friendly piece got miskilled
+  validator_knight vkight(clk, knight_lock, reset,
+                          piece_x, piece_y, move_x, move_y,
+                          validate_square, knight_validate_x,
+                          knight_validate_y, knight_valid);
+
+  validator_king vking(clk, king_lock, reset,
+                      piece_x, piece_y, move_x, move_y,
+                      validate_square, king_validate_x,
+                      king_validate_y, king_valid);
+
+  validator_queen vqueen(clk, queen_lock, reset,
+                          piece_x, piece_y, move_x, move_y,
+                          validate_square, queen_validate_x,
+                          queen_validate_y, queen_valid);
+
+  validator_bishop vboshop(clk, bishop_lock, reset,
+                          piece_x, piece_y, move_x, move_y,
+                          validate_square, bishop_validate_x,
+                          bishop_validate_y, bishop_valid);
   // etc...
 
   always @ ( * ) begin
@@ -50,3 +78,4 @@ module move_validator (
     endcase
   end
 endmodule // move_validator
+`endif

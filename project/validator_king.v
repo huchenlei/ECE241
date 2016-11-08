@@ -1,6 +1,11 @@
 module validator_king (
+  input clk,
+  input memory_lock,
+  input reset,
   input [2:0] piece_x, piece_y,
   input [2:0] move_x, move_y,
+  input [3:0] validate_square,
+  output reg [2:0] validate_x, validate_y,
   output reg king_valid
   );
 

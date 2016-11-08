@@ -8,26 +8,27 @@ module control (
   input [3:0] selected_piece,
   input [3:0] validate_square,
 
-  output reg [1:0] winning, // wining condition satisfied? | winning player
+  output reg current_player,
+  output reg winning, // winning condition satisfied?
   output reg [2:0] piece_x, piece_y, // left down corner (0,0)
   output reg [2:0] move_x, move_y, // position piece is moving to
   output reg [3:0] piece,
   output reg [2:0] box_x, box_y,
   // control signals
-  // 00: control
+  // 00: c  ontrol
   // 01: validator
   // 10: datapath
   output reg [1:0] memory_manage,
-  output [2:0] validate_x, validate_y
+  output [2:0] validate_x, validate_y,
+  output reg rewrite
   );
 
   // FSM
-  reg current_player;
   reg move_valid;
   wire piece_valid;
-  reg winning;
   reg box_can_move;
-  reg read_piece;
+  reg read_destination;
+  reg check_winning;
   reg validate_complete;
 
   reg [5:0] current_state, next_state;
@@ -44,6 +45,7 @@ module control (
               S_GAME_OVER = 6'd9;
 
   // validate piece
+  // [BUG]: The player could only control his/her own piece
   assign piece_valid = (selected_piece == 4'b0) ? 1'b0 : 1'b1;
 
 // state table
@@ -101,6 +103,7 @@ always @ ( * ) begin
   box_can_move = 1'b0;
   // default grant memory access to control module
   memory_manage = 2'b0;
+  check_winning = 1'b0;
 
   case(current_state)
     S_INIT: begin
@@ -117,16 +120,63 @@ always @ ( * ) begin
       memory_manage = 2'b1;
     end
     S_CHECK_WINNING: begin
-
+      check_winning = 1'b1;
     end
   endcase
 end
 
-// check winning
-// to be done
+// flip player
+always @ ( posedge clk ) begin
+  if(current_state == S_CHECK_WINNING)
+    current_player <= ~current_player;
+end
 
-// game over output
-// to be done
+// select piece
+always @ ( posedge clk ) begin
+  case (current_state)
+    S_SELECT_PIECE: begin
+      piece_x <= box_x;
+      piece_y <= box_y;
+    end
+    S_INIT: begin
+      piece_x <= 3'b0;
+      piece_y <= 3'b0;
+    end
+    default: begin
+      piece_x <= piece_x;
+      piece_y <= piece_y;
+    end
+  endcase
+  $display("[SelectPiece] x:%d, y:%d", piece_x, piece_y);
+end
+
+// select destination
+always @ ( posedge clk ) begin
+  case (current_state)
+    S_SELECT_DESTINATION: begin
+      move_x <= box_x;
+      move_y <= box_y;
+    end
+    S_INIT: begin
+      move_x <= 3'b0;
+      move_y <= 3'b0;
+    end
+    default: begin
+      move_x <= move_x;
+      move_y <= move_y;
+    end
+  endcase
+  $display("[SelectDestination] x:%d, y:%d", move_x, move_y);
+end
+
+// check winning
+always @ ( posedge clk ) begin
+  if(check_winning)
+    winning <= (selected_piece == 4'd6) || (selected_piece == 4'd12);
+  if(current_state == S_INIT)
+    winning <= 1'b0;
+  $display("[CheckWinning] winning is %b", winning);
+end
 
 // validate move
 // mocking move_validator
@@ -150,6 +200,7 @@ always @ ( posedge clk ) begin
   else
     current_state <= next_state;
   $display("[StateTable] Current state is state[%d]", next_state);
+  $display("[StateTable] Current player is %b", current_player);
 end
 
 wire frame_clk;

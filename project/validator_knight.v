@@ -1,10 +1,12 @@
 module validator_knight (
+  input clk,
+  input memory_lock,
+  input reset,
   input [2:0] piece_x, piece_y,
   input [2:0] move_x, move_y,
-  // the knight will never be blocked by other piece
-  // thus does not need memory access
-  // input [3:0] validate_square,
-  // output reg [2:0] validate_x, validate_y,
+  // memory access
+  input [3:0] validate_square,
+  output reg [2:0] validate_x, validate_y,
   output reg knight_valid
   );
 
