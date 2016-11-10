@@ -1,4 +1,3 @@
-import binascii
 from PIL import Image
 
 
@@ -15,11 +14,11 @@ def img2str(filename):
         color = r * 4 + g * 2 + b
         new_data.append(str(line_counter) + ": " + str(color) + ";")
         line_counter += 1
-    print(len(new_data))
+    print("The depth of picture is ", len(new_data))
     return new_data
 
 
-# default size is 48*48
+# default color is 3 bit
 def create_mif(filename, content, width=3):
     with open(filename[:-4] + ".mif", 'w+') as f:
         f.write("DEPTH=" + str(len(content)) + ";\n")
