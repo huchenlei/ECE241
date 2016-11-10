@@ -31,7 +31,7 @@ module control (
   reg box_can_move;
   reg read_destination;
   reg check_winning;
-  reg validate_complete;
+  wire validate_complete;
 
   reg [5:0] current_state, next_state;
 
@@ -43,8 +43,10 @@ module control (
               S_SELECT_DESTINATION = 6'd5,
               // S_VALIDATE_DESTINATION_WAIT = 6'd6,
               S_VALIDATE_DESTINATION = 6'd7,
-              S_CHECK_WINNING = 6'd8,
-              S_GAME_OVER = 6'd9;
+              S_CHECK_WINNING_WAIT = 6'd8;
+              S_CHECK_WINNING = 6'd9,
+              S_GAME_OVER = 6'd10;
+
 
   // validate piece
   // [BUG]: The player could only control his/her own piece
@@ -90,6 +92,8 @@ always @ ( * ) begin
           next_state = S_VALIDATE_DESTINATION;
         end
       end
+      // let the winning reg load result on clk edge
+      S_CHECK_WINNING_WAIT: next_state = S_CHECK_WINNING;
       S_CHECK_WINNING: begin
         next_state = winning ? S_GAME_OVER : S_MOVE_BOX_1;
       end
@@ -176,7 +180,7 @@ always @ ( posedge clk ) begin
       move_y <= move_y;
     end
   endcase
-  $display("[SelectDestination] x:%d, y:%d", move_x, move_y);
+  $display("[SelectDestination] %d x:%d, y:%d", selected_piece, move_x, move_y);
 end
 
 // check winning
@@ -191,6 +195,7 @@ end
 // validate move
 // mocking move_validator
 reg [2:0] move_counter;
+assign validate_complete = move_counter == 3'b111;
 always @ ( posedge clk ) begin
   if(clk_reset) move_counter <= 3'b0;
   else begin
@@ -199,7 +204,6 @@ always @ ( posedge clk ) begin
       move_counter <= move_counter + 1;
     end
   end
-  validate_complete <= (move_counter == 3'b111);
   move_valid <= (move_counter == 3'b111);
 end
 
