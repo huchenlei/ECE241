@@ -63,7 +63,7 @@ always @ ( * ) begin
       end
       S_VALIDATE_PIECE: begin
         if(!select) begin // make sure not get into infinite loop
-          next_state = piece_valid ? S_MOVE_BOX_1 : S_MOVE_BOX_2;
+          next_state = piece_valid ? S_MOVE_BOX_2 : S_MOVE_BOX_1;
         end
         else begin
           next_state = S_VALIDATE_PIECE;
@@ -192,7 +192,7 @@ end
 // mocking move_validator
 reg [2:0] move_counter;
 always @ ( posedge clk ) begin
-  if(reset) move_counter <= 3'b0;
+  if(clk_reset) move_counter <= 3'b0;
   else begin
     if(memory_manage == 2'b1) begin
       $display("[Mocking Validator]");
@@ -212,10 +212,12 @@ always @ ( posedge clk ) begin
   $display("---------------------------------------");
   $display("[StateTable] Current state is state[%d]", next_state);
   $display("[StateTable] Current player is %b", current_player);
+  $display("[Memory] memory_manage:%b", memory_manage);
   $display("[Signal] select:%b", select);
   $display("[Signal] deselect:%b", deselect);
   $display("[Signal] piece_valid:%b", piece_valid);
   $display("[Signal] move_valid:%b", move_valid);
+  $display("[Signal] validate_complete:%b", validate_complete);
 end
 
 wire frame_clk;
