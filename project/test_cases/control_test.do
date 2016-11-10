@@ -1,6 +1,6 @@
 vlib work
-vlog validator_king.v
-vsim validator_king
+vlog control.v
+vsim control
 
 log {/*}
 add wave {/*}

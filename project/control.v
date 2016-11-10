@@ -27,6 +27,7 @@ module control (
   // FSM
   reg move_valid;
   wire piece_valid;
+  wire clk_reset;
   reg box_can_move;
   reg read_destination;
   reg check_winning;
@@ -48,6 +49,7 @@ module control (
   // validate piece
   // [BUG]: The player could only control his/her own piece
   assign piece_valid = (selected_piece == 4'b0) ? 1'b0 : 1'b1;
+  assign clk_reset = reset || (current_state == S_INIT);
 
 // state table
 always @ ( * ) begin
@@ -94,7 +96,7 @@ always @ ( * ) begin
       S_GAME_OVER: begin
         next_state = reset ? S_INIT : S_GAME_OVER;
       end
-      default: S_INIT;
+      default: next_state = S_INIT;
     endcase
 end
 
@@ -198,7 +200,7 @@ always @ ( posedge clk ) begin
     end
   end
   validate_complete <= (move_counter == 3'b111);
-  move_valid <= (move_counter == 3'b111)
+  move_valid <= (move_counter == 3'b111);
 end
 
 // setting state
@@ -215,7 +217,7 @@ wire frame_clk;
 // 4Hz clock for not so fast select-box moving
 //configrable_clock #(26'd12500000) c0(clk, reset, frame_clk);
 // high frequency clk for testing
-configrable_clock #(26'd1) c0(clk, reset, frame_clk);
+configrable_clock #(26'd1) c0(clk, clk_reset, frame_clk);
 // select box
 always @ ( posedge clk ) begin
   if(current_state == S_INIT) begin

@@ -1,4 +1,4 @@
-module validator_rook (
+ module validator_rook (
   input clk,
   input memory_lock,
   input reset,
@@ -6,7 +6,7 @@ module validator_rook (
   input [2:0] piece_x, piece_y,
   input [2:0] move_x, move_y,
   // memory access
-  input [2:0] validate_square,
+  input [3:0] validate_square,
   output reg [2:0] validate_x, validate_y,
   output reg rook_valid // result
   );
