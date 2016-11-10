@@ -12,7 +12,7 @@ module control (
   output reg winning, // winning condition satisfied?
   output reg [2:0] piece_x, piece_y, // left down corner (0,0)
   output reg [2:0] move_x, move_y, // position piece is moving to
-  output reg [3:0] piece,
+  output reg [3:0] piece_to_move,
   output reg [2:0] box_x, box_y,
   // control signals
   // 00: c  ontrol
@@ -20,7 +20,8 @@ module control (
   // 10: datapath
   output reg [1:0] memory_manage,
   output [2:0] validate_x, validate_y,
-  output reg rewrite
+  output reg move_piece,
+  output reg initialize_board
   );
 
   // FSM
@@ -104,10 +105,12 @@ always @ ( * ) begin
   // default grant memory access to control module
   memory_manage = 2'b0;
   check_winning = 1'b0;
+  initialize_board = 1'b0;
+  move_piece = 1'b0;
 
   case(current_state)
     S_INIT: begin
-      current_player = 1'b0; // player 1
+      initialize_board = 1'b1;
     end
     S_MOVE_BOX_1: begin
       box_can_move = 1'b1;
@@ -120,6 +123,7 @@ always @ ( * ) begin
       memory_manage = 2'b1;
     end
     S_CHECK_WINNING: begin
+      move_piece = 1'b1;
       check_winning = 1'b1;
     end
   endcase
@@ -127,8 +131,11 @@ end
 
 // flip player
 always @ ( posedge clk ) begin
-  if(current_state == S_CHECK_WINNING)
-    current_player <= ~current_player;
+  case (current_state)
+    S_INIT: current_player <= 1'b0;
+    S_CHECK_WINNING: current_player <= ~current_player;
+    default: current_player <= current_player;
+  endcase
 end
 
 // select piece
@@ -137,6 +144,7 @@ always @ ( posedge clk ) begin
     S_SELECT_PIECE: begin
       piece_x <= box_x;
       piece_y <= box_y;
+      piece_to_move <= selected_piece; // info to datapath
     end
     S_INIT: begin
       piece_x <= 3'b0;
