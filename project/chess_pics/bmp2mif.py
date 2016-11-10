@@ -1,7 +1,7 @@
 from PIL import Image
 
 
-def img2str(filename, color_type="3bit"):
+def img2str(filename, color_type=1):
     img = Image.open(filename)
     imgdata = [(r, g, b) for (r, g, b) in img.getdata()]
     new_data_3bit = []
@@ -25,11 +25,11 @@ def img2str(filename, color_type="3bit"):
         new_data_mono.append(str(line_counter) + ": " + str(w) + ";")
         line_counter += 1
     print("The depth of picture is ", len(new_data_3bit))
-    if color_type == "3bit":
+    if color_type == 3:
         return new_data_3bit
-    elif color_type == "2bit":
+    elif color_type == 2:
         return new_data_2bit
-    elif color_type == "mono":
+    elif color_type == 1:
         return new_data_mono
 
 
@@ -46,5 +46,5 @@ def create_mif(filename, content, width=3):
 
 
 filename = input("Please input file name(.bmp):")
-color_type = input("Please input convert type(3bit, 2bit, mono):")
-create_mif(filename, img2str(filename, color_type))
+color_type = input("Please input convert type(3, 2, 1):")
+create_mif(filename, img2str(filename, color_type), color_type)
