@@ -111,7 +111,7 @@ always @ ( * ) begin
   move_piece = 1'b0;
 
   case(current_state)
-    S_INIT: begin
+    S_INIT: begin
       initialize_board = 1'b1;
     end
     S_MOVE_BOX_1: begin
@@ -157,7 +157,7 @@ always @ ( posedge clk ) begin
       piece_y <= piece_y;
     end
   endcase
-  $display("[SelectPiece] x:%d, y:%d", piece_x, piece_y);
+  $display("[SelectPiece] %d x:%d, y:%d", piece_to_move, piece_x, piece_y);
 end
 
 // select destination
@@ -209,8 +209,13 @@ always @ ( posedge clk ) begin
     current_state <= S_INIT;
   else
     current_state <= next_state;
+  $display("---------------------------------------");
   $display("[StateTable] Current state is state[%d]", next_state);
   $display("[StateTable] Current player is %b", current_player);
+  $display("[Signal] select:%b", select);
+  $display("[Signal] deselect:%b", deselect);
+  $display("[Signal] piece_valid:%b", piece_valid);
+  $display("[Signal] move_valid:%b", move_valid);
 end
 
 wire frame_clk;
