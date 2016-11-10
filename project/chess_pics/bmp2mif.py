@@ -1,21 +1,36 @@
 from PIL import Image
 
 
-# open the bmp file
-def img2str(filename):
+def img2str(filename, color_type="3bit"):
     img = Image.open(filename)
     imgdata = [(r, g, b) for (r, g, b) in img.getdata()]
-    new_data = []
+    new_data_3bit = []
+    new_data_2bit = []
+    new_data_mono = []
     line_counter = 0
     for (r, g, b) in imgdata:
-        r = 1 if (r >= 128) else 0
-        g = 1 if (g >= 128) else 0
-        b = 1 if (b >= 128) else 0
-        color = r * 4 + g * 2 + b
-        new_data.append(str(line_counter) + ": " + str(color) + ";")
+        # 3bit color
+        r3 = 1 if (r >= 128) else 0
+        g3 = 1 if (g >= 128) else 0
+        b3 = 1 if (b >= 128) else 0
+        color = r3 * 4 + g3 * 2 + b3
+        new_data_3bit.append(str(line_counter) + ": " + str(color) + ";")
+        # 2 bit color(red as alpha)
+        a2 = 1 if (r > g or r > b) else 0
+        w = 1 if ((g == b == r) and (g > 128)) else 0
+        color = a2 * 2 + w
+        new_data_2bit.append(str(line_counter) + ": " + str(color) + ";")
+        # 1 bit color
+        w = 1 if ((g == b == r) and (g > 128)) else 0
+        new_data_mono.append(str(line_counter) + ": " + str(w) + ";")
         line_counter += 1
-    print("The depth of picture is ", len(new_data))
-    return new_data
+    print("The depth of picture is ", len(new_data_3bit))
+    if color_type == "3bit":
+        return new_data_3bit
+    elif color_type == "2bit":
+        return new_data_2bit
+    elif color_type == "mono":
+        return new_data_mono
 
 
 # default color is 3 bit
@@ -30,5 +45,6 @@ def create_mif(filename, content, width=3):
         f.write("END;")
 
 
-filename = "board_240p_1.bmp"
-create_mif(filename, img2str(filename))
+filename = input("Please input file name(.bmp):")
+color_type = input("Please input convert type(3bit, 2bit, mono):")
+create_mif(filename, img2str(filename, color_type))
