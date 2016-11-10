@@ -30,5 +30,5 @@ def create_mif(filename, content, width=3):
         f.write("END;")
 
 
-filename = "board-24.bmp"
+filename = "board_240p.bmp"
 create_mif(filename, img2str(filename))
