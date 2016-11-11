@@ -72,24 +72,24 @@ module main (
 	// Define the number of colours as well as the initial background
 	// image file (.MIF) for the controller.
 	vga_adapter VGA(
-			.resetn(resetn),
-			.clock(CLOCK_50),
-			.colour(colour),
-			.x(x),
-			.y(y),
-			.plot(writeEn),
-			/* Signals for the DAC to drive the monitor. */
-			.VGA_R(VGA_R),
-			.VGA_G(VGA_G),
-			.VGA_B(VGA_B),
-			.VGA_HS(VGA_HS),
-			.VGA_VS(VGA_VS),
-			.VGA_BLANK(VGA_BLANK_N),
-			.VGA_SYNC(VGA_SYNC_N),
-			.VGA_CLK(VGA_CLK));
-		defparam VGA.RESOLUTION = "320x240";
-		defparam VGA.MONOCHROME = "TRUE";
-		defparam VGA.BACKGROUND_IMAGE = "chess_pics/board_240p.mif";
+    .resetn(resetn),
+    .clock(CLOCK_50),
+    .colour(colour),
+    .x(x),
+    .y(y),
+    .plot(writeEn),
+    /* Signals for the DAC to drive the monitor. */
+    .VGA_R(VGA_R),
+    .VGA_G(VGA_G),
+    .VGA_B(VGA_B),
+    .VGA_HS(VGA_HS),
+    .VGA_VS(VGA_VS),
+    .VGA_BLANK(VGA_BLANK_N),
+    .VGA_SYNC(VGA_SYNC_N),
+    .VGA_CLK(VGA_CLK));
+  defparam VGA.RESOLUTION = "320x240";
+  defparam VGA.MONOCHROME = "TRUE";
+  defparam VGA.BACKGROUND_IMAGE = "chess_pics/board_240p.mif";
 
   wire winning_msg, current_player, can_render;
 
@@ -108,7 +108,7 @@ module main (
   wire [2:0] piece_x, piece_y;
   wire [3:0] piece_to_move;
   wire [2:0] move_x, move_y;
-  wire move_piece, initialize_board;
+  wire move_piece, initialize_board, initialize_complete;
   // control module
   control c0(
     .clk(CLOCK_50),
@@ -118,6 +118,7 @@ module main (
     .select(SW[0]), .deselect(SW[1]),
     .selected_piece(data_out_control),
     .validate_square(data_out_validator),
+    .initialize_complete(initialize_complete),
 
     .current_player(current_player),
     .winning_msg(winning_msg),
@@ -141,6 +142,8 @@ module main (
     .initialize_board(initialize_board),
     .move_piece(move_piece)
 
-    .datapath_x(datapath_x), .datapath_y(datapath_y)
+    .datapath_x(datapath_x), .datapath_y(datapath_y),
+    .initialize_complete(initialize_complete),
+    .data_out(data_in_datapath)
     );
 endmodule // main

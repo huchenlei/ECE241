@@ -46,5 +46,5 @@ def create_mif(filename, content, width=3):
 
 
 filename = input("Please input file name(.bmp):")
-color_type = input("Please input convert type(3, 2, 1):")
+color_type = int(input("Please input convert type(3, 2, 1):"))
 create_mif(filename, img2str(filename, color_type), color_type)

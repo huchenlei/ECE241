@@ -7,6 +7,7 @@ module control (
   input select, deselect,
   input [3:0] selected_piece,
   input [3:0] validate_square,
+  input initialize_complete, // feed back signal from datapath
 
   output reg current_player,
   output reg winning_msg, // winning condition satisfied?
@@ -46,9 +47,8 @@ module control (
               S_SELECT_DESTINATION = 6'd5,
               // S_VALIDATE_DESTINATION_WAIT = 6'd6,
               S_VALIDATE_DESTINATION = 6'd7,
-              S_CHECK_WINNING_WAIT = 6'd8,
-              S_CHECK_WINNING = 6'd9,
-              S_GAME_OVER = 6'd10;
+              S_CHECK_WINNING = 6'd8,
+              S_GAME_OVER = 6'd9;
 
 
   // validate piece
@@ -59,7 +59,9 @@ module control (
 // state table
 always @ ( * ) begin
     case (current_state)
-      S_INIT: next_state = S_MOVE_BOX_1;
+      S_INIT: begin
+        next_state = initialize_complete ? S_MOVE_BOX_1 : S_INIT;
+      end
       S_MOVE_BOX_1: begin
         next_state = select ? S_SELECT_PIECE : S_MOVE_BOX_1;
       end
@@ -95,8 +97,6 @@ always @ ( * ) begin
           next_state = S_VALIDATE_DESTINATION;
         end
       end
-      // let the winning reg load result on clk edge
-      S_CHECK_WINNING_WAIT: next_state = S_CHECK_WINNING;
       S_CHECK_WINNING: begin
         next_state = winning ? S_GAME_OVER : S_MOVE_BOX_1;
       end
