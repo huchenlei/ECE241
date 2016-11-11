@@ -9,7 +9,7 @@ module control (
   input [3:0] validate_square,
 
   output reg current_player,
-  output reg winning, // winning condition satisfied?
+  output reg winning_msg, // winning condition satisfied?
   output reg [2:0] piece_x, piece_y, // left down corner (0,0)
   output reg [2:0] move_x, move_y, // position piece is moving to
   output reg [3:0] piece_to_move,
@@ -18,13 +18,16 @@ module control (
   // 00: c  ontrol
   // 01: validator
   // 10: datapath
+  // 11: view
   output reg [1:0] memory_manage,
   output [2:0] validate_x, validate_y,
   output reg move_piece,
-  output reg initialize_board
+  output reg initialize_board,
+  output reg can_render
   );
 
   // FSM
+  reg winning;
   reg move_valid;
   wire piece_valid;
   wire clk_reset;
@@ -43,7 +46,7 @@ module control (
               S_SELECT_DESTINATION = 6'd5,
               // S_VALIDATE_DESTINATION_WAIT = 6'd6,
               S_VALIDATE_DESTINATION = 6'd7,
-              S_CHECK_WINNING_WAIT = 6'd8;
+              S_CHECK_WINNING_WAIT = 6'd8,
               S_CHECK_WINNING = 6'd9,
               S_GAME_OVER = 6'd10;
 
@@ -86,7 +89,7 @@ always @ ( * ) begin
       end
       S_VALIDATE_DESTINATION: begin
         if(!select) begin
-          next_state = move_valid ? S_CHECK_WINNING : S_MOVE_BOX_2;
+          next_state = move_valid ? S_CHECK_WINNING_WAIT : S_MOVE_BOX_2;
         end
         else begin
           next_state = S_VALIDATE_DESTINATION;
@@ -185,7 +188,7 @@ end
 
 // check winning
 always @ ( posedge clk ) begin
-  if(check_winning)
+  if(S_VALIDATE_DESTINATION)
     winning <= (selected_piece == 4'd6) || (selected_piece == 4'd12);
   if(current_state == S_INIT)
     winning <= 1'b0;
