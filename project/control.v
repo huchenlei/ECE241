@@ -5,8 +5,7 @@ module control (
   input reset,
   input up, down, left, right,
   input select, deselect,
-  input [3:0] selected_piece,
-  input [3:0] validate_square,
+  input [3:0] piece_read,
   input initialize_complete, // feed back signal from datapath
 
   output reg current_player,
@@ -21,7 +20,7 @@ module control (
   // 10: datapath
   // 11: view
   output reg [1:0] memory_manage,
-  output [2:0] validate_x, validate_y,
+  output [5:0] address_validator,
   output reg move_piece,
   output reg initialize_board,
   output reg can_render
@@ -53,7 +52,7 @@ module control (
 
   // validate piece
   // [BUG]: The player could only control his/her own piece
-  assign piece_valid = (selected_piece == 4'b0) ? 1'b0 : 1'b1;
+  assign piece_valid = (piece_read == 4'b0) ? 1'b0 : 1'b1;
   assign clk_reset = reset || (current_state == S_INIT);
 
 // state table
@@ -153,7 +152,7 @@ always @ ( posedge clk ) begin
     S_SELECT_PIECE: begin
       piece_x <= box_x;
       piece_y <= box_y;
-      piece_to_move <= selected_piece; // info to datapath
+      piece_to_move <= piece_read; // info to datapath
     end
     S_INIT: begin
       piece_x <= 3'b0;
@@ -183,32 +182,35 @@ always @ ( posedge clk ) begin
       move_y <= move_y;
     end
   endcase
-  $display("[SelectDestination] %d x:%d, y:%d", selected_piece, move_x, move_y);
+  $display("[SelectDestination] %d x:%d, y:%d", piece_read, move_x, move_y);
 end
 
 // check winning
 always @ ( posedge clk ) begin
   if(S_VALIDATE_DESTINATION)
-    winning <= (selected_piece == 4'd6) || (selected_piece == 4'd12);
+    winning <= (piece_read == 4'd6) || (piece_read == 4'd12);
   if(current_state == S_INIT)
     winning <= 1'b0;
   $display("[CheckWinning] winning is %b", winning);
 end
 
 // validate move
+move_validator mv(clk, reset, piece_to_move, piece_x, piece_y,
+                  move_x, move_y, piece_read, address_validator,
+                  move_valid, validate_complete);
 // mocking move_validator
-reg [2:0] move_counter;
-assign validate_complete = move_counter == 3'b111;
-always @ ( posedge clk ) begin
-  if(clk_reset) move_counter <= 3'b0;
-  else begin
-    if(memory_manage == 2'b1) begin
-      $display("[Mocking Validator]");
-      move_counter <= move_counter + 1;
-    end
-  end
-  move_valid <= (move_counter == 3'b111);
-end
+// reg [2:0] move_counter;
+// assign validate_complete = move_counter == 3'b111;
+// always @ ( posedge clk ) begin
+//   if(clk_reset) move_counter <= 3'b0;
+//   else begin
+//     if(memory_manage == 2'b1) begin
+//       $display("[Mocking Validator]");
+//       move_counter <= move_counter + 1;
+//     end
+//   end
+//   move_valid <= (move_counter == 3'b111);
+// end
 
 // setting state
 always @ ( posedge clk ) begin
@@ -217,8 +219,8 @@ always @ ( posedge clk ) begin
   else
     current_state <= next_state;
   $display("---------------------------------------");
-  $display("[StateTable] Current state is state[%d]", next_state);
-  $display("[StateTable] Current player is %b", current_player);
+  $display("[Controller] Current state is state[%d]", next_state);
+  $display("[Controller] Current player is %b", current_player);
   $display("[Memory] memory_manage:%b", memory_manage);
   $display("[Signal] select:%b", select);
   $display("[Signal] deselect:%b", deselect);

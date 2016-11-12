@@ -1,8 +1,0 @@
-* timing analysis
-two steps:
-1. find critical path
-   longest delay path in circuit.
-   determine Tmin (min clock period).
-   longest path
-2. Hold-time analysis
-   shorest path

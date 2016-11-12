@@ -1,5 +1,7 @@
 module view_render (
-  input [3:0] data_out_view,
+  input clk,
+  input reset,
+  input [3:0] piece_read,
   input [2:0] box_x, box_y,
   input current_player,
   input winning_msg,

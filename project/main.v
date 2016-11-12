@@ -43,24 +43,14 @@ module main (
              address_validator, address_view;
   wire [3:0] data_in_datapath;
   wire [1:0] memory_manage;
-  wire [3:0] data_out_control, data_out_validator, data_out_view;
+  wire [3:0] piece_read;
   // memory module
   memory_access ma(
     address_control, address_validator, address_datapath, address_view,
     data_in_datapath,
     CLOCK_50, writeEn,
-    memory_manage,
-    data_out_control, data_out_validator, data_out_view
+    memory_manage, piece_read
     );
-
-  wire [2:0] box_x, box_y;
-  wire [2:0] validate_x, validate_y;
-  wire [2:0] datapath_x, datapath_y;
-  wire [2:0] view_x, view_y;
-  address_encoder ae0(box_x, box_y, address_control);
-  address_encoder ae1(validate_x, validate_y, address_validator);
-  address_encoder ae2(datapath_x, datapath_y, address_datapath);
-  address_encoder ae3(view_x, view_y, address_view);
 
   // Initialize picture holding memory modules here...
 
@@ -93,14 +83,16 @@ module main (
   wire winning_msg, current_player, can_render;
 
   view_render v0(
-    .data_out_view(data_out_view),
-    .box_x(box_x), .box_y(box_y),
+    .clk(CLOCK_50),
+    .reset(reset),
+    .piece_read(piece_read),
+    .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .current_player(current_player),
     .winning_msg(winning_msg),
     .can_render(can_render),
 
     .x(x), .y(y), .colour(colour),
-    .writeEn(writeEn), .view_x(view_x), .view_y(view_y)
+    .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0])
     );
 
   // Controller
@@ -115,15 +107,14 @@ module main (
     // vim hjkl style moving
     .up(~KEY[1]), .down(~KEY[2]), .left(~KEY[3]), .right(~KEY[0]),
     .select(SW[0]), .deselect(SW[1]),
-    .selected_piece(data_out_control),
-    .validate_square(data_out_validator),
+    .piece_read(piece_read),
     .initialize_complete(initialize_complete),
 
     .current_player(current_player),
     .winning_msg(winning_msg),
     .piece_x(piece_x), .piece_y(piece_y),
     .move_x(move_x), .move_y(move_y),
-    .box_x(box_x), .box_y(box_y),
+    .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .memory_manage(memory_manage),
     .validate_x(validate_x), .validate_y(validate_y),
     .move_piece(move_piece),
@@ -141,7 +132,7 @@ module main (
     .initialize_board(initialize_board),
     .move_piece(move_piece),
 
-    .datapath_x(datapath_x), .datapath_y(datapath_y),
+    .datapath_x(address_datapath[5:3]), .datapath_y(address_datapath[2:0]),
     .initialize_complete(initialize_complete),
     .data_out(data_in_datapath)
     );
