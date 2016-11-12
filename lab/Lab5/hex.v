@@ -1,5 +1,4 @@
-module hex(hexout, x);
-  input [3:0] x;
+module hex(hexout,   input [3:0] x;
   output [6:0]hexout;
 
 	assign hexout[0] = (~x[3]&~x[2]&~x[1]&x[0])|(~x[3]&x[2]&~x[1]&~x[0])|(x[3]&~x[2]&x[1]&x[0])|(x[3]&x[2]&~x[1]&x[0]);

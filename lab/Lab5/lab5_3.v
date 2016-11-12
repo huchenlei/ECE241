@@ -3,7 +3,7 @@ module lab5_3 (KEY, SW, LEDR, CLOCK_50);
   input [1:0] KEY;
   input [2:0] SW;
   input CLOCK_50;
-  output LEDR[0];
+  output [0:0] LEDR;
   reg [11:0] data;
   wire result;
   reg out;

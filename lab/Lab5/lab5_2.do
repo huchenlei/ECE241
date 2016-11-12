@@ -2,8 +2,8 @@ vlib work
 vlog lab5_2.v
 vsim lab5_2
 
-log{/*}
-add wave{/*}
+log {/*}
+add wave {/*}
 
 # CLOCK_50 clk
 # SW[1:0] frequency control

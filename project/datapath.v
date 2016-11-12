@@ -73,6 +73,7 @@ module datapath (
         datapath_x <= 3'b0;
         datapath_y <= 3'b0;
         initialize_complete <= 1'b0;
+        $display("[FSM1] setting up");
       end
       S_INIT_SQUARE: begin
         if(datapath_y == 3'd1) data_out <= 4'd1; // black pawn
@@ -103,14 +104,20 @@ module datapath (
         end
         if(datapath_y <= 3'd6 || datapath_y >= 3'd1)
           data_out <= 4'd0; // empty
+        $display("[FSM1] filling square[%d, %d] with %d", datapath_x, datapath_y, data_out);
       end
       S_COUNT_ROW: begin
         datapath_x <= datapath_x + 1;
+        $display("[FSM1] incrementing datapath_x %d", datapath_x);
       end
       S_COUNT_COL: begin
         datapath_y <= datapath_y + 1;
+        $display("[FSM1] incrementing datapath_y %d", datapath_y);
       end
-      S_COMPLETE: initialize_complete <= 1'b1;
+      S_COMPLETE: begin
+        initialize_complete <= 1'b1;
+        $display("[FSM1] initialize_complete");
+      end
     endcase
 
     // move piece
@@ -118,13 +125,16 @@ module datapath (
       S_SELECT_DESTINATION: begin
         datapath_x <= move_x;
         datapath_y <= move_y;
+        $display("[FSM2] select destination [%d, %d]", move_x, move_y);
       end
       S_WRITE_DESTINATION: begin
         data_out <= piece_to_move;
+        $display("[FSM2] write destination as %d", piece_to_move);
       end
       S_SELECT_ORIGIN: begin
         datapath_x <= piece_x;
         datapath_y <= piece_y;
+        $display("[FSM2] select origin [%d, %d]", piece_x, piece_y);
       end
       S_ERASE_ORIGIN: begin
         data_out <= 4'b0;
@@ -137,6 +147,8 @@ module datapath (
       current_state <= S_SETUP;
     else
       current_state <= next_state;
+    $display("--------------------------");
+    $display("[FSM1-initialize] Current state is state[%d]", current_state);
   end
 
   always @ ( posedge clk ) begin
@@ -144,5 +156,7 @@ module datapath (
       current_state_m <= 3'd0;
     else
       current_state_m <= next_state_m;
+    $display("~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    $display("[FSM2-move_piece] Current state is state[%d]", current_state_m);
   end
 endmodule // datapath

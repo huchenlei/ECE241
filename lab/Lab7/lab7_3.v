@@ -151,7 +151,7 @@ module control (
 							S_ERASE = 4'd3,
 							S_MOVE = 4'd4;
 
-	always @ ( * ) begin
+	always @ ( * )
 		begin: state_table
 		case(current_state)
 			S_INIT: next_state = S_PLOT;
@@ -213,7 +213,6 @@ module control (
 			current_state <= S_INIT;
 		else
 			current_state <= next_state;
-		end
 		$display("[StateReg] setting current_state as state[%d]", current_state);
 	end
 endmodule // control

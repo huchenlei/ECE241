@@ -2,8 +2,8 @@ vlib work
 vlog lab5_1.v
 vsim lab5_1
 
-log{/*}
-add wave{/*}
+log {/*}
+add wave {/*}
 
 # SW[1] = enable;
 # KEY[0] = clock;

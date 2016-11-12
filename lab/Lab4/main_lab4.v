@@ -13,7 +13,7 @@ module d_flip_flop (data, clk, reset, q);
   output q;
   reg q;
   always @ (posedge clk) begin
-    if (~reset)
+    if (reset)
       q <= 1'b0;
     else
       q <= data;
@@ -30,13 +30,15 @@ module muxed_flip_flop (right, left, LL, Ln, data, clk, reset, q);
 endmodule // muxed_flip_flop
 
 module rotate_register (PLn, RR, ASR, data, clk, reset, q);
+  // PLn parallel load data
+  // RR rotate right
+  // ASR Arithmetch Shift
   input PLn, RR, ASR, clk, reset;
   input[7:0] data;
   output[7:0] q;
   wire [7:0] conn;
   wire ctrled_clk, LR;
   assign ctrled_clk = clk & ~(RR & ASR);
-  assign LR = ~RR;
   muxed_flip_flop m0(conn[7], conn[1], LR, PLn, data[0], clk, reset, q[0]);
   muxed_flip_flop m1(conn[0], conn[2], LR, PLn, data[1], clk, reset, q[1]);
   muxed_flip_flop m2(conn[1], conn[3], LR, PLn, data[1], clk, reset, q[2]);
