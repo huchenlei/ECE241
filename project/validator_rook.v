@@ -22,9 +22,9 @@
   assign distance = (x_dis == 3'b0) ? y_dis : x_dis;
 
   reg [2:0] current_state, next_state;
-  localparam  S_CHECK_MOVE = 3'd0;
-              S_CHECK_PATH = 3'd1;
-              S_OUTPUT_RESULT = 3'd2;
+  localparam  S_CHECK_MOVE = 3'd0,
+              S_CHECK_PATH = 3'd1,
+              S_OUTPUT_RESULT = 3'd2,
               S_WAIT_FOR_MEMORY = 3'd3;
 
   // state_table
@@ -40,7 +40,7 @@
         next_state = path_validated ? S_OUTPUT_RESULT : S_CHECK_PATH;
       S_OUTPUT_RESULT:
         next_state = S_WAIT_FOR_MEMORY;
-      default: S_WAIT_FOR_MEMORY;
+      default: next_state = S_WAIT_FOR_MEMORY;
     endcase
   end
 

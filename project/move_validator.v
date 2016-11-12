@@ -6,7 +6,7 @@ module move_validator (
   // selected piece info
   input [3:0] selected_piece,
   input [2:0] piece_x, piece_y,
-  input [2:0] move_x, move_y,
+  input [2:0] move_x, move_y,
   // validator select result
   input [3:0] validate_square,
   // validator select

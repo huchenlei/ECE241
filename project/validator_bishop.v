@@ -22,6 +22,7 @@ module validator_bishop (
     else begin
       bishop_valid = (x_dis == y_dis);
     end
+	 $display("[Bishop] x_dis:%d y_dis:%d", x_dis, y_dis);
   end
-  $display("[Bishop] x_dis:%d y_dis:%d", x_dis, y_dis);
+  
 endmodule // validator_bishop

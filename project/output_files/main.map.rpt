@@ -1,0 +1,1390 @@
+Analysis & Synthesis report for main
+Fri Nov 11 15:30:42 2016
+Quartus Prime Version 16.0.0 Build 211 04/27/2016 SJ Standard Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. Analysis & Synthesis RAM Summary
+  9. State Machine - |main|datapath:d0|current_state_m
+ 10. State Machine - |main|datapath:d0|current_state
+ 11. State Machine - |main|control:c0|current_state
+ 12. Registers Removed During Synthesis
+ 13. Removed Registers Triggering Further Register Optimizations
+ 14. General Register Statistics
+ 15. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 16. Source assignments for memory_access:ma|board:b|altsyncram:altsyncram_component|altsyncram_9jl1:auto_generated
+ 17. Source assignments for vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated
+ 18. Parameter Settings for User Entity Instance: memory_access:ma|board:b|altsyncram:altsyncram_component
+ 19. Parameter Settings for User Entity Instance: vga_adapter:VGA
+ 20. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_address_translator:user_input_translator
+ 21. Parameter Settings for User Entity Instance: vga_adapter:VGA|altsyncram:VideoMemory
+ 22. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component
+ 23. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_controller:controller
+ 24. Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_controller:controller|vga_address_translator:controller_translator
+ 25. Parameter Settings for User Entity Instance: control:c0|configrable_clock:c0
+ 26. altsyncram Parameter Settings by Entity Instance
+ 27. altpll Parameter Settings by Entity Instance
+ 28. Port Connectivity Checks: "control:c0"
+ 29. Port Connectivity Checks: "memory_access:ma|board:b"
+ 30. Post-Synthesis Netlist Statistics for Top Partition
+ 31. Elapsed Time Per Partition
+ 32. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 1991-2016 Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus Prime License Agreement,
+the Altera MegaCore Function License Agreement, or other 
+applicable license agreement, including, without limitation, 
+that your use is for the sole purpose of programming logic 
+devices manufactured by Altera and sold by Altera or its 
+authorized distributors.  Please refer to the applicable 
+agreement for further details.
+
+
+
++-----------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                      ;
++---------------------------------+-------------------------------------------------+
+; Analysis & Synthesis Status     ; Successful - Fri Nov 11 15:30:42 2016           ;
+; Quartus Prime Version           ; 16.0.0 Build 211 04/27/2016 SJ Standard Edition ;
+; Revision Name                   ; main                                            ;
+; Top-level Entity Name           ; main                                            ;
+; Family                          ; Cyclone V                                       ;
+; Logic utilization (in ALMs)     ; N/A                                             ;
+; Total registers                 ; 34                                              ;
+; Total pins                      ; 50                                              ;
+; Total virtual pins              ; 0                                               ;
+; Total block memory bits         ; 76,800                                          ;
+; Total DSP Blocks                ; 0                                               ;
+; Total HSSI RX PCSs              ; 0                                               ;
+; Total HSSI PMA RX Deserializers ; 0                                               ;
+; Total HSSI TX PCSs              ; 0                                               ;
+; Total HSSI PMA TX Serializers   ; 0                                               ;
+; Total PLLs                      ; 1                                               ;
+; Total DLLs                      ; 0                                               ;
++---------------------------------+-------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                                             ;
++---------------------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                                          ; Setting            ; Default Value      ;
++---------------------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                                          ; 5CSEMA5F31C6       ;                    ;
+; Top-level entity name                                                           ; main               ; main               ;
+; Family name                                                                     ; Cyclone V          ; Cyclone V          ;
+; Use smart compilation                                                           ; Off                ; Off                ;
+; Enable parallel Assembler and TimeQuest Timing Analyzer during compilation      ; On                 ; On                 ;
+; Enable compact report table                                                     ; Off                ; Off                ;
+; Restructure Multiplexers                                                        ; Auto               ; Auto               ;
+; MLAB Add Timing Constraints For Mixed-Port Feed-Through Mode Setting Don't Care ; Off                ; Off                ;
+; Create Debugging Nodes for IP Cores                                             ; Off                ; Off                ;
+; Preserve fewer node names                                                       ; On                 ; On                 ;
+; Disable OpenCore Plus hardware evaluation                                       ; Off                ; Off                ;
+; Verilog Version                                                                 ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                                    ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                                        ; Auto               ; Auto               ;
+; Safe State Machine                                                              ; Off                ; Off                ;
+; Extract Verilog State Machines                                                  ; On                 ; On                 ;
+; Extract VHDL State Machines                                                     ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                               ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                                      ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                                  ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                                         ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                                       ; On                 ; On                 ;
+; Parallel Synthesis                                                              ; On                 ; On                 ;
+; DSP Block Balancing                                                             ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                                              ; On                 ; On                 ;
+; Power-Up Don't Care                                                             ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                                    ; Off                ; Off                ;
+; Remove Duplicate Registers                                                      ; On                 ; On                 ;
+; Ignore CARRY Buffers                                                            ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                                          ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                                           ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                                       ; Off                ; Off                ;
+; Ignore LCELL Buffers                                                            ; Off                ; Off                ;
+; Ignore SOFT Buffers                                                             ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                                  ; Off                ; Off                ;
+; Optimization Technique                                                          ; Balanced           ; Balanced           ;
+; Carry Chain Length                                                              ; 70                 ; 70                 ;
+; Auto Carry Chains                                                               ; On                 ; On                 ;
+; Auto Open-Drain Pins                                                            ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                                           ; Off                ; Off                ;
+; Auto ROM Replacement                                                            ; On                 ; On                 ;
+; Auto RAM Replacement                                                            ; On                 ; On                 ;
+; Auto DSP Block Replacement                                                      ; On                 ; On                 ;
+; Auto Shift Register Replacement                                                 ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                                 ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                                   ; On                 ; On                 ;
+; Strict RAM Replacement                                                          ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                               ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                                          ; Off                ; Off                ;
+; Auto Resource Sharing                                                           ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                                              ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                                              ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                                   ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing                             ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                               ; Off                ; Off                ;
+; Timing-Driven Synthesis                                                         ; On                 ; On                 ;
+; Report Parameter Settings                                                       ; On                 ; On                 ;
+; Report Source Assignments                                                       ; On                 ; On                 ;
+; Report Connectivity Checks                                                      ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                                              ; Off                ; Off                ;
+; Synchronization Register Chain Length                                           ; 3                  ; 3                  ;
+; PowerPlay Power Optimization During Synthesis                                   ; Normal compilation ; Normal compilation ;
+; HDL message level                                                               ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                                 ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report                        ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report                              ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report                       ; 100                ; 100                ;
+; Clock MUX Protection                                                            ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                                     ; Off                ; Off                ;
+; Block Design Naming                                                             ; Auto               ; Auto               ;
+; SDC constraint protection                                                       ; Off                ; Off                ;
+; Synthesis Effort                                                                ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal                    ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                                            ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                                              ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                                     ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                                          ; On                 ; On                 ;
+; Synthesis Seed                                                                  ; 1                  ; 1                  ;
+; Automatic Parallel Synthesis                                                    ; On                 ; On                 ;
+; Partial Reconfiguration Bitstream ID                                            ; Off                ; Off                ;
++---------------------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 8           ;
+; Maximum allowed            ; 4           ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 4           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processors 2-4         ;   0.0%      ;
++----------------------------+-------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                                                     ;
++---------------------------------------------------------------------------+-----------------+----------------------------------------+---------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path                                          ; Used in Netlist ; File Type                              ; File Name with Absolute Path                                              ; Library ;
++---------------------------------------------------------------------------+-----------------+----------------------------------------+---------------------------------------------------------------------------+---------+
+; //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_pll.v                ; yes             ; User Wizard-Generated File             ; //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_pll.v                ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_controller.v         ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_controller.v         ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_address_translator.v ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_address_translator.v ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v            ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v            ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/view_render.v                        ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/view_render.v                        ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v                      ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v                      ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/main.v                               ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/main.v                               ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/datapath.v                           ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/datapath.v                           ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/control.v                            ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/control.v                            ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/configrable_clock.v                  ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/configrable_clock.v                  ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/board.v                              ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/board.v                              ;         ;
+; //SRVD/Homes$/huchenle/Desktop/chess/address_utils.v                      ; yes             ; User Verilog HDL File                  ; //SRVD/Homes$/huchenle/Desktop/chess/address_utils.v                      ;         ;
+; altsyncram.tdf                                                            ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/altsyncram.tdf             ;         ;
+; stratix_ram_block.inc                                                     ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/stratix_ram_block.inc      ;         ;
+; lpm_mux.inc                                                               ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/lpm_mux.inc                ;         ;
+; lpm_decode.inc                                                            ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/lpm_decode.inc             ;         ;
+; aglobal160.inc                                                            ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/aglobal160.inc             ;         ;
+; a_rdenreg.inc                                                             ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/a_rdenreg.inc              ;         ;
+; altrom.inc                                                                ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/altrom.inc                 ;         ;
+; altram.inc                                                                ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/altram.inc                 ;         ;
+; altdpram.inc                                                              ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/altdpram.inc               ;         ;
+; altsyncram_9jl1.tdf                                                       ; yes             ; Auto-Found AHDL File                   ; //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_9jl1.tdf               ;         ;
+; altsyncram_bln1.tdf                                                       ; yes             ; Auto-Found AHDL File                   ; //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_bln1.tdf               ;         ;
+; chess_pics/board_240p.mif                                                 ; yes             ; Auto-Found Memory Initialization File  ; //SRVD/Homes$/huchenle/Desktop/chess/chess_pics/board_240p.mif            ;         ;
+; decode_nma.tdf                                                            ; yes             ; Auto-Found AHDL File                   ; //SRVD/Homes$/huchenle/Desktop/chess/db/decode_nma.tdf                    ;         ;
+; decode_g2a.tdf                                                            ; yes             ; Auto-Found AHDL File                   ; //SRVD/Homes$/huchenle/Desktop/chess/db/decode_g2a.tdf                    ;         ;
+; mux_0hb.tdf                                                               ; yes             ; Auto-Found AHDL File                   ; //SRVD/Homes$/huchenle/Desktop/chess/db/mux_0hb.tdf                       ;         ;
+; altpll.tdf                                                                ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/altpll.tdf                 ;         ;
+; stratix_pll.inc                                                           ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/stratix_pll.inc            ;         ;
+; stratixii_pll.inc                                                         ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/stratixii_pll.inc          ;         ;
+; cycloneii_pll.inc                                                         ; yes             ; Megafunction                           ; c:/altera/16.0/quartus/libraries/megafunctions/cycloneii_pll.inc          ;         ;
+; altpll_80u.tdf                                                            ; yes             ; Auto-Found AHDL File                   ; //SRVD/Homes$/huchenle/Desktop/chess/db/altpll_80u.tdf                    ;         ;
++---------------------------------------------------------------------------+-----------------+----------------------------------------+---------------------------------------------------------------------------+---------+
+
+
++--------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                                                                                          ;
++---------------------------------------------+----------------------------------------------------------------------------------------+
+; Resource                                    ; Usage                                                                                  ;
++---------------------------------------------+----------------------------------------------------------------------------------------+
+; Estimate of Logic utilization (ALMs needed) ; 32                                                                                     ;
+;                                             ;                                                                                        ;
+; Combinational ALUT usage for logic          ; 57                                                                                     ;
+;     -- 7 input functions                    ; 3                                                                                      ;
+;     -- 6 input functions                    ; 1                                                                                      ;
+;     -- 5 input functions                    ; 7                                                                                      ;
+;     -- 4 input functions                    ; 12                                                                                     ;
+;     -- <=3 input functions                  ; 34                                                                                     ;
+;                                             ;                                                                                        ;
+; Dedicated logic registers                   ; 34                                                                                     ;
+;                                             ;                                                                                        ;
+; I/O pins                                    ; 50                                                                                     ;
+; Total MLAB memory bits                      ; 0                                                                                      ;
+; Total block memory bits                     ; 76800                                                                                  ;
+;                                             ;                                                                                        ;
+; Total DSP Blocks                            ; 0                                                                                      ;
+;                                             ;                                                                                        ;
+; Total PLLs                                  ; 1                                                                                      ;
+;     -- PLLs                                 ; 1                                                                                      ;
+;                                             ;                                                                                        ;
+; Maximum fan-out node                        ; vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component|altpll_80u:auto_generated|clk[0] ;
+; Maximum fan-out                             ; 46                                                                                     ;
+; Total fan-out                               ; 556                                                                                    ;
+; Average fan-out                             ; 2.75                                                                                   ;
++---------------------------------------------+----------------------------------------------------------------------------------------+
+
+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                              ;
++---------------------------------------------------------+-------------------+--------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+------------------------+--------------+
+; Compilation Hierarchy Node                              ; LC Combinationals ; LC Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                  ; Entity Name            ; Library Name ;
++---------------------------------------------------------+-------------------+--------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+------------------------+--------------+
+; |main                                                   ; 57 (1)            ; 34 (0)       ; 76800             ; 0          ; 50   ; 0            ; |main                                                                                                ; main                   ; work         ;
+;    |vga_adapter:VGA|                                    ; 56 (0)            ; 34 (0)       ; 76800             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA                                                                                ; vga_adapter            ; work         ;
+;       |altsyncram:VideoMemory|                          ; 13 (0)            ; 8 (0)        ; 76800             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory                                                         ; altsyncram             ; work         ;
+;          |altsyncram_bln1:auto_generated|               ; 13 (0)            ; 8 (8)        ; 76800             ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated                          ; altsyncram_bln1        ; work         ;
+;             |decode_g2a:rden_decode_b|                  ; 10 (10)           ; 0 (0)        ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated|decode_g2a:rden_decode_b ; decode_g2a             ; work         ;
+;             |mux_0hb:mux3|                              ; 3 (3)             ; 0 (0)        ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated|mux_0hb:mux3             ; mux_0hb                ; work         ;
+;       |vga_controller:controller|                       ; 43 (32)           ; 26 (26)      ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_controller:controller                                                      ; vga_controller         ; work         ;
+;          |vga_address_translator:controller_translator| ; 11 (11)           ; 0 (0)        ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_controller:controller|vga_address_translator:controller_translator         ; vga_address_translator ; work         ;
+;       |vga_pll:mypll|                                   ; 0 (0)             ; 0 (0)        ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll                                                                  ; vga_pll                ; work         ;
+;          |altpll:altpll_component|                      ; 0 (0)             ; 0 (0)        ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component                                          ; altpll                 ; work         ;
+;             |altpll_80u:auto_generated|                 ; 0 (0)             ; 0 (0)        ; 0                 ; 0          ; 0    ; 0            ; |main|vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component|altpll_80u:auto_generated                ; altpll_80u             ; work         ;
++---------------------------------------------------------+-------------------+--------------+-------------------+------------+------+--------------+------------------------------------------------------------------------------------------------------+------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis RAM Summary                                                                                                                                                                           ;
++----------------------------------------------------------------------------------+------+------------------+--------------+--------------+--------------+--------------+-------+---------------------------+
+; Name                                                                             ; Type ; Mode             ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Size  ; MIF                       ;
++----------------------------------------------------------------------------------+------+------------------+--------------+--------------+--------------+--------------+-------+---------------------------+
+; vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated|ALTSYNCRAM ; AUTO ; Simple Dual Port ; 76800        ; 1            ; 76800        ; 1            ; 76800 ; chess_pics/board_240p.mif ;
++----------------------------------------------------------------------------------+------+------------------+--------------+--------------+--------------+--------------+-------+---------------------------+
+
+
+Encoding Type:  One-Hot
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |main|datapath:d0|current_state_m                                                                                                                                                                  ;
++--------------------------------------+---------------------------------+-------------------------------------+--------------------------------------+-----------------------------+--------------------------------+
+; Name                                 ; current_state_m.S_SELECT_ORIGIN ; current_state_m.S_WRITE_DESTINATION ; current_state_m.S_SELECT_DESTINATION ; current_state_m.S_MOVE_WAIT ; current_state_m.S_ERASE_ORIGIN ;
++--------------------------------------+---------------------------------+-------------------------------------+--------------------------------------+-----------------------------+--------------------------------+
+; current_state_m.S_MOVE_WAIT          ; 0                               ; 0                                   ; 0                                    ; 0                           ; 0                              ;
+; current_state_m.S_SELECT_DESTINATION ; 0                               ; 0                                   ; 1                                    ; 1                           ; 0                              ;
+; current_state_m.S_WRITE_DESTINATION  ; 0                               ; 1                                   ; 0                                    ; 1                           ; 0                              ;
+; current_state_m.S_SELECT_ORIGIN      ; 1                               ; 0                                   ; 0                                    ; 1                           ; 0                              ;
+; current_state_m.S_ERASE_ORIGIN       ; 0                               ; 0                                   ; 0                                    ; 1                           ; 1                              ;
++--------------------------------------+---------------------------------+-------------------------------------+--------------------------------------+-----------------------------+--------------------------------+
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |main|datapath:d0|current_state                                                                                                                      ;
++-----------------------------+---------------------------+---------------------------+-----------------------------+-----------------------+--------------------------+
+; Name                        ; current_state.S_COUNT_COL ; current_state.S_COUNT_ROW ; current_state.S_INIT_SQUARE ; current_state.S_SETUP ; current_state.S_COMPLETE ;
++-----------------------------+---------------------------+---------------------------+-----------------------------+-----------------------+--------------------------+
+; current_state.S_SETUP       ; 0                         ; 0                         ; 0                           ; 0                     ; 0                        ;
+; current_state.S_INIT_SQUARE ; 0                         ; 0                         ; 1                           ; 1                     ; 0                        ;
+; current_state.S_COUNT_ROW   ; 0                         ; 1                         ; 0                           ; 1                     ; 0                        ;
+; current_state.S_COUNT_COL   ; 1                         ; 0                         ; 0                           ; 1                     ; 0                        ;
+; current_state.S_COMPLETE    ; 0                         ; 0                         ; 0                           ; 1                     ; 1                        ;
++-----------------------------+---------------------------+---------------------------+-----------------------------+-----------------------+--------------------------+
+
+
+Encoding Type:  One-Hot
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |main|control:c0|current_state                                                                                                                                                                                                                                                                                ;
++--------------------------------------+---------------------------+-------------------------------+--------------------------------------+------------------------------------+----------------------------+--------------------------------+------------------------------+----------------------------+----------------------+
+; Name                                 ; current_state.S_GAME_OVER ; current_state.S_CHECK_WINNING ; current_state.S_VALIDATE_DESTINATION ; current_state.S_SELECT_DESTINATION ; current_state.S_MOVE_BOX_2 ; current_state.S_VALIDATE_PIECE ; current_state.S_SELECT_PIECE ; current_state.S_MOVE_BOX_1 ; current_state.S_INIT ;
++--------------------------------------+---------------------------+-------------------------------+--------------------------------------+------------------------------------+----------------------------+--------------------------------+------------------------------+----------------------------+----------------------+
+; current_state.S_INIT                 ; 0                         ; 0                             ; 0                                    ; 0                                  ; 0                          ; 0                              ; 0                            ; 0                          ; 0                    ;
+; current_state.S_MOVE_BOX_1           ; 0                         ; 0                             ; 0                                    ; 0                                  ; 0                          ; 0                              ; 0                            ; 1                          ; 1                    ;
+; current_state.S_SELECT_PIECE         ; 0                         ; 0                             ; 0                                    ; 0                                  ; 0                          ; 0                              ; 1                            ; 0                          ; 1                    ;
+; current_state.S_VALIDATE_PIECE       ; 0                         ; 0                             ; 0                                    ; 0                                  ; 0                          ; 1                              ; 0                            ; 0                          ; 1                    ;
+; current_state.S_MOVE_BOX_2           ; 0                         ; 0                             ; 0                                    ; 0                                  ; 1                          ; 0                              ; 0                            ; 0                          ; 1                    ;
+; current_state.S_SELECT_DESTINATION   ; 0                         ; 0                             ; 0                                    ; 1                                  ; 0                          ; 0                              ; 0                            ; 0                          ; 1                    ;
+; current_state.S_VALIDATE_DESTINATION ; 0                         ; 0                             ; 1                                    ; 0                                  ; 0                          ; 0                              ; 0                            ; 0                          ; 1                    ;
+; current_state.S_CHECK_WINNING        ; 0                         ; 1                             ; 0                                    ; 0                                  ; 0                          ; 0                              ; 0                            ; 0                          ; 1                    ;
+; current_state.S_GAME_OVER            ; 1                         ; 0                             ; 0                                    ; 0                                  ; 0                          ; 0                              ; 0                            ; 0                          ; 1                    ;
++--------------------------------------+---------------------------+-------------------------------+--------------------------------------+------------------------------------+----------------------------+--------------------------------+------------------------------+----------------------------+----------------------+
+
+
++--------------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                         ;
++---------------------------------------------------+----------------------------------------+
+; Register name                                     ; Reason for Removal                     ;
++---------------------------------------------------+----------------------------------------+
+; datapath:d0|data_out[0]                           ; Stuck at GND due to stuck port data_in ;
+; datapath:d0|current_state_m~2                     ; Lost fanout                            ;
+; datapath:d0|current_state_m~3                     ; Lost fanout                            ;
+; datapath:d0|current_state~2                       ; Lost fanout                            ;
+; datapath:d0|current_state~3                       ; Lost fanout                            ;
+; control:c0|current_state~2                        ; Lost fanout                            ;
+; control:c0|current_state~3                        ; Lost fanout                            ;
+; control:c0|current_state~4                        ; Lost fanout                            ;
+; control:c0|current_state~5                        ; Lost fanout                            ;
+; control:c0|current_state~6                        ; Lost fanout                            ;
+; control:c0|current_state~7                        ; Lost fanout                            ;
+; datapath:d0|datapath_x[0..2]                      ; Lost fanout                            ;
+; datapath:d0|datapath_y[0..2]                      ; Lost fanout                            ;
+; datapath:d0|initialize_complete                   ; Lost fanout                            ;
+; control:c0|winning                                ; Lost fanout                            ;
+; control:c0|move_valid                             ; Lost fanout                            ;
+; control:c0|move_counter[0..2]                     ; Lost fanout                            ;
+; control:c0|piece_x[0]                             ; Lost fanout                            ;
+; control:c0|move_x[0]                              ; Lost fanout                            ;
+; control:c0|piece_x[1]                             ; Lost fanout                            ;
+; control:c0|move_x[1]                              ; Lost fanout                            ;
+; control:c0|piece_x[2]                             ; Lost fanout                            ;
+; control:c0|move_x[2]                              ; Lost fanout                            ;
+; control:c0|piece_y[0]                             ; Lost fanout                            ;
+; control:c0|move_y[0]                              ; Lost fanout                            ;
+; control:c0|piece_y[1]                             ; Lost fanout                            ;
+; control:c0|move_y[1]                              ; Lost fanout                            ;
+; control:c0|piece_y[2]                             ; Lost fanout                            ;
+; control:c0|move_y[2]                              ; Lost fanout                            ;
+; control:c0|box_x[0..2]                            ; Lost fanout                            ;
+; control:c0|box_y[0..2]                            ; Lost fanout                            ;
+; control:c0|configrable_clock:c0|high_f_reg[0..25] ; Lost fanout                            ;
+; datapath:d0|current_state_m.S_ERASE_ORIGIN        ; Lost fanout                            ;
+; datapath:d0|current_state_m.S_MOVE_WAIT           ; Lost fanout                            ;
+; datapath:d0|current_state_m.S_SELECT_DESTINATION  ; Lost fanout                            ;
+; datapath:d0|current_state_m.S_WRITE_DESTINATION   ; Lost fanout                            ;
+; datapath:d0|current_state_m.S_SELECT_ORIGIN       ; Lost fanout                            ;
+; datapath:d0|current_state.S_COMPLETE              ; Lost fanout                            ;
+; datapath:d0|current_state.S_SETUP                 ; Lost fanout                            ;
+; datapath:d0|current_state.S_INIT_SQUARE           ; Lost fanout                            ;
+; datapath:d0|current_state.S_COUNT_ROW             ; Lost fanout                            ;
+; datapath:d0|current_state.S_COUNT_COL             ; Lost fanout                            ;
+; control:c0|current_state.S_INIT                   ; Lost fanout                            ;
+; control:c0|current_state.S_MOVE_BOX_1             ; Lost fanout                            ;
+; control:c0|current_state.S_SELECT_PIECE           ; Lost fanout                            ;
+; control:c0|current_state.S_VALIDATE_PIECE         ; Lost fanout                            ;
+; control:c0|current_state.S_MOVE_BOX_2             ; Lost fanout                            ;
+; control:c0|current_state.S_SELECT_DESTINATION     ; Lost fanout                            ;
+; control:c0|current_state.S_VALIDATE_DESTINATION   ; Lost fanout                            ;
+; control:c0|current_state.S_CHECK_WINNING          ; Lost fanout                            ;
+; control:c0|current_state.S_GAME_OVER              ; Lost fanout                            ;
+; Total Number of Removed Registers = 86            ;                                        ;
++---------------------------------------------------+----------------------------------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------+
+; Removed Registers Triggering Further Register Optimizations                                                                                         ;
++-------------------------------+---------------------------+-----------------------------------------------------------------------------------------+
+; Register name                 ; Reason for Removal        ; Registers Removed due to This Register                                                  ;
++-------------------------------+---------------------------+-----------------------------------------------------------------------------------------+
+; datapath:d0|data_out[0]       ; Stuck at GND              ; datapath:d0|datapath_x[0], control:c0|piece_x[0], control:c0|move_x[0],                 ;
+;                               ; due to stuck port data_in ; control:c0|box_x[0], control:c0|box_y[0], control:c0|box_y[1], control:c0|box_y[2],     ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[4],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[5],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[6],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[7],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[8],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[9],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[10],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[11],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[12],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[13],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[14],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[15],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[16],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[18],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[19],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[20],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[21],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[22],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[23],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[24],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[25],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[17],                                         ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[0],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[1],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[2],                                          ;
+;                               ;                           ; control:c0|configrable_clock:c0|high_f_reg[3],                                          ;
+;                               ;                           ; datapath:d0|current_state_m.S_SELECT_ORIGIN, datapath:d0|current_state.S_SETUP,         ;
+;                               ;                           ; control:c0|current_state.S_MOVE_BOX_1, control:c0|current_state.S_MOVE_BOX_2            ;
+; datapath:d0|current_state~2   ; Lost Fanouts              ; datapath:d0|datapath_x[1], datapath:d0|datapath_x[2], datapath:d0|datapath_y[0],        ;
+;                               ;                           ; datapath:d0|datapath_y[1], control:c0|piece_x[1], control:c0|move_x[1],                 ;
+;                               ;                           ; control:c0|piece_x[2], control:c0|move_x[2], control:c0|piece_y[0],                     ;
+;                               ;                           ; control:c0|move_y[0], control:c0|piece_y[1], control:c0|move_y[1], control:c0|box_x[1], ;
+;                               ;                           ; control:c0|box_x[2], datapath:d0|current_state.S_COUNT_ROW,                             ;
+;                               ;                           ; datapath:d0|current_state.S_COUNT_COL                                                   ;
+; control:c0|current_state~2    ; Lost Fanouts              ; datapath:d0|initialize_complete, control:c0|move_valid, control:c0|move_counter[0],     ;
+;                               ;                           ; datapath:d0|current_state.S_COMPLETE,                                                   ;
+;                               ;                           ; control:c0|current_state.S_VALIDATE_DESTINATION                                         ;
+; control:c0|current_state~3    ; Lost Fanouts              ; control:c0|move_counter[2], control:c0|move_counter[1],                                 ;
+;                               ;                           ; control:c0|current_state.S_SELECT_PIECE,                                                ;
+;                               ;                           ; control:c0|current_state.S_SELECT_DESTINATION                                           ;
+; datapath:d0|current_state_m~2 ; Lost Fanouts              ; datapath:d0|current_state_m.S_MOVE_WAIT,                                                ;
+;                               ;                           ; datapath:d0|current_state_m.S_WRITE_DESTINATION,                                        ;
+;                               ;                           ; control:c0|current_state.S_CHECK_WINNING                                                ;
+; control:c0|current_state~5    ; Lost Fanouts              ; control:c0|winning, control:c0|current_state.S_INIT,                                    ;
+;                               ;                           ; control:c0|current_state.S_GAME_OVER                                                    ;
+; datapath:d0|datapath_y[2]     ; Lost Fanouts              ; control:c0|piece_y[2], control:c0|move_y[2]                                             ;
+; datapath:d0|current_state_m~3 ; Lost Fanouts              ; datapath:d0|current_state_m.S_SELECT_DESTINATION                                        ;
+; datapath:d0|current_state~3   ; Lost Fanouts              ; datapath:d0|current_state.S_INIT_SQUARE                                                 ;
++-------------------------------+---------------------------+-----------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 34    ;
+; Number of registers using Synchronous Clear  ; 20    ;
+; Number of registers using Synchronous Load   ; 0     ;
+; Number of registers using Asynchronous Clear ; 20    ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 10    ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                            ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                  ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------+
+; 3:1                ; 3 bits    ; 6 LEs         ; 3 LEs                ; 3 LEs                  ; Yes        ; |main|control:c0|move_counter[2]                            ;
+; 3:1                ; 10 bits   ; 20 LEs        ; 0 LEs                ; 20 LEs                 ; Yes        ; |main|vga_adapter:VGA|vga_controller:controller|yCounter[2] ;
+; 3:1                ; 26 bits   ; 52 LEs        ; 0 LEs                ; 52 LEs                 ; Yes        ; |main|control:c0|configrable_clock:c0|high_f_reg[4]         ;
+; 3:1                ; 4 bits    ; 8 LEs         ; 8 LEs                ; 0 LEs                  ; Yes        ; |main|datapath:d0|datapath_x[2]                             ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 2 LEs                ; 2 LEs                  ; Yes        ; |main|control:c0|box_x[2]                                   ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 2 LEs                ; 2 LEs                  ; Yes        ; |main|control:c0|box_y[2]                                   ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------+
+; Source assignments for memory_access:ma|board:b|altsyncram:altsyncram_component|altsyncram_9jl1:auto_generated ;
++---------------------------------+--------------------+------+--------------------------------------------------+
+; Assignment                      ; Value              ; From ; To                                               ;
++---------------------------------+--------------------+------+--------------------------------------------------+
+; OPTIMIZE_POWER_DURING_SYNTHESIS ; NORMAL_COMPILATION ; -    ; -                                                ;
++---------------------------------+--------------------+------+--------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------+
+; Source assignments for vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated ;
++---------------------------------+--------------------+------+--------------------------------+
+; Assignment                      ; Value              ; From ; To                             ;
++---------------------------------+--------------------+------+--------------------------------+
+; OPTIMIZE_POWER_DURING_SYNTHESIS ; NORMAL_COMPILATION ; -    ; -                              ;
++---------------------------------+--------------------+------+--------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: memory_access:ma|board:b|altsyncram:altsyncram_component ;
++------------------------------------+----------------------+-------------------------------------------+
+; Parameter Name                     ; Value                ; Type                                      ;
++------------------------------------+----------------------+-------------------------------------------+
+; BYTE_SIZE_BLOCK                    ; 8                    ; Untyped                                   ;
+; AUTO_CARRY_CHAINS                  ; ON                   ; AUTO_CARRY                                ;
+; IGNORE_CARRY_BUFFERS               ; OFF                  ; IGNORE_CARRY                              ;
+; AUTO_CASCADE_CHAINS                ; ON                   ; AUTO_CASCADE                              ;
+; IGNORE_CASCADE_BUFFERS             ; OFF                  ; IGNORE_CASCADE                            ;
+; WIDTH_BYTEENA                      ; 1                    ; Untyped                                   ;
+; OPERATION_MODE                     ; SINGLE_PORT          ; Untyped                                   ;
+; WIDTH_A                            ; 4                    ; Signed Integer                            ;
+; WIDTHAD_A                          ; 6                    ; Signed Integer                            ;
+; NUMWORDS_A                         ; 64                   ; Signed Integer                            ;
+; OUTDATA_REG_A                      ; CLOCK0               ; Untyped                                   ;
+; ADDRESS_ACLR_A                     ; NONE                 ; Untyped                                   ;
+; OUTDATA_ACLR_A                     ; NONE                 ; Untyped                                   ;
+; WRCONTROL_ACLR_A                   ; NONE                 ; Untyped                                   ;
+; INDATA_ACLR_A                      ; NONE                 ; Untyped                                   ;
+; BYTEENA_ACLR_A                     ; NONE                 ; Untyped                                   ;
+; WIDTH_B                            ; 1                    ; Untyped                                   ;
+; WIDTHAD_B                          ; 1                    ; Untyped                                   ;
+; NUMWORDS_B                         ; 1                    ; Untyped                                   ;
+; INDATA_REG_B                       ; CLOCK1               ; Untyped                                   ;
+; WRCONTROL_WRADDRESS_REG_B          ; CLOCK1               ; Untyped                                   ;
+; RDCONTROL_REG_B                    ; CLOCK1               ; Untyped                                   ;
+; ADDRESS_REG_B                      ; CLOCK1               ; Untyped                                   ;
+; OUTDATA_REG_B                      ; UNREGISTERED         ; Untyped                                   ;
+; BYTEENA_REG_B                      ; CLOCK1               ; Untyped                                   ;
+; INDATA_ACLR_B                      ; NONE                 ; Untyped                                   ;
+; WRCONTROL_ACLR_B                   ; NONE                 ; Untyped                                   ;
+; ADDRESS_ACLR_B                     ; NONE                 ; Untyped                                   ;
+; OUTDATA_ACLR_B                     ; NONE                 ; Untyped                                   ;
+; RDCONTROL_ACLR_B                   ; NONE                 ; Untyped                                   ;
+; BYTEENA_ACLR_B                     ; NONE                 ; Untyped                                   ;
+; WIDTH_BYTEENA_A                    ; 1                    ; Signed Integer                            ;
+; WIDTH_BYTEENA_B                    ; 1                    ; Untyped                                   ;
+; RAM_BLOCK_TYPE                     ; AUTO                 ; Untyped                                   ;
+; BYTE_SIZE                          ; 8                    ; Untyped                                   ;
+; READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE            ; Untyped                                   ;
+; READ_DURING_WRITE_MODE_PORT_A      ; NEW_DATA_NO_NBE_READ ; Untyped                                   ;
+; READ_DURING_WRITE_MODE_PORT_B      ; NEW_DATA_NO_NBE_READ ; Untyped                                   ;
+; INIT_FILE                          ; UNUSED               ; Untyped                                   ;
+; INIT_FILE_LAYOUT                   ; PORT_A               ; Untyped                                   ;
+; MAXIMUM_DEPTH                      ; 0                    ; Untyped                                   ;
+; CLOCK_ENABLE_INPUT_A               ; BYPASS               ; Untyped                                   ;
+; CLOCK_ENABLE_INPUT_B               ; NORMAL               ; Untyped                                   ;
+; CLOCK_ENABLE_OUTPUT_A              ; BYPASS               ; Untyped                                   ;
+; CLOCK_ENABLE_OUTPUT_B              ; NORMAL               ; Untyped                                   ;
+; CLOCK_ENABLE_CORE_A                ; USE_INPUT_CLKEN      ; Untyped                                   ;
+; CLOCK_ENABLE_CORE_B                ; USE_INPUT_CLKEN      ; Untyped                                   ;
+; ENABLE_ECC                         ; FALSE                ; Untyped                                   ;
+; ECC_PIPELINE_STAGE_ENABLED         ; FALSE                ; Untyped                                   ;
+; WIDTH_ECCSTATUS                    ; 3                    ; Untyped                                   ;
+; DEVICE_FAMILY                      ; Cyclone V            ; Untyped                                   ;
+; CBXI_PARAMETER                     ; altsyncram_9jl1      ; Untyped                                   ;
++------------------------------------+----------------------+-------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: vga_adapter:VGA         ;
++-------------------------+---------------------------+----------------+
+; Parameter Name          ; Value                     ; Type           ;
++-------------------------+---------------------------+----------------+
+; BITS_PER_COLOUR_CHANNEL ; 1                         ; Signed Integer ;
+; MONOCHROME              ; TRUE                      ; String         ;
+; RESOLUTION              ; 320x240                   ; String         ;
+; BACKGROUND_IMAGE        ; chess_pics/board_240p.mif ; String         ;
++-------------------------+---------------------------+----------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_address_translator:user_input_translator ;
++----------------+---------+--------------------------------------------------------------------------------+
+; Parameter Name ; Value   ; Type                                                                           ;
++----------------+---------+--------------------------------------------------------------------------------+
+; RESOLUTION     ; 320x240 ; String                                                                         ;
++----------------+---------+--------------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: vga_adapter:VGA|altsyncram:VideoMemory ;
++------------------------------------+---------------------------+--------------------+
+; Parameter Name                     ; Value                     ; Type               ;
++------------------------------------+---------------------------+--------------------+
+; BYTE_SIZE_BLOCK                    ; 8                         ; Untyped            ;
+; AUTO_CARRY_CHAINS                  ; ON                        ; AUTO_CARRY         ;
+; IGNORE_CARRY_BUFFERS               ; OFF                       ; IGNORE_CARRY       ;
+; AUTO_CASCADE_CHAINS                ; ON                        ; AUTO_CASCADE       ;
+; IGNORE_CASCADE_BUFFERS             ; OFF                       ; IGNORE_CASCADE     ;
+; WIDTH_BYTEENA                      ; 1                         ; Untyped            ;
+; OPERATION_MODE                     ; DUAL_PORT                 ; Untyped            ;
+; WIDTH_A                            ; 1                         ; Signed Integer     ;
+; WIDTHAD_A                          ; 17                        ; Signed Integer     ;
+; NUMWORDS_A                         ; 76800                     ; Signed Integer     ;
+; OUTDATA_REG_A                      ; UNREGISTERED              ; Untyped            ;
+; ADDRESS_ACLR_A                     ; NONE                      ; Untyped            ;
+; OUTDATA_ACLR_A                     ; NONE                      ; Untyped            ;
+; WRCONTROL_ACLR_A                   ; NONE                      ; Untyped            ;
+; INDATA_ACLR_A                      ; NONE                      ; Untyped            ;
+; BYTEENA_ACLR_A                     ; NONE                      ; Untyped            ;
+; WIDTH_B                            ; 1                         ; Signed Integer     ;
+; WIDTHAD_B                          ; 17                        ; Signed Integer     ;
+; NUMWORDS_B                         ; 76800                     ; Signed Integer     ;
+; INDATA_REG_B                       ; CLOCK1                    ; Untyped            ;
+; WRCONTROL_WRADDRESS_REG_B          ; CLOCK1                    ; Untyped            ;
+; RDCONTROL_REG_B                    ; CLOCK1                    ; Untyped            ;
+; ADDRESS_REG_B                      ; CLOCK1                    ; Untyped            ;
+; OUTDATA_REG_B                      ; CLOCK1                    ; Untyped            ;
+; BYTEENA_REG_B                      ; CLOCK1                    ; Untyped            ;
+; INDATA_ACLR_B                      ; NONE                      ; Untyped            ;
+; WRCONTROL_ACLR_B                   ; NONE                      ; Untyped            ;
+; ADDRESS_ACLR_B                     ; NONE                      ; Untyped            ;
+; OUTDATA_ACLR_B                     ; NONE                      ; Untyped            ;
+; RDCONTROL_ACLR_B                   ; NONE                      ; Untyped            ;
+; BYTEENA_ACLR_B                     ; NONE                      ; Untyped            ;
+; WIDTH_BYTEENA_A                    ; 1                         ; Untyped            ;
+; WIDTH_BYTEENA_B                    ; 1                         ; Untyped            ;
+; RAM_BLOCK_TYPE                     ; AUTO                      ; Untyped            ;
+; BYTE_SIZE                          ; 8                         ; Untyped            ;
+; READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                 ; Untyped            ;
+; READ_DURING_WRITE_MODE_PORT_A      ; NEW_DATA_NO_NBE_READ      ; Untyped            ;
+; READ_DURING_WRITE_MODE_PORT_B      ; NEW_DATA_NO_NBE_READ      ; Untyped            ;
+; INIT_FILE                          ; chess_pics/board_240p.mif ; Untyped            ;
+; INIT_FILE_LAYOUT                   ; PORT_A                    ; Untyped            ;
+; MAXIMUM_DEPTH                      ; 0                         ; Untyped            ;
+; CLOCK_ENABLE_INPUT_A               ; BYPASS                    ; Untyped            ;
+; CLOCK_ENABLE_INPUT_B               ; BYPASS                    ; Untyped            ;
+; CLOCK_ENABLE_OUTPUT_A              ; NORMAL                    ; Untyped            ;
+; CLOCK_ENABLE_OUTPUT_B              ; BYPASS                    ; Untyped            ;
+; CLOCK_ENABLE_CORE_A                ; USE_INPUT_CLKEN           ; Untyped            ;
+; CLOCK_ENABLE_CORE_B                ; USE_INPUT_CLKEN           ; Untyped            ;
+; ENABLE_ECC                         ; FALSE                     ; Untyped            ;
+; ECC_PIPELINE_STAGE_ENABLED         ; FALSE                     ; Untyped            ;
+; WIDTH_ECCSTATUS                    ; 3                         ; Untyped            ;
+; DEVICE_FAMILY                      ; Cyclone V                 ; Untyped            ;
+; CBXI_PARAMETER                     ; altsyncram_bln1           ; Untyped            ;
++------------------------------------+---------------------------+--------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component ;
++-------------------------------+-------------------+------------------------------------------------+
+; Parameter Name                ; Value             ; Type                                           ;
++-------------------------------+-------------------+------------------------------------------------+
+; OPERATION_MODE                ; NORMAL            ; Untyped                                        ;
+; PLL_TYPE                      ; FAST              ; Untyped                                        ;
+; LPM_HINT                      ; UNUSED            ; Untyped                                        ;
+; QUALIFY_CONF_DONE             ; OFF               ; Untyped                                        ;
+; COMPENSATE_CLOCK              ; CLK0              ; Untyped                                        ;
+; SCAN_CHAIN                    ; LONG              ; Untyped                                        ;
+; PRIMARY_CLOCK                 ; INCLK0            ; Untyped                                        ;
+; INCLK0_INPUT_FREQUENCY        ; 20000             ; Signed Integer                                 ;
+; INCLK1_INPUT_FREQUENCY        ; 0                 ; Untyped                                        ;
+; GATE_LOCK_SIGNAL              ; NO                ; Untyped                                        ;
+; GATE_LOCK_COUNTER             ; 0                 ; Untyped                                        ;
+; LOCK_HIGH                     ; 1                 ; Untyped                                        ;
+; LOCK_LOW                      ; 1                 ; Untyped                                        ;
+; VALID_LOCK_MULTIPLIER         ; 1                 ; Untyped                                        ;
+; INVALID_LOCK_MULTIPLIER       ; 5                 ; Untyped                                        ;
+; SWITCH_OVER_ON_LOSSCLK        ; OFF               ; Untyped                                        ;
+; SWITCH_OVER_ON_GATED_LOCK     ; OFF               ; Untyped                                        ;
+; ENABLE_SWITCH_OVER_COUNTER    ; OFF               ; Untyped                                        ;
+; SKIP_VCO                      ; OFF               ; Untyped                                        ;
+; SWITCH_OVER_COUNTER           ; 0                 ; Untyped                                        ;
+; SWITCH_OVER_TYPE              ; AUTO              ; Untyped                                        ;
+; FEEDBACK_SOURCE               ; EXTCLK0           ; Untyped                                        ;
+; BANDWIDTH                     ; 0                 ; Untyped                                        ;
+; BANDWIDTH_TYPE                ; AUTO              ; Untyped                                        ;
+; SPREAD_FREQUENCY              ; 0                 ; Untyped                                        ;
+; DOWN_SPREAD                   ; 0                 ; Untyped                                        ;
+; SELF_RESET_ON_GATED_LOSS_LOCK ; OFF               ; Untyped                                        ;
+; SELF_RESET_ON_LOSS_LOCK       ; OFF               ; Untyped                                        ;
+; CLK9_MULTIPLY_BY              ; 0                 ; Untyped                                        ;
+; CLK8_MULTIPLY_BY              ; 0                 ; Untyped                                        ;
+; CLK7_MULTIPLY_BY              ; 0                 ; Untyped                                        ;
+; CLK6_MULTIPLY_BY              ; 0                 ; Untyped                                        ;
+; CLK5_MULTIPLY_BY              ; 1                 ; Untyped                                        ;
+; CLK4_MULTIPLY_BY              ; 1                 ; Untyped                                        ;
+; CLK3_MULTIPLY_BY              ; 1                 ; Untyped                                        ;
+; CLK2_MULTIPLY_BY              ; 1                 ; Untyped                                        ;
+; CLK1_MULTIPLY_BY              ; 1                 ; Untyped                                        ;
+; CLK0_MULTIPLY_BY              ; 1                 ; Signed Integer                                 ;
+; CLK9_DIVIDE_BY                ; 0                 ; Untyped                                        ;
+; CLK8_DIVIDE_BY                ; 0                 ; Untyped                                        ;
+; CLK7_DIVIDE_BY                ; 0                 ; Untyped                                        ;
+; CLK6_DIVIDE_BY                ; 0                 ; Untyped                                        ;
+; CLK5_DIVIDE_BY                ; 1                 ; Untyped                                        ;
+; CLK4_DIVIDE_BY                ; 1                 ; Untyped                                        ;
+; CLK3_DIVIDE_BY                ; 1                 ; Untyped                                        ;
+; CLK2_DIVIDE_BY                ; 1                 ; Untyped                                        ;
+; CLK1_DIVIDE_BY                ; 1                 ; Untyped                                        ;
+; CLK0_DIVIDE_BY                ; 2                 ; Signed Integer                                 ;
+; CLK9_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK8_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK7_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK6_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK5_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK4_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK3_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK2_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK1_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK0_PHASE_SHIFT              ; 0                 ; Untyped                                        ;
+; CLK5_TIME_DELAY               ; 0                 ; Untyped                                        ;
+; CLK4_TIME_DELAY               ; 0                 ; Untyped                                        ;
+; CLK3_TIME_DELAY               ; 0                 ; Untyped                                        ;
+; CLK2_TIME_DELAY               ; 0                 ; Untyped                                        ;
+; CLK1_TIME_DELAY               ; 0                 ; Untyped                                        ;
+; CLK0_TIME_DELAY               ; 0                 ; Untyped                                        ;
+; CLK9_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK8_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK7_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK6_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK5_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK4_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK3_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK2_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK1_DUTY_CYCLE               ; 50                ; Untyped                                        ;
+; CLK0_DUTY_CYCLE               ; 50                ; Signed Integer                                 ;
+; CLK9_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK8_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK7_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK6_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK5_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK4_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK3_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK2_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK1_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK0_USE_EVEN_COUNTER_MODE    ; OFF               ; Untyped                                        ;
+; CLK9_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK8_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK7_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK6_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK5_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK4_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK3_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK2_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK1_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; CLK0_USE_EVEN_COUNTER_VALUE   ; OFF               ; Untyped                                        ;
+; LOCK_WINDOW_UI                ;  0.05             ; Untyped                                        ;
+; LOCK_WINDOW_UI_BITS           ; UNUSED            ; Untyped                                        ;
+; VCO_RANGE_DETECTOR_LOW_BITS   ; UNUSED            ; Untyped                                        ;
+; VCO_RANGE_DETECTOR_HIGH_BITS  ; UNUSED            ; Untyped                                        ;
+; DPA_MULTIPLY_BY               ; 0                 ; Untyped                                        ;
+; DPA_DIVIDE_BY                 ; 1                 ; Untyped                                        ;
+; DPA_DIVIDER                   ; 0                 ; Untyped                                        ;
+; EXTCLK3_MULTIPLY_BY           ; 1                 ; Untyped                                        ;
+; EXTCLK2_MULTIPLY_BY           ; 1                 ; Untyped                                        ;
+; EXTCLK1_MULTIPLY_BY           ; 1                 ; Untyped                                        ;
+; EXTCLK0_MULTIPLY_BY           ; 1                 ; Untyped                                        ;
+; EXTCLK3_DIVIDE_BY             ; 1                 ; Untyped                                        ;
+; EXTCLK2_DIVIDE_BY             ; 1                 ; Untyped                                        ;
+; EXTCLK1_DIVIDE_BY             ; 1                 ; Untyped                                        ;
+; EXTCLK0_DIVIDE_BY             ; 1                 ; Untyped                                        ;
+; EXTCLK3_PHASE_SHIFT           ; 0                 ; Untyped                                        ;
+; EXTCLK2_PHASE_SHIFT           ; 0                 ; Untyped                                        ;
+; EXTCLK1_PHASE_SHIFT           ; 0                 ; Untyped                                        ;
+; EXTCLK0_PHASE_SHIFT           ; 0                 ; Untyped                                        ;
+; EXTCLK3_TIME_DELAY            ; 0                 ; Untyped                                        ;
+; EXTCLK2_TIME_DELAY            ; 0                 ; Untyped                                        ;
+; EXTCLK1_TIME_DELAY            ; 0                 ; Untyped                                        ;
+; EXTCLK0_TIME_DELAY            ; 0                 ; Untyped                                        ;
+; EXTCLK3_DUTY_CYCLE            ; 50                ; Untyped                                        ;
+; EXTCLK2_DUTY_CYCLE            ; 50                ; Untyped                                        ;
+; EXTCLK1_DUTY_CYCLE            ; 50                ; Untyped                                        ;
+; EXTCLK0_DUTY_CYCLE            ; 50                ; Untyped                                        ;
+; VCO_MULTIPLY_BY               ; 0                 ; Untyped                                        ;
+; VCO_DIVIDE_BY                 ; 0                 ; Untyped                                        ;
+; SCLKOUT0_PHASE_SHIFT          ; 0                 ; Untyped                                        ;
+; SCLKOUT1_PHASE_SHIFT          ; 0                 ; Untyped                                        ;
+; VCO_MIN                       ; 0                 ; Untyped                                        ;
+; VCO_MAX                       ; 0                 ; Untyped                                        ;
+; VCO_CENTER                    ; 0                 ; Untyped                                        ;
+; PFD_MIN                       ; 0                 ; Untyped                                        ;
+; PFD_MAX                       ; 0                 ; Untyped                                        ;
+; M_INITIAL                     ; 0                 ; Untyped                                        ;
+; M                             ; 0                 ; Untyped                                        ;
+; N                             ; 1                 ; Untyped                                        ;
+; M2                            ; 1                 ; Untyped                                        ;
+; N2                            ; 1                 ; Untyped                                        ;
+; SS                            ; 1                 ; Untyped                                        ;
+; C0_HIGH                       ; 0                 ; Untyped                                        ;
+; C1_HIGH                       ; 0                 ; Untyped                                        ;
+; C2_HIGH                       ; 0                 ; Untyped                                        ;
+; C3_HIGH                       ; 0                 ; Untyped                                        ;
+; C4_HIGH                       ; 0                 ; Untyped                                        ;
+; C5_HIGH                       ; 0                 ; Untyped                                        ;
+; C6_HIGH                       ; 0                 ; Untyped                                        ;
+; C7_HIGH                       ; 0                 ; Untyped                                        ;
+; C8_HIGH                       ; 0                 ; Untyped                                        ;
+; C9_HIGH                       ; 0                 ; Untyped                                        ;
+; C0_LOW                        ; 0                 ; Untyped                                        ;
+; C1_LOW                        ; 0                 ; Untyped                                        ;
+; C2_LOW                        ; 0                 ; Untyped                                        ;
+; C3_LOW                        ; 0                 ; Untyped                                        ;
+; C4_LOW                        ; 0                 ; Untyped                                        ;
+; C5_LOW                        ; 0                 ; Untyped                                        ;
+; C6_LOW                        ; 0                 ; Untyped                                        ;
+; C7_LOW                        ; 0                 ; Untyped                                        ;
+; C8_LOW                        ; 0                 ; Untyped                                        ;
+; C9_LOW                        ; 0                 ; Untyped                                        ;
+; C0_INITIAL                    ; 0                 ; Untyped                                        ;
+; C1_INITIAL                    ; 0                 ; Untyped                                        ;
+; C2_INITIAL                    ; 0                 ; Untyped                                        ;
+; C3_INITIAL                    ; 0                 ; Untyped                                        ;
+; C4_INITIAL                    ; 0                 ; Untyped                                        ;
+; C5_INITIAL                    ; 0                 ; Untyped                                        ;
+; C6_INITIAL                    ; 0                 ; Untyped                                        ;
+; C7_INITIAL                    ; 0                 ; Untyped                                        ;
+; C8_INITIAL                    ; 0                 ; Untyped                                        ;
+; C9_INITIAL                    ; 0                 ; Untyped                                        ;
+; C0_MODE                       ; BYPASS            ; Untyped                                        ;
+; C1_MODE                       ; BYPASS            ; Untyped                                        ;
+; C2_MODE                       ; BYPASS            ; Untyped                                        ;
+; C3_MODE                       ; BYPASS            ; Untyped                                        ;
+; C4_MODE                       ; BYPASS            ; Untyped                                        ;
+; C5_MODE                       ; BYPASS            ; Untyped                                        ;
+; C6_MODE                       ; BYPASS            ; Untyped                                        ;
+; C7_MODE                       ; BYPASS            ; Untyped                                        ;
+; C8_MODE                       ; BYPASS            ; Untyped                                        ;
+; C9_MODE                       ; BYPASS            ; Untyped                                        ;
+; C0_PH                         ; 0                 ; Untyped                                        ;
+; C1_PH                         ; 0                 ; Untyped                                        ;
+; C2_PH                         ; 0                 ; Untyped                                        ;
+; C3_PH                         ; 0                 ; Untyped                                        ;
+; C4_PH                         ; 0                 ; Untyped                                        ;
+; C5_PH                         ; 0                 ; Untyped                                        ;
+; C6_PH                         ; 0                 ; Untyped                                        ;
+; C7_PH                         ; 0                 ; Untyped                                        ;
+; C8_PH                         ; 0                 ; Untyped                                        ;
+; C9_PH                         ; 0                 ; Untyped                                        ;
+; L0_HIGH                       ; 1                 ; Untyped                                        ;
+; L1_HIGH                       ; 1                 ; Untyped                                        ;
+; G0_HIGH                       ; 1                 ; Untyped                                        ;
+; G1_HIGH                       ; 1                 ; Untyped                                        ;
+; G2_HIGH                       ; 1                 ; Untyped                                        ;
+; G3_HIGH                       ; 1                 ; Untyped                                        ;
+; E0_HIGH                       ; 1                 ; Untyped                                        ;
+; E1_HIGH                       ; 1                 ; Untyped                                        ;
+; E2_HIGH                       ; 1                 ; Untyped                                        ;
+; E3_HIGH                       ; 1                 ; Untyped                                        ;
+; L0_LOW                        ; 1                 ; Untyped                                        ;
+; L1_LOW                        ; 1                 ; Untyped                                        ;
+; G0_LOW                        ; 1                 ; Untyped                                        ;
+; G1_LOW                        ; 1                 ; Untyped                                        ;
+; G2_LOW                        ; 1                 ; Untyped                                        ;
+; G3_LOW                        ; 1                 ; Untyped                                        ;
+; E0_LOW                        ; 1                 ; Untyped                                        ;
+; E1_LOW                        ; 1                 ; Untyped                                        ;
+; E2_LOW                        ; 1                 ; Untyped                                        ;
+; E3_LOW                        ; 1                 ; Untyped                                        ;
+; L0_INITIAL                    ; 1                 ; Untyped                                        ;
+; L1_INITIAL                    ; 1                 ; Untyped                                        ;
+; G0_INITIAL                    ; 1                 ; Untyped                                        ;
+; G1_INITIAL                    ; 1                 ; Untyped                                        ;
+; G2_INITIAL                    ; 1                 ; Untyped                                        ;
+; G3_INITIAL                    ; 1                 ; Untyped                                        ;
+; E0_INITIAL                    ; 1                 ; Untyped                                        ;
+; E1_INITIAL                    ; 1                 ; Untyped                                        ;
+; E2_INITIAL                    ; 1                 ; Untyped                                        ;
+; E3_INITIAL                    ; 1                 ; Untyped                                        ;
+; L0_MODE                       ; BYPASS            ; Untyped                                        ;
+; L1_MODE                       ; BYPASS            ; Untyped                                        ;
+; G0_MODE                       ; BYPASS            ; Untyped                                        ;
+; G1_MODE                       ; BYPASS            ; Untyped                                        ;
+; G2_MODE                       ; BYPASS            ; Untyped                                        ;
+; G3_MODE                       ; BYPASS            ; Untyped                                        ;
+; E0_MODE                       ; BYPASS            ; Untyped                                        ;
+; E1_MODE                       ; BYPASS            ; Untyped                                        ;
+; E2_MODE                       ; BYPASS            ; Untyped                                        ;
+; E3_MODE                       ; BYPASS            ; Untyped                                        ;
+; L0_PH                         ; 0                 ; Untyped                                        ;
+; L1_PH                         ; 0                 ; Untyped                                        ;
+; G0_PH                         ; 0                 ; Untyped                                        ;
+; G1_PH                         ; 0                 ; Untyped                                        ;
+; G2_PH                         ; 0                 ; Untyped                                        ;
+; G3_PH                         ; 0                 ; Untyped                                        ;
+; E0_PH                         ; 0                 ; Untyped                                        ;
+; E1_PH                         ; 0                 ; Untyped                                        ;
+; E2_PH                         ; 0                 ; Untyped                                        ;
+; E3_PH                         ; 0                 ; Untyped                                        ;
+; M_PH                          ; 0                 ; Untyped                                        ;
+; C1_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; C2_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; C3_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; C4_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; C5_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; C6_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; C7_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; C8_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; C9_USE_CASC_IN                ; OFF               ; Untyped                                        ;
+; CLK0_COUNTER                  ; G0                ; Untyped                                        ;
+; CLK1_COUNTER                  ; G0                ; Untyped                                        ;
+; CLK2_COUNTER                  ; G0                ; Untyped                                        ;
+; CLK3_COUNTER                  ; G0                ; Untyped                                        ;
+; CLK4_COUNTER                  ; G0                ; Untyped                                        ;
+; CLK5_COUNTER                  ; G0                ; Untyped                                        ;
+; CLK6_COUNTER                  ; E0                ; Untyped                                        ;
+; CLK7_COUNTER                  ; E1                ; Untyped                                        ;
+; CLK8_COUNTER                  ; E2                ; Untyped                                        ;
+; CLK9_COUNTER                  ; E3                ; Untyped                                        ;
+; L0_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; L1_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; G0_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; G1_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; G2_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; G3_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; E0_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; E1_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; E2_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; E3_TIME_DELAY                 ; 0                 ; Untyped                                        ;
+; M_TIME_DELAY                  ; 0                 ; Untyped                                        ;
+; N_TIME_DELAY                  ; 0                 ; Untyped                                        ;
+; EXTCLK3_COUNTER               ; E3                ; Untyped                                        ;
+; EXTCLK2_COUNTER               ; E2                ; Untyped                                        ;
+; EXTCLK1_COUNTER               ; E1                ; Untyped                                        ;
+; EXTCLK0_COUNTER               ; E0                ; Untyped                                        ;
+; ENABLE0_COUNTER               ; L0                ; Untyped                                        ;
+; ENABLE1_COUNTER               ; L0                ; Untyped                                        ;
+; CHARGE_PUMP_CURRENT           ; 2                 ; Untyped                                        ;
+; LOOP_FILTER_R                 ;  1.000000         ; Untyped                                        ;
+; LOOP_FILTER_C                 ; 5                 ; Untyped                                        ;
+; CHARGE_PUMP_CURRENT_BITS      ; 9999              ; Untyped                                        ;
+; LOOP_FILTER_R_BITS            ; 9999              ; Untyped                                        ;
+; LOOP_FILTER_C_BITS            ; 9999              ; Untyped                                        ;
+; VCO_POST_SCALE                ; 0                 ; Untyped                                        ;
+; CLK2_OUTPUT_FREQUENCY         ; 0                 ; Untyped                                        ;
+; CLK1_OUTPUT_FREQUENCY         ; 0                 ; Untyped                                        ;
+; CLK0_OUTPUT_FREQUENCY         ; 0                 ; Untyped                                        ;
+; INTENDED_DEVICE_FAMILY        ; Cyclone II        ; Untyped                                        ;
+; PORT_CLKENA0                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKENA1                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKENA2                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKENA3                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKENA4                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKENA5                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_EXTCLKENA0               ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_EXTCLKENA1               ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_EXTCLKENA2               ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_EXTCLKENA3               ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_EXTCLK0                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_EXTCLK1                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_EXTCLK2                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_EXTCLK3                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKBAD0                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKBAD1                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLK0                     ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLK1                     ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLK2                     ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLK3                     ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLK4                     ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLK5                     ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLK6                     ; PORT_UNUSED       ; Untyped                                        ;
+; PORT_CLK7                     ; PORT_UNUSED       ; Untyped                                        ;
+; PORT_CLK8                     ; PORT_UNUSED       ; Untyped                                        ;
+; PORT_CLK9                     ; PORT_UNUSED       ; Untyped                                        ;
+; PORT_SCANDATA                 ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCANDATAOUT              ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCANDONE                 ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCLKOUT1                 ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCLKOUT0                 ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_ACTIVECLOCK              ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKLOSS                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_INCLK1                   ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_INCLK0                   ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_FBIN                     ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_PLLENA                   ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CLKSWITCH                ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_ARESET                   ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_PFDENA                   ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCANCLK                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCANACLR                 ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCANREAD                 ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCANWRITE                ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_ENABLE0                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_ENABLE1                  ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_LOCKED                   ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_CONFIGUPDATE             ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_FBOUT                    ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_PHASEDONE                ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_PHASESTEP                ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_PHASEUPDOWN              ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_SCANCLKENA               ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_PHASECOUNTERSELECT       ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_VCOOVERRANGE             ; PORT_CONNECTIVITY ; Untyped                                        ;
+; PORT_VCOUNDERRANGE            ; PORT_CONNECTIVITY ; Untyped                                        ;
+; M_TEST_SOURCE                 ; 5                 ; Untyped                                        ;
+; C0_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C1_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C2_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C3_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C4_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C5_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C6_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C7_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C8_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; C9_TEST_SOURCE                ; 5                 ; Untyped                                        ;
+; CBXI_PARAMETER                ; altpll_80u        ; Untyped                                        ;
+; VCO_FREQUENCY_CONTROL         ; AUTO              ; Untyped                                        ;
+; VCO_PHASE_SHIFT_STEP          ; 0                 ; Untyped                                        ;
+; WIDTH_CLOCK                   ; 6                 ; Untyped                                        ;
+; WIDTH_PHASECOUNTERSELECT      ; 4                 ; Untyped                                        ;
+; USING_FBMIMICBIDIR_PORT       ; OFF               ; Untyped                                        ;
+; DEVICE_FAMILY                 ; Cyclone V         ; Untyped                                        ;
+; SCAN_CHAIN_MIF_FILE           ; UNUSED            ; Untyped                                        ;
+; SIM_GATE_LOCK_DEVICE_BEHAVIOR ; OFF               ; Untyped                                        ;
+; AUTO_CARRY_CHAINS             ; ON                ; AUTO_CARRY                                     ;
+; IGNORE_CARRY_BUFFERS          ; OFF               ; IGNORE_CARRY                                   ;
+; AUTO_CASCADE_CHAINS           ; ON                ; AUTO_CASCADE                                   ;
+; IGNORE_CASCADE_BUFFERS        ; OFF               ; IGNORE_CASCADE                                 ;
++-------------------------------+-------------------+------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_controller:controller ;
++-------------------------+------------+-------------------------------------------------+
+; Parameter Name          ; Value      ; Type                                            ;
++-------------------------+------------+-------------------------------------------------+
+; BITS_PER_COLOUR_CHANNEL ; 1          ; Signed Integer                                  ;
+; MONOCHROME              ; TRUE       ; String                                          ;
+; RESOLUTION              ; 320x240    ; String                                          ;
+; C_VERT_NUM_PIXELS       ; 0111100000 ; Unsigned Binary                                 ;
+; C_VERT_SYNC_START       ; 0111101101 ; Unsigned Binary                                 ;
+; C_VERT_SYNC_END         ; 0111101110 ; Unsigned Binary                                 ;
+; C_VERT_TOTAL_COUNT      ; 1000001101 ; Unsigned Binary                                 ;
+; C_HORZ_NUM_PIXELS       ; 1010000000 ; Unsigned Binary                                 ;
+; C_HORZ_SYNC_START       ; 1010010011 ; Unsigned Binary                                 ;
+; C_HORZ_SYNC_END         ; 1011110010 ; Unsigned Binary                                 ;
+; C_HORZ_TOTAL_COUNT      ; 1100100000 ; Unsigned Binary                                 ;
++-------------------------+------------+-------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: vga_adapter:VGA|vga_controller:controller|vga_address_translator:controller_translator ;
++----------------+---------+----------------------------------------------------------------------------------------------------------+
+; Parameter Name ; Value   ; Type                                                                                                     ;
++----------------+---------+----------------------------------------------------------------------------------------------------------+
+; RESOLUTION     ; 320x240 ; String                                                                                                   ;
++----------------+---------+----------------------------------------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: control:c0|configrable_clock:c0 ;
++----------------+----------------------------+--------------------------------+
+; Parameter Name ; Value                      ; Type                           ;
++----------------+----------------------------+--------------------------------+
+; period         ; 00000000000000000000000001 ; Unsigned Binary                ;
++----------------+----------------------------+--------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------------------------------------------+
+; altsyncram Parameter Settings by Entity Instance                                                     ;
++-------------------------------------------+----------------------------------------------------------+
+; Name                                      ; Value                                                    ;
++-------------------------------------------+----------------------------------------------------------+
+; Number of entity instances                ; 2                                                        ;
+; Entity Instance                           ; memory_access:ma|board:b|altsyncram:altsyncram_component ;
+;     -- OPERATION_MODE                     ; SINGLE_PORT                                              ;
+;     -- WIDTH_A                            ; 4                                                        ;
+;     -- NUMWORDS_A                         ; 64                                                       ;
+;     -- OUTDATA_REG_A                      ; CLOCK0                                                   ;
+;     -- WIDTH_B                            ; 1                                                        ;
+;     -- NUMWORDS_B                         ; 1                                                        ;
+;     -- ADDRESS_REG_B                      ; CLOCK1                                                   ;
+;     -- OUTDATA_REG_B                      ; UNREGISTERED                                             ;
+;     -- RAM_BLOCK_TYPE                     ; AUTO                                                     ;
+;     -- READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                                ;
+; Entity Instance                           ; vga_adapter:VGA|altsyncram:VideoMemory                   ;
+;     -- OPERATION_MODE                     ; DUAL_PORT                                                ;
+;     -- WIDTH_A                            ; 1                                                        ;
+;     -- NUMWORDS_A                         ; 76800                                                    ;
+;     -- OUTDATA_REG_A                      ; UNREGISTERED                                             ;
+;     -- WIDTH_B                            ; 1                                                        ;
+;     -- NUMWORDS_B                         ; 76800                                                    ;
+;     -- ADDRESS_REG_B                      ; CLOCK1                                                   ;
+;     -- OUTDATA_REG_B                      ; CLOCK1                                                   ;
+;     -- RAM_BLOCK_TYPE                     ; AUTO                                                     ;
+;     -- READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                                ;
++-------------------------------------------+----------------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------+
+; altpll Parameter Settings by Entity Instance                                          ;
++-------------------------------+-------------------------------------------------------+
+; Name                          ; Value                                                 ;
++-------------------------------+-------------------------------------------------------+
+; Number of entity instances    ; 1                                                     ;
+; Entity Instance               ; vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component ;
+;     -- OPERATION_MODE         ; NORMAL                                                ;
+;     -- PLL_TYPE               ; FAST                                                  ;
+;     -- PRIMARY_CLOCK          ; INCLK0                                                ;
+;     -- INCLK0_INPUT_FREQUENCY ; 20000                                                 ;
+;     -- INCLK1_INPUT_FREQUENCY ; 0                                                     ;
+;     -- VCO_MULTIPLY_BY        ; 0                                                     ;
+;     -- VCO_DIVIDE_BY          ; 0                                                     ;
++-------------------------------+-------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "control:c0"                                                                                                       ;
++---------------+--------+----------+----------------------------------------------------------------------------------------------------------+
+; Port          ; Type   ; Severity ; Details                                                                                                  ;
++---------------+--------+----------+----------------------------------------------------------------------------------------------------------+
+; piece_to_move ; Output ; Warning  ; Declared by entity but not connected by instance. Logic that only feeds a dangling port will be removed. ;
++---------------+--------+----------+----------------------------------------------------------------------------------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "memory_access:ma|board:b"                                                                                                                                                        ;
++-------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Port  ; Type  ; Severity ; Details                                                                                                                                                                          ;
++-------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; clock ; Input ; Warning  ; Input port expression (4 bits) is wider than the input port (1 bits) it drives.  The 3 most-significant bit(s) in the expression will be dangling if they have no other fanouts. ;
+; data  ; Input ; Warning  ; Input port expression (1 bits) is smaller than the input port (4 bits) it drives.  Extra input bit(s) "data[3..1]" will be connected to GND.                                     ;
++-------+-------+----------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; arriav_ff             ; 34                          ;
+;     CLR SCLR          ; 10                          ;
+;     ENA CLR SCLR      ; 10                          ;
+;     plain             ; 14                          ;
+; arriav_lcell_comb     ; 58                          ;
+;     arith             ; 20                          ;
+;         1 data inputs ; 20                          ;
+;     extend            ; 3                           ;
+;         7 data inputs ; 3                           ;
+;     normal            ; 24                          ;
+;         0 data inputs ; 2                           ;
+;         3 data inputs ; 2                           ;
+;         4 data inputs ; 12                          ;
+;         5 data inputs ; 7                           ;
+;         6 data inputs ; 1                           ;
+;     shared            ; 11                          ;
+;         0 data inputs ; 1                           ;
+;         1 data inputs ; 2                           ;
+;         2 data inputs ; 7                           ;
+;         3 data inputs ; 1                           ;
+; boundary_port         ; 50                          ;
+; generic_pll           ; 1                           ;
+; stratixv_ram_block    ; 10                          ;
+;                       ;                             ;
+; Max LUT depth         ; 3.00                        ;
+; Average LUT depth     ; 1.96                        ;
++-----------------------+-----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:00     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Analysis & Synthesis
+    Info: Version 16.0.0 Build 211 04/27/2016 SJ Standard Edition
+    Info: Processing started: Fri Nov 11 15:30:32 2016
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off main -c main
+Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+Info (20030): Parallel compilation is enabled and will use 4 of the 4 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file vga_adapter/vga_pll.v
+    Info (12023): Found entity 1: vga_pll File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_pll.v Line: 36
+Info (12021): Found 1 design units, including 1 entities, in source file vga_adapter/vga_controller.v
+    Info (12023): Found entity 1: vga_controller File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_controller.v Line: 9
+Info (12021): Found 1 design units, including 1 entities, in source file vga_adapter/vga_address_translator.v
+    Info (12023): Found entity 1: vga_address_translator File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_address_translator.v Line: 4
+Info (12021): Found 1 design units, including 1 entities, in source file vga_adapter/vga_adapter.v
+    Info (12023): Found entity 1: vga_adapter File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v Line: 78
+Info (12021): Found 1 design units, including 1 entities, in source file view_render.v
+    Info (12023): Found entity 1: view_render File: //SRVD/Homes$/huchenle/Desktop/chess/view_render.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file validator_w_pawn.v
+    Info (12023): Found entity 1: validator_w_pawn File: //SRVD/Homes$/huchenle/Desktop/chess/validator_w_pawn.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file validator_rook.v
+    Info (12023): Found entity 1: validator_rook File: //SRVD/Homes$/huchenle/Desktop/chess/validator_rook.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file validator_queen.v
+    Info (12023): Found entity 1: validator_queen File: //SRVD/Homes$/huchenle/Desktop/chess/validator_queen.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file validator_knight.v
+    Info (12023): Found entity 1: validator_knight File: //SRVD/Homes$/huchenle/Desktop/chess/validator_knight.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file validator_king.v
+    Info (12023): Found entity 1: validator_king File: //SRVD/Homes$/huchenle/Desktop/chess/validator_king.v Line: 1
+Info (12021): Found 0 design units, including 0 entities, in source file validator_b_pawn.v
+Info (12021): Found 1 design units, including 1 entities, in source file validator_bishop.v
+    Info (12023): Found entity 1: validator_bishop File: //SRVD/Homes$/huchenle/Desktop/chess/validator_bishop.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file move_validator.v
+    Info (12023): Found entity 1: move_validator File: //SRVD/Homes$/huchenle/Desktop/chess/move_validator.v Line: 3
+Info (12021): Found 1 design units, including 1 entities, in source file memory_access.v
+    Info (12023): Found entity 1: memory_access File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file main.v
+    Info (12023): Found entity 1: main File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 17
+Info (12021): Found 1 design units, including 1 entities, in source file datapath.v
+    Info (12023): Found entity 1: datapath File: //SRVD/Homes$/huchenle/Desktop/chess/datapath.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file control.v
+    Info (12023): Found entity 1: control File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 3
+Info (12021): Found 1 design units, including 1 entities, in source file configrable_clock.v
+    Info (12023): Found entity 1: configrable_clock File: //SRVD/Homes$/huchenle/Desktop/chess/configrable_clock.v Line: 3
+Info (12021): Found 1 design units, including 1 entities, in source file board.v
+    Info (12023): Found entity 1: board File: //SRVD/Homes$/huchenle/Desktop/chess/board.v Line: 43
+Info (12021): Found 2 design units, including 2 entities, in source file address_utils.v
+    Info (12023): Found entity 1: address_encoder File: //SRVD/Homes$/huchenle/Desktop/chess/address_utils.v Line: 4
+    Info (12023): Found entity 2: address_decoder File: //SRVD/Homes$/huchenle/Desktop/chess/address_utils.v Line: 12
+Warning (10236): Verilog HDL Implicit Net warning at move_validator.v(29): created implicit net for "knight_lock" File: //SRVD/Homes$/huchenle/Desktop/chess/move_validator.v Line: 29
+Warning (10236): Verilog HDL Implicit Net warning at move_validator.v(34): created implicit net for "king_lock" File: //SRVD/Homes$/huchenle/Desktop/chess/move_validator.v Line: 34
+Warning (10236): Verilog HDL Implicit Net warning at move_validator.v(39): created implicit net for "queen_lock" File: //SRVD/Homes$/huchenle/Desktop/chess/move_validator.v Line: 39
+Warning (10236): Verilog HDL Implicit Net warning at move_validator.v(44): created implicit net for "bishop_lock" File: //SRVD/Homes$/huchenle/Desktop/chess/move_validator.v Line: 44
+Warning (10236): Verilog HDL Implicit Net warning at main.v(39): created implicit net for "resetn" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 39
+Warning (10236): Verilog HDL Implicit Net warning at main.v(76): created implicit net for "colour" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 76
+Info (12127): Elaborating entity "main" for the top level hierarchy
+Info (12128): Elaborating entity "memory_access" for hierarchy "memory_access:ma" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 54
+Warning (10240): Verilog HDL Always Construct warning at memory_access.v(38): inferring latch(es) for variable "data_out_view", which holds its previous value in one or more paths through the always construct File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Warning (10240): Verilog HDL Always Construct warning at memory_access.v(38): inferring latch(es) for variable "data_out_control", which holds its previous value in one or more paths through the always construct File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Warning (10240): Verilog HDL Always Construct warning at memory_access.v(38): inferring latch(es) for variable "data_out_validator", which holds its previous value in one or more paths through the always construct File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_validator[0]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_validator[1]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_validator[2]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_validator[3]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_control[0]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_control[1]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_control[2]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_control[3]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_view[0]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_view[1]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_view[2]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (10041): Inferred latch for "data_out_view[3]" at memory_access.v(38) File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 38
+Info (12128): Elaborating entity "board" for hierarchy "memory_access:ma|board:b" File: //SRVD/Homes$/huchenle/Desktop/chess/memory_access.v Line: 20
+Info (12128): Elaborating entity "altsyncram" for hierarchy "memory_access:ma|board:b|altsyncram:altsyncram_component" File: //SRVD/Homes$/huchenle/Desktop/chess/board.v Line: 89
+Info (12130): Elaborated megafunction instantiation "memory_access:ma|board:b|altsyncram:altsyncram_component" File: //SRVD/Homes$/huchenle/Desktop/chess/board.v Line: 89
+Info (12133): Instantiated megafunction "memory_access:ma|board:b|altsyncram:altsyncram_component" with the following parameter: File: //SRVD/Homes$/huchenle/Desktop/chess/board.v Line: 89
+    Info (12134): Parameter "clock_enable_input_a" = "BYPASS"
+    Info (12134): Parameter "clock_enable_output_a" = "BYPASS"
+    Info (12134): Parameter "intended_device_family" = "Cyclone V"
+    Info (12134): Parameter "lpm_hint" = "ENABLE_RUNTIME_MOD=NO"
+    Info (12134): Parameter "lpm_type" = "altsyncram"
+    Info (12134): Parameter "numwords_a" = "64"
+    Info (12134): Parameter "operation_mode" = "SINGLE_PORT"
+    Info (12134): Parameter "outdata_aclr_a" = "NONE"
+    Info (12134): Parameter "outdata_reg_a" = "CLOCK0"
+    Info (12134): Parameter "power_up_uninitialized" = "FALSE"
+    Info (12134): Parameter "read_during_write_mode_port_a" = "NEW_DATA_NO_NBE_READ"
+    Info (12134): Parameter "widthad_a" = "6"
+    Info (12134): Parameter "width_a" = "4"
+    Info (12134): Parameter "width_byteena_a" = "1"
+Warning (12125): Using design file db/altsyncram_9jl1.tdf, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: altsyncram_9jl1 File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_9jl1.tdf Line: 28
+Info (12128): Elaborating entity "altsyncram_9jl1" for hierarchy "memory_access:ma|board:b|altsyncram:altsyncram_component|altsyncram_9jl1:auto_generated" File: c:/altera/16.0/quartus/libraries/megafunctions/altsyncram.tdf Line: 792
+Info (12128): Elaborating entity "address_encoder" for hierarchy "address_encoder:ae0" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 60
+Warning (10230): Verilog HDL assignment warning at address_utils.v(9): truncated value with size 32 to match size of target (6) File: //SRVD/Homes$/huchenle/Desktop/chess/address_utils.v Line: 9
+Info (12128): Elaborating entity "vga_adapter" for hierarchy "vga_adapter:VGA" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 88
+Info (12128): Elaborating entity "vga_address_translator" for hierarchy "vga_adapter:VGA|vga_address_translator:user_input_translator" File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v Line: 192
+Info (12128): Elaborating entity "altsyncram" for hierarchy "vga_adapter:VGA|altsyncram:VideoMemory" File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v Line: 213
+Info (12130): Elaborated megafunction instantiation "vga_adapter:VGA|altsyncram:VideoMemory" File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v Line: 213
+Info (12133): Instantiated megafunction "vga_adapter:VGA|altsyncram:VideoMemory" with the following parameter: File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v Line: 213
+    Info (12134): Parameter "WIDTH_A" = "1"
+    Info (12134): Parameter "WIDTH_B" = "1"
+    Info (12134): Parameter "INTENDED_DEVICE_FAMILY" = "Cyclone II"
+    Info (12134): Parameter "OPERATION_MODE" = "DUAL_PORT"
+    Info (12134): Parameter "WIDTHAD_A" = "17"
+    Info (12134): Parameter "NUMWORDS_A" = "76800"
+    Info (12134): Parameter "WIDTHAD_B" = "17"
+    Info (12134): Parameter "NUMWORDS_B" = "76800"
+    Info (12134): Parameter "OUTDATA_REG_B" = "CLOCK1"
+    Info (12134): Parameter "ADDRESS_REG_B" = "CLOCK1"
+    Info (12134): Parameter "CLOCK_ENABLE_INPUT_A" = "BYPASS"
+    Info (12134): Parameter "CLOCK_ENABLE_INPUT_B" = "BYPASS"
+    Info (12134): Parameter "CLOCK_ENABLE_OUTPUT_B" = "BYPASS"
+    Info (12134): Parameter "POWER_UP_UNINITIALIZED" = "FALSE"
+    Info (12134): Parameter "INIT_FILE" = "chess_pics/board_240p.mif"
+Warning (12125): Using design file db/altsyncram_bln1.tdf, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: altsyncram_bln1 File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_bln1.tdf Line: 34
+Info (12128): Elaborating entity "altsyncram_bln1" for hierarchy "vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated" File: c:/altera/16.0/quartus/libraries/megafunctions/altsyncram.tdf Line: 792
+Warning (12125): Using design file db/decode_nma.tdf, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: decode_nma File: //SRVD/Homes$/huchenle/Desktop/chess/db/decode_nma.tdf Line: 23
+Info (12128): Elaborating entity "decode_nma" for hierarchy "vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated|decode_nma:decode2" File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_bln1.tdf Line: 47
+Warning (12125): Using design file db/decode_g2a.tdf, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: decode_g2a File: //SRVD/Homes$/huchenle/Desktop/chess/db/decode_g2a.tdf Line: 23
+Info (12128): Elaborating entity "decode_g2a" for hierarchy "vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated|decode_g2a:rden_decode_b" File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_bln1.tdf Line: 48
+Warning (12125): Using design file db/mux_0hb.tdf, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: mux_0hb File: //SRVD/Homes$/huchenle/Desktop/chess/db/mux_0hb.tdf Line: 23
+Info (12128): Elaborating entity "mux_0hb" for hierarchy "vga_adapter:VGA|altsyncram:VideoMemory|altsyncram_bln1:auto_generated|mux_0hb:mux3" File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_bln1.tdf Line: 50
+Info (12128): Elaborating entity "vga_pll" for hierarchy "vga_adapter:VGA|vga_pll:mypll" File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v Line: 231
+Info (12128): Elaborating entity "altpll" for hierarchy "vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component" File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_pll.v Line: 53
+Info (12130): Elaborated megafunction instantiation "vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component" File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_pll.v Line: 53
+Info (12133): Instantiated megafunction "vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component" with the following parameter: File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_pll.v Line: 53
+    Info (12134): Parameter "operation_mode" = "NORMAL"
+    Info (12134): Parameter "intended_device_family" = "Cyclone II"
+    Info (12134): Parameter "lpm_type" = "altpll"
+    Info (12134): Parameter "pll_type" = "FAST"
+    Info (12134): Parameter "inclk0_input_frequency" = "20000"
+    Info (12134): Parameter "primary_clock" = "INCLK0"
+    Info (12134): Parameter "compensate_clock" = "CLK0"
+    Info (12134): Parameter "clk0_phase_shift" = "0"
+    Info (12134): Parameter "clk0_divide_by" = "2"
+    Info (12134): Parameter "clk0_multiply_by" = "1"
+    Info (12134): Parameter "clk0_duty_cycle" = "50"
+Warning (12125): Using design file db/altpll_80u.tdf, which is not specified as a design file for the current project, but contains definitions for 1 design units and 1 entities in project
+    Info (12023): Found entity 1: altpll_80u File: //SRVD/Homes$/huchenle/Desktop/chess/db/altpll_80u.tdf Line: 26
+Info (12128): Elaborating entity "altpll_80u" for hierarchy "vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component|altpll_80u:auto_generated" File: c:/altera/16.0/quartus/libraries/megafunctions/altpll.tdf Line: 898
+Info (12128): Elaborating entity "vga_controller" for hierarchy "vga_adapter:VGA|vga_controller:controller" File: //SRVD/Homes$/huchenle/Desktop/chess/vga_adapter/vga_adapter.v Line: 252
+Info (12128): Elaborating entity "view_render" for hierarchy "view_render:v0" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 104
+Warning (10034): Output port "x" at view_render.v(9) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/view_render.v Line: 9
+Warning (10034): Output port "y" at view_render.v(10) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/view_render.v Line: 10
+Warning (10034): Output port "view_x" at view_render.v(13) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/view_render.v Line: 13
+Warning (10034): Output port "view_y" at view_render.v(14) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/view_render.v Line: 14
+Warning (10034): Output port "colour" at view_render.v(11) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/view_render.v Line: 11
+Warning (10034): Output port "writeEn" at view_render.v(12) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/view_render.v Line: 12
+Info (12128): Elaborating entity "control" for hierarchy "control:c0" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 132
+Warning (10036): Verilog HDL or VHDL warning at control.v(37): object "check_winning" assigned a value but never read File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 37
+Warning (10270): Verilog HDL Case Statement warning at control.v(120): incomplete case statement has no default case item File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 120
+Info (10264): Verilog HDL Case Statement information at control.v(120): all case item expressions in this case statement are onehot File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 120
+Info (10264): Verilog HDL Case Statement information at control.v(143): all case item expressions in this case statement are onehot File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 143
+Info (10264): Verilog HDL Case Statement information at control.v(152): all case item expressions in this case statement are onehot File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 152
+Info (10264): Verilog HDL Case Statement information at control.v(172): all case item expressions in this case statement are onehot File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 172
+Warning (10230): Verilog HDL assignment warning at control.v(207): truncated value with size 32 to match size of target (3) File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 207
+Warning (10230): Verilog HDL assignment warning at control.v(242): truncated value with size 32 to match size of target (3) File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 242
+Warning (10230): Verilog HDL assignment warning at control.v(243): truncated value with size 32 to match size of target (3) File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 243
+Warning (10230): Verilog HDL assignment warning at control.v(244): truncated value with size 32 to match size of target (3) File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 244
+Warning (10230): Verilog HDL assignment warning at control.v(245): truncated value with size 32 to match size of target (3) File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 245
+Warning (10034): Output port "validate_x" at control.v(24) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 24
+Warning (10034): Output port "validate_y" at control.v(24) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 24
+Warning (10034): Output port "winning_msg" at control.v(13) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 13
+Warning (10034): Output port "can_render" at control.v(28) has no driver File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 28
+Info (12128): Elaborating entity "configrable_clock" for hierarchy "control:c0|configrable_clock:c0" File: //SRVD/Homes$/huchenle/Desktop/chess/control.v Line: 234
+Warning (10230): Verilog HDL assignment warning at configrable_clock.v(20): truncated value with size 32 to match size of target (26) File: //SRVD/Homes$/huchenle/Desktop/chess/configrable_clock.v Line: 20
+Info (12128): Elaborating entity "datapath" for hierarchy "datapath:d0" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 147
+Warning (10230): Verilog HDL assignment warning at datapath.v(108): truncated value with size 32 to match size of target (3) File: //SRVD/Homes$/huchenle/Desktop/chess/datapath.v Line: 108
+Warning (10230): Verilog HDL assignment warning at datapath.v(111): truncated value with size 32 to match size of target (3) File: //SRVD/Homes$/huchenle/Desktop/chess/datapath.v Line: 111
+Info (10264): Verilog HDL Case Statement information at datapath.v(117): all case item expressions in this case statement are onehot File: //SRVD/Homes$/huchenle/Desktop/chess/datapath.v Line: 117
+Warning (14284): Synthesized away the following node(s):
+    Warning (14285): Synthesized away the following RAM node(s):
+        Warning (14320): Synthesized away node "memory_access:ma|board:b|altsyncram:altsyncram_component|altsyncram_9jl1:auto_generated|q_a[0]" File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_9jl1.tdf Line: 37
+        Warning (14320): Synthesized away node "memory_access:ma|board:b|altsyncram:altsyncram_component|altsyncram_9jl1:auto_generated|q_a[1]" File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_9jl1.tdf Line: 60
+        Warning (14320): Synthesized away node "memory_access:ma|board:b|altsyncram:altsyncram_component|altsyncram_9jl1:auto_generated|q_a[2]" File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_9jl1.tdf Line: 83
+        Warning (14320): Synthesized away node "memory_access:ma|board:b|altsyncram:altsyncram_component|altsyncram_9jl1:auto_generated|q_a[3]" File: //SRVD/Homes$/huchenle/Desktop/chess/db/altsyncram_9jl1.tdf Line: 106
+Warning (12241): 2 hierarchies have connectivity warnings - see the Connectivity Checks report folder
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "VGA_SYNC_N" is stuck at VCC File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 27
+Info (286030): Timing-Driven Synthesis is running
+Info (17049): 85 registers lost all their fanouts during netlist optimizations.
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 5 node(s), including 0 DDIO, 1 PLL, 0 transceiver and 0 LCELL
+Warning: RST port on the PLL is not properly connected on instance vga_adapter:VGA|vga_pll:mypll|altpll:altpll_component|altpll_80u:auto_generated|generic_pll1. The reset port on the PLL should be connected. If the PLL loses lock for any reason, you might need to manually reset the PLL in order to re-establish lock to the reference clock. File: //SRVD/Homes$/huchenle/Desktop/chess/db/altpll_80u.tdf Line: 34
+    Info: Must be connected
+Warning (21074): Design contains 13 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "SW[2]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "SW[3]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "SW[4]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "SW[5]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "SW[6]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "SW[7]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "SW[8]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "SW[0]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "SW[1]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 18
+    Warning (15610): No output dependent on input pin "KEY[1]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 19
+    Warning (15610): No output dependent on input pin "KEY[2]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 19
+    Warning (15610): No output dependent on input pin "KEY[0]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 19
+    Warning (15610): No output dependent on input pin "KEY[3]" File: //SRVD/Homes$/huchenle/Desktop/chess/main.v Line: 19
+Info (21057): Implemented 129 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 15 input pins
+    Info (21059): Implemented 35 output pins
+    Info (21061): Implemented 68 logic cells
+    Info (21064): Implemented 10 RAM segments
+    Info (21065): Implemented 1 PLLs
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 61 warnings
+    Info: Peak virtual memory: 912 megabytes
+    Info: Processing ended: Fri Nov 11 15:30:42 2016
+    Info: Elapsed time: 00:00:10
+    Info: Total CPU time (on all processors): 00:00:21
+
+

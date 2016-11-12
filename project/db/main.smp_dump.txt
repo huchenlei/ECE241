@@ -1,0 +1,28 @@
+
+State Machine - |main|datapath:d0|current_state_m
+Name current_state_m.S_SELECT_ORIGIN current_state_m.S_WRITE_DESTINATION current_state_m.S_SELECT_DESTINATION current_state_m.S_MOVE_WAIT current_state_m.S_ERASE_ORIGIN 
+current_state_m.S_MOVE_WAIT 0 0 0 0 0 
+current_state_m.S_SELECT_DESTINATION 0 0 1 1 0 
+current_state_m.S_WRITE_DESTINATION 0 1 0 1 0 
+current_state_m.S_SELECT_ORIGIN 1 0 0 1 0 
+current_state_m.S_ERASE_ORIGIN 0 0 0 1 1 
+
+State Machine - |main|datapath:d0|current_state
+Name current_state.S_COUNT_COL current_state.S_COUNT_ROW current_state.S_INIT_SQUARE current_state.S_SETUP current_state.S_COMPLETE 
+current_state.S_SETUP 0 0 0 0 0 
+current_state.S_INIT_SQUARE 0 0 1 1 0 
+current_state.S_COUNT_ROW 0 1 0 1 0 
+current_state.S_COUNT_COL 1 0 0 1 0 
+current_state.S_COMPLETE 0 0 0 1 1 
+
+State Machine - |main|control:c0|current_state
+Name current_state.S_GAME_OVER current_state.S_CHECK_WINNING current_state.S_VALIDATE_DESTINATION current_state.S_SELECT_DESTINATION current_state.S_MOVE_BOX_2 current_state.S_VALIDATE_PIECE current_state.S_SELECT_PIECE current_state.S_MOVE_BOX_1 current_state.S_INIT 
+current_state.S_INIT 0 0 0 0 0 0 0 0 0 
+current_state.S_MOVE_BOX_1 0 0 0 0 0 0 0 1 1 
+current_state.S_SELECT_PIECE 0 0 0 0 0 0 1 0 1 
+current_state.S_VALIDATE_PIECE 0 0 0 0 0 1 0 0 1 
+current_state.S_MOVE_BOX_2 0 0 0 0 1 0 0 0 1 
+current_state.S_SELECT_DESTINATION 0 0 0 1 0 0 0 0 1 
+current_state.S_VALIDATE_DESTINATION 0 0 1 0 0 0 0 0 1 
+current_state.S_CHECK_WINNING 0 1 0 0 0 0 0 0 1 
+current_state.S_GAME_OVER 1 0 0 0 0 0 0 0 1 

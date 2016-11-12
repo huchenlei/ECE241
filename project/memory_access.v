@@ -38,7 +38,7 @@ module memory_access (
     case (control_signal)
       2'd0: data_out_control = piece_out;
       2'd1: data_out_validator = piece_out;
-      2'd3: data_out_view;
+      2'd3: data_out_view = piece_out;
       default: data_out_control = piece_out;
     endcase
   end

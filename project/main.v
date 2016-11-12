@@ -20,14 +20,14 @@ module main (
   input CLOCK_50,
 
   // VGA output
-	output			VGA_CLK;   				//	VGA Clock
-	output			VGA_HS;					//	VGA H_SYNC
-	output			VGA_VS;					//	VGA V_SYNC
-	output			VGA_BLANK_N;				//	VGA BLANK
-	output			VGA_SYNC_N;				//	VGA SYNC
-	output	[9:0]	VGA_R;   				//	VGA Red[9:0]
-	output	[9:0]	VGA_G;	 				//	VGA Green[9:0]
-	output	[9:0]	VGA_B;   				//	VGA Blue[9:0]
+	output			VGA_CLK,   				//	VGA Clock
+	output			VGA_HS,					//	VGA H_SYNC
+	output			VGA_VS,					//	VGA V_SYNC
+	output			VGA_BLANK_N,				//	VGA BLANK
+	output			VGA_SYNC_N,				//	VGA SYNC
+	output	[9:0]	VGA_R,   				//	VGA Red[9:0]
+	output	[9:0]	VGA_G,	 				//	VGA Green[9:0]
+	output	[9:0]	VGA_B   				//	VGA Blue[9:0]
   );
 
   wire reset;
@@ -43,7 +43,6 @@ module main (
              address_validator, address_view;
   wire [3:0] data_in_datapath;
   wire [1:0] memory_manage;
-  wire writeEn;
   wire [3:0] data_out_control, data_out_validator, data_out_view;
   // memory module
   memory_access ma(
@@ -122,7 +121,7 @@ module main (
 
     .current_player(current_player),
     .winning_msg(winning_msg),
-    .piece_x(piece_x), .piece_y(piece_x),
+    .piece_x(piece_x), .piece_y(piece_y),
     .move_x(move_x), .move_y(move_y),
     .box_x(box_x), .box_y(box_y),
     .memory_manage(memory_manage),
@@ -140,7 +139,7 @@ module main (
     .move_x(move_x), .move_y(move_y),
     .piece_to_move(piece_to_move),
     .initialize_board(initialize_board),
-    .move_piece(move_piece)
+    .move_piece(move_piece),
 
     .datapath_x(datapath_x), .datapath_y(datapath_y),
     .initialize_complete(initialize_complete),

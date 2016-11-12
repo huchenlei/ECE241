@@ -16,16 +16,16 @@ module datapath (
   // initialize board
   reg [2:0] current_state, next_state;
 
-  localparam  S_SETUP = 3'd0;
-              S_INIT_SQUARE = 3'd1;
-              S_COUNT_ROW = 3'd2;
-              S_COUNT_COL = 3'd3;
+  localparam  S_SETUP = 3'd0,
+              S_INIT_SQUARE = 3'd1,
+              S_COUNT_ROW = 3'd2,
+              S_COUNT_COL = 3'd3,
               S_COMPLETE = 3'd4;
 
   always @ ( * ) begin
     case (current_state)
-      S_SETUP: next_state = initialize_board ? S_INIT : S_SETUP;
-      S_INIT_SQUARE begin
+      S_SETUP: next_state = initialize_board ? S_INIT_SQUARE : S_SETUP;
+      S_INIT_SQUARE: begin
         next_state = S_COUNT_ROW;
       end
       S_COUNT_ROW: begin
@@ -44,10 +44,10 @@ module datapath (
   // FSM2
   // move piece
   reg [2:0] current_state_m, next_state_m;
-  localparam  S_MOVE_WAIT = 3'd0;
-              S_SELECT_DESTINATION = 3'd1;
-              S_WRITE_DESTINATION = 3'd2;
-              S_SELECT_ORIGIN = 3'd3;
+  localparam  S_MOVE_WAIT = 3'd0,
+              S_SELECT_DESTINATION = 3'd1,
+              S_WRITE_DESTINATION = 3'd2,
+              S_SELECT_ORIGIN = 3'd3,
               S_ERASE_ORIGIN = 3'd4;
 
   always @ ( * ) begin
@@ -55,14 +55,14 @@ module datapath (
       S_MOVE_WAIT:
         next_state_m = move_piece ? S_SELECT_DESTINATION : S_MOVE_WAIT;
       S_SELECT_DESTINATION:
-        next_state = S_WRITE_DESTINATION;
+        next_state_m = S_WRITE_DESTINATION;
       S_WRITE_DESTINATION:
-        next_state = S_SELECT_ORIGIN;
+        next_state_m = S_SELECT_ORIGIN;
       S_SELECT_ORIGIN:
-        next_state = S_ERASE_ORIGIN;
+        next_state_m = S_ERASE_ORIGIN;
       S_ERASE_ORIGIN:
-        next_state = S_MOVE_WAIT;
-      default: next_state = S_MOVE_WAIT;
+        next_state_m = S_MOVE_WAIT;
+      default: next_state_m = S_MOVE_WAIT;
     endcase
   end
 

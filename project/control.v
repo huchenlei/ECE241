@@ -91,7 +91,7 @@ always @ ( * ) begin
       end
       S_VALIDATE_DESTINATION: begin
         if(!select) begin
-          next_state = move_valid ? S_CHECK_WINNING_WAIT : S_MOVE_BOX_2;
+          next_state = move_valid ? S_CHECK_WINNING : S_MOVE_BOX_2;
         end
         else begin
           next_state = S_VALIDATE_DESTINATION;
