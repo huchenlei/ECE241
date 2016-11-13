@@ -34,6 +34,7 @@ module control (
   reg box_can_move;
   reg read_destination;
   reg check_winning;
+  wire start_validation;
   wire validate_complete;
 
   reg [5:0] current_state, next_state;
@@ -107,6 +108,8 @@ always @ ( * ) begin
 end
 
 // setting signals
+assign start_validation = (memory_manage == 2'b1);
+
 always @ ( * ) begin
   // by default set all signals to 0
   box_can_move = 1'b0;
@@ -195,7 +198,7 @@ always @ ( posedge clk ) begin
 end
 
 // validate move
-move_validator mv(clk, reset, piece_to_move, piece_x, piece_y,
+move_validator mv(clk, reset, start_validation, piece_to_move, piece_x, piece_y,
                   move_x, move_y, piece_read, address_validator,
                   move_valid, validate_complete);
 // mocking move_validator

@@ -1,13 +1,13 @@
 module validator_queen (
   input clk,
-  input memory_lock,
+  output reg queen_complete,
   input reset,
   // path info
   input [2:0] piece_x, piece_y,
   input [2:0] move_x, move_y,
   // memory access
-  input [3:0] validate_square,
-  output reg [2:0] validate_x, validate_y,
+  input [3:0] piece_read,
+  output reg [5:0] address_validator,
   output reg queen_valid // result
   );
 
@@ -26,5 +26,6 @@ module validator_queen (
       queen_valid = (x_dis == y_dis) || (product_dis == 0);
     end
     $display("[Queen] x_dis:%d y_dis:%d", x_dis, y_dis);
+    queen_complete = 1'b1;
   end
 endmodule // validator_queen

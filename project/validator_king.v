@@ -1,11 +1,11 @@
 module validator_king (
   input clk,
-  input memory_lock,
+  output reg king_complete,
   input reset,
   input [2:0] piece_x, piece_y,
   input [2:0] move_x, move_y,
-  input [3:0] validate_square,
-  output reg [2:0] validate_x, validate_y,
+  input [3:0] piece_read,
+  output reg [5:0] address_validator,
   output reg king_valid
   );
 
@@ -26,5 +26,6 @@ module validator_king (
         king_valid = 1'b0;
     end
     $display("[King] x_dis:%d y_dis:%d", x_dis, y_dis);
+    king_complete = 1'b1;
   end
 endmodule // validator_king

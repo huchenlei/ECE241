@@ -1,13 +1,13 @@
 module validator_w_pawn (
   input clk,
-  input memory_lock,
+  output reg w_pawn_complete,
   input reset,
   // path info
   input [2:0] piece_x, piece_y,
   input [2:0] move_x, move_y,
   // memory access
-  input [3:0] validate_square,
-  output reg [2:0] validate_x, validate_y,
+  input [3:0] piece_read,
+  output reg [5:0] address_validator,
   output reg queen_valid // result
   );
 
