@@ -19,22 +19,13 @@ module main (
   input [3:0] KEY,
   input CLOCK_50,
 
-  // // VGA output
-	// output			VGA_CLK,   				//	VGA Clock
-	// output			VGA_HS,					//	VGA H_SYNC
-	// output			VGA_VS,					//	VGA V_SYNC
-	// output			VGA_BLANK_N,				//	VGA BLANK
-	// output			VGA_SYNC_N,				//	VGA SYNC
-	// output	[9:0]	VGA_R,   				//	VGA Red[9:0]
-	// output	[9:0]	VGA_G,	 				//	VGA Green[9:0]
-	// output	[9:0]	VGA_B   				//	VGA Blue[9:0]
+  // output from controller
+  output winning_msg,
+  output current_player,
+  output can_render,
   );
 
-  // wire reset;
-  // wire color;
-  // wire [8:0] x;
-  // wire [7:0] y;
-  // wire writeEn;
+  wire reset;
   assign reset = SW[9];
   assign resetn = ~SW[9];
 
@@ -52,48 +43,7 @@ module main (
     memory_manage, piece_read
     );
 
-  // Initialize picture holding memory modules here...
-
-
-  // View
-  // VGA module from lab7
-  // Create an Instance of a VGA controller - there can be only one!
-	// Define the number of colours as well as the initial background
-	// image file (.MIF) for the controller.
-	// vga_adapter VGA(
-  //   .resetn(resetn),
-  //   .clock(CLOCK_50),
-  //   .colour(colour),
-  //   .x(x),
-  //   .y(y),
-  //   .plot(writeEn),
-  //   /* Signals for the DAC to drive the monitor. */
-  //   .VGA_R(VGA_R),
-  //   .VGA_G(VGA_G),
-  //   .VGA_B(VGA_B),
-  //   .VGA_HS(VGA_HS),
-  //   .VGA_VS(VGA_VS),
-  //   .VGA_BLANK(VGA_BLANK_N),
-  //   .VGA_SYNC(VGA_SYNC_N),
-  //   .VGA_CLK(VGA_CLK));
-  // defparam VGA.RESOLUTION = "320x240";
-  // defparam VGA.MONOCHROME = "TRUE";
-  // defparam VGA.BACKGROUND_IMAGE = "chess_pics/board_240p.mif";
-
   wire winning_msg, current_player, can_render;
-
-  // view_render v0(
-  //   .clk(CLOCK_50),
-  //   .reset(reset),
-  //   .piece_read(piece_read),
-  //   .box_x(address_control[5:3]), .box_y(address_control[2:0]),
-  //   .current_player(current_player),
-  //   .winning_msg(winning_msg),
-  //   .can_render(can_render),
-  //
-  //   .x(x), .y(y), .colour(colour),
-  //   .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0])
-  //   );
 
   // Controller
   wire [2:0] piece_x, piece_y;

@@ -13,7 +13,7 @@
   );
 
   // memory access signal
-  reg validate_path, start_path_check, ld_result;
+  reg validate_path, start_path_check;
   wire path_validated;
 
   reg [2:0] validate_x, validate_y;
@@ -54,19 +54,20 @@
       current_state <= S_WAIT_FOR_MEMORY;
     else
       current_state <= next_state;
-    $display("[StateTable] Current state is state[%d]", next_state);
+    $display("-----------------------------------------");
+    $display("[RookValidator] Current state is state[%d]", next_state);
   end
 
   // setting signals
   always @ ( * ) begin
     start_path_check = 1'b0;
-    ld_result = 1'b0;
+    rook_complete = 1'b0;
     case (current_state)
       S_CHECK_PATH: begin
         start_path_check = 1'b1;
       end
       S_OUTPUT_RESULT: begin
-        ld_result = 1'b1;
+        rook_complete = 1'b1;
       end
     endcase
   end
@@ -94,7 +95,7 @@
     else
       path_counter <= path_counter + 1;
     $display("[path_counter] %d", path_counter);
-    $display("[validate_box] validating x:%d, y:%d", validate_x, validate_y);
+    $display("[validate_box] x:%d, y:%d there is %d in the square", validate_x, validate_y, piece_read);
   end
 
   // access memory

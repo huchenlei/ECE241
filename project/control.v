@@ -21,9 +21,9 @@ module control (
   // 11: view
   output reg [1:0] memory_manage,
   output [5:0] address_validator,
+  output can_render,
   output reg move_piece,
-  output reg initialize_board,
-  output reg can_render
+  output reg initialize_board
   );
 
   // FSM
@@ -108,30 +108,37 @@ always @ ( * ) begin
 end
 
 // setting signals
-assign start_validation = (memory_manage == 2'b1);
+assign start_validation = (memory_manage == 2'b01);
+assign can_render = (memory_manage == 2'b11)
 
 always @ ( * ) begin
   // by default set all signals to 0
   box_can_move = 1'b0;
-  // default grant memory access to control module
-  memory_manage = 2'b0;
   check_winning = 1'b0;
   initialize_board = 1'b0;
   move_piece = 1'b0;
+  // default grant memory access to view_render module
+  memory_manage = 2'b11;
 
   case(current_state)
     S_INIT: begin
       initialize_board = 1'b1;
+      // grant memory access to datapath
+      memory_manage = 2'b10;
     end
     S_MOVE_BOX_1: begin
       box_can_move = 1'b1;
+      // grant memory access to control
+      memory_manage = 2'b00;
     end
     S_MOVE_BOX_2: begin
       box_can_move = 1'b1;
+      // grant memory access to control
+      memory_manage = 2'b00;
     end
     S_SELECT_DESTINATION: begin
       // grant memory access to validator module
-      memory_manage = 2'b1;
+      memory_manage = 2'b01;
     end
     S_CHECK_WINNING: begin
       move_piece = 1'b1;
