@@ -1,5 +1,7 @@
 `ifndef datapath_m
 `define datapath_m
+`include "configrable_clock.v"
+
 module datapath (
   input clk,
   input reset,
@@ -21,15 +23,23 @@ module datapath (
 
   localparam  S_SETUP = 3'd0,
               S_INIT_SQUARE = 3'd1,
-              S_COUNT_ROW = 3'd2,
-              S_COUNT_COL = 3'd3,
-              S_COMPLETE = 3'd4;
+              S_INIT_SQUARE_WAIT = 3'd2,
+              S_COUNT_ROW = 3'd3,
+              S_COUNT_COL = 3'd4,
+              S_COMPLETE = 3'd5;
+  // clock for memory setting delay (initialing)
+  wire reset_clock, count_complete;
+  assign reset_clock = (current_state == S_INIT_SQUARE);
+  configrable_clock #(26'd3) clock0(clk, reset_clock, count_complete);
 
   always @ ( * ) begin
     case (current_state)
       S_SETUP: next_state = initialize_board ? S_INIT_SQUARE : S_SETUP;
       S_INIT_SQUARE: begin
-        next_state = S_COUNT_ROW;
+        next_state = S_INIT_SQUARE_WAIT;
+      end
+      S_INIT_SQUARE_WAIT: begin
+        next_state = count_complete ? S_COUNT_ROW : S_INIT_SQUARE_WAIT;
       end
       S_COUNT_ROW: begin
         next_state = (datapath_x == 3'd7) ? S_COUNT_COL : S_INIT_SQUARE;
@@ -48,23 +58,31 @@ module datapath (
   // move piece
   reg [2:0] current_state_m, next_state_m;
   localparam  S_MOVE_WAIT = 3'd0,
-              S_SELECT_DESTINATION = 3'd1,
-              S_WRITE_DESTINATION = 3'd2,
-              S_SELECT_ORIGIN = 3'd3,
-              S_ERASE_ORIGIN = 3'd4;
+              S_WRITE_DESTINATION = 3'd1,
+              S_WRITE_DESTINATION_WAIT = 3'd2,
+              S_ERASE_ORIGIN = 3'd3,
+              S_ERASE_ORIGIN_WAIT = 3'd4;
+              S_MOVE_COMPLETE = 3'd5;
+
+  // clock for memory setting delay (moving piece)
+  wire reset_clock_fsm2, count_complete_fsm2;
+  assign reset_clock = (current_state_m == S_WRITE_DESTINATION || current_state_m == S_ERASE_ORIGIN);
+  configrable_clock #(26'd3) clock0(clk, reset_clock_fsm2, count_complete_fsm2);
 
   always @ ( * ) begin
     case (current_state_m)
       S_MOVE_WAIT:
         next_state_m = move_piece ? S_SELECT_DESTINATION : S_MOVE_WAIT;
-      S_SELECT_DESTINATION:
-        next_state_m = S_WRITE_DESTINATION;
       S_WRITE_DESTINATION:
-        next_state_m = S_SELECT_ORIGIN;
-      S_SELECT_ORIGIN:
-        next_state_m = S_ERASE_ORIGIN;
+        next_state_m = S_WRITE_DESTINATION_WAIT;
+      S_WRITE_DESTINATION_WAIT:
+        next_state_m = count_complete_fsm2 ? S_ERASE_ORIGIN : S_WRITE_DESTINATION_WAIT;
       S_ERASE_ORIGIN:
-        next_state_m = S_MOVE_WAIT;
+        next_state_m = S_ERASE_ORIGIN_WAIT;
+      S_ERASE_ORIGIN_WAIT:
+        next_state_m = count_complete_fsm2 ? S_MOVE_COMPLETE : S_ERASE_ORIGIN_WAIT;
+      S_MOVE_COMPLETE:
+        next_state = S_MOVE_WAIT;
       default: next_state_m = S_MOVE_WAIT;
     endcase
   end
@@ -128,24 +146,20 @@ module datapath (
       S_MOVE_WAIT: begin
         move_complete <= 1'b0;
       end
-      S_SELECT_DESTINATION: begin
+      S_WRITE_DESTINATION: begin
         datapath_x <= destination_x;
         datapath_y <= destination_y;
-        $display("[FSM2] select destination [%d, %d]", destination_x, destination_y);
-      end
-      S_WRITE_DESTINATION: begin
         data_out <= piece_to_move;
-        $display("[FSM2] write destination as %d", piece_to_move);
-      end
-      S_SELECT_ORIGIN: begin
-        datapath_x <= origin_x;
-        datapath_y <= origin_y;
-        $display("[FSM2] select origin [%d, %d]", origin_x, origin_y);
+        // $display("[FSM2] write destination as %d", piece_to_move);
       end
       S_ERASE_ORIGIN: begin
+        datapath_x <= origin_x;
+        datapath_y <= origin_y;
         data_out <= 4'b0;
-        move_complete <= 1'b1;
+        // $display("[FSM2] erasing origin");
       end
+      S_MOVE_COMPLETE:
+        move_complete <= 1'b1;
     endcase
   end
 
@@ -160,11 +174,11 @@ module datapath (
 
   always @ ( posedge clk ) begin
     if(reset)
-      current_state_m <= 3'd0;
+      current_state_m <= S_MOVE_WAIT;
     else
       current_state_m <= next_state_m;
-    $display("~~~~~~~~~~~~~~~~~~~~~~~~~~");
-    $display("[FSM2-move_piece] Current state is state[%d]", current_state_m);
+    // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    // $display("[FSM2-move_piece] Current state is state[%d]", current_state_m);
   end
 endmodule // datapath
 `endif
