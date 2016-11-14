@@ -31,6 +31,8 @@ module control_view(
 					
 				default:     next_state = S_REFRESH;
 			endcase
+			$display("--------------current state is ",current_state );
+			$display("--------------next state is ",next_state );
 		end // state_table
 		
 		
@@ -75,6 +77,8 @@ module control_view(
 					select = 1'b0;
 				end
 			endcase
+		    $display("***currentStat_select ",current_state );
+			$display("***nextStat_select",next_state );
 		end
 		always@(posedge clk)
 		begin: state_FFs

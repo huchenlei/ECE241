@@ -29,8 +29,8 @@ module datapath_view (input clk,resetn,
 					y_initial <= y_initial + 9'd28;
 				end
 			end
-			$display("x_initial is ",x_initial );
-			$display("y_initial is ",y_initial );
+			$display("[x_initial] ",x_initial );
+			$display("[y_initial] ",y_initial );
 		end
 		
 		always@(posedge clk) begin
@@ -43,7 +43,9 @@ module datapath_view (input clk,resetn,
 			else begin
 				count_y <= count_y +1'b1;
 				count_x <= 5'b0;
-			end			
+			end	
+			$display("[count_x] ",count_x );
+			$display("[count_y] ",count_y );			
 		end
 		assign clear_count = (count_y==5'd28)?1'b1:1'b0;
 		
@@ -54,6 +56,7 @@ module datapath_view (input clk,resetn,
 		bishop_blk bis_b({count_x,count_y},clk,10'b0,1'b0,memout_bis_b);
 		//......
 		always@(posedge clk) begin
+		$display("[select_colour] ",select_colour );
 			if (ld_colour==1'b1) begin
 				if(select && select_colour)
 					colour = 1'b0; //flash on
@@ -67,6 +70,7 @@ module datapath_view (input clk,resetn,
 				endcase
 				end
 			end
+			$display("[color] ",colour );
 		end
 		//increment view, goes to memory accesss and get figure
 		always@(posedge clk) begin
@@ -75,6 +79,7 @@ module datapath_view (input clk,resetn,
 			if (update_viewXY==1'b1) begin
 				view_x <= view_x + 1'b1;
 				view_y <= view_y + 1'b1;
+				
 			end
 			else if(!resetn || clear_viewXY) begin
 				view_x <= 3'b0;
@@ -83,6 +88,9 @@ module datapath_view (input clk,resetn,
 			
 			if(view_x == 3'd8 && view_y == 3'd8)
 				complete <= 1'b1;
+				
+			$display("[view_x] ",view_x );
+			$display("[view_y] ",view_y );
 		end
 		
 		//select box
