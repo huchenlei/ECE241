@@ -1,7 +1,7 @@
 module datapath (
   input clk,
   input reset,
-  input [2:0] piece_x, piece_y, // mark the selected piece
+  input [2:0] origin_x, origin_y, // mark the selected piece
   input [2:0] move_x, move_y, // destination coordinates
   input [3:0] piece_to_move,
   input initialize_board,
@@ -9,7 +9,8 @@ module datapath (
 
   output reg [2:0] datapath_x, datapath_y,
   output reg [3:0] data_out,
-  output reg initialize_complete
+  output reg initialize_complete,
+  output reg move_complete
   );
 
   // FSM1
@@ -122,6 +123,9 @@ module datapath (
 
     // move piece
     case (current_state_m)
+      S_MOVE_WAIT: begin
+        move_complete <= 1'b0;
+      end
       S_SELECT_DESTINATION: begin
         datapath_x <= move_x;
         datapath_y <= move_y;
@@ -132,12 +136,13 @@ module datapath (
         $display("[FSM2] write destination as %d", piece_to_move);
       end
       S_SELECT_ORIGIN: begin
-        datapath_x <= piece_x;
-        datapath_y <= piece_y;
-        $display("[FSM2] select origin [%d, %d]", piece_x, piece_y);
+        datapath_x <= origin_x;
+        datapath_y <= origin_y;
+        $display("[FSM2] select origin [%d, %d]", origin_x, origin_y);
       end
       S_ERASE_ORIGIN: begin
         data_out <= 4'b0;
+        move_complete <= 1'b1;
       end
     endcase
   end

@@ -81,7 +81,7 @@ module main (
   defparam VGA.MONOCHROME = "TRUE";
   defparam VGA.BACKGROUND_IMAGE = "chess_pics/board_240p.mif";
 
-  wire winning_msg, current_player, can_render;
+  wire winning_msg, current_player, start_render_board, board_render_complete;
 
   view_render v0(
     .clk(CLOCK_50),
@@ -90,17 +90,18 @@ module main (
     .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .current_player(current_player),
     .winning_msg(winning_msg),
-    .can_render(can_render),
+    .start_render_board(start_render_board),
 
     .x(x), .y(y), .colour(colour),
-    .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0])
+    .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0]),
+    .board_render_complete(board_render_complete)
     );
 
   // Controller
-  wire [2:0] piece_x, piece_y;
+  wire [2:0] origin_x, origin_y;
   wire [3:0] piece_to_move;
-  wire [2:0] move_x, move_y;
-  wire move_piece, initialize_board, initialize_complete;
+  wire [2:0] destination_x, destination_y;
+  wire move_piece, move_complete, initialize_board, initialize_complete;
   // control module
   control c0(
     .clk(CLOCK_50),
@@ -110,31 +111,34 @@ module main (
     .select(SW[0]), .deselect(SW[1]),
     .piece_read(piece_read),
     .initialize_complete(initialize_complete),
+    .board_render_complete(board_render_complete),
+    .move_complete(move_complete),
 
     .current_player(current_player),
     .winning_msg(winning_msg),
-    .piece_x(piece_x), .piece_y(piece_y),
-    .move_x(move_x), .move_y(move_y),
+    .origin_x(origin_x), .origin_y(origin_y),
+    .destination_x(destination_x), .destination_y(destination_y),
     .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .memory_manage(memory_manage),
     .address_validator(address_validator),
     .move_piece(move_piece),
     .initialize_board(initialize_board),
-    .can_render(can_render)
+    .start_render_board(start_render_board)
     );
 
   // datapath module
   datapath d0(
     .clk(CLOCK_50),
     .reset(reset),
-    .piece_x(piece_x), .piece_y(piece_y),
-    .move_x(move_x), .move_y(move_y),
+    .origin_x(origin_x), .origin_y(origin_y),
+    .destination_x(destination_x), .destination_y(destination_y),
     .piece_to_move(piece_to_move),
     .initialize_board(initialize_board),
     .move_piece(move_piece),
 
     .datapath_x(address_datapath[5:3]), .datapath_y(address_datapath[2:0]),
     .initialize_complete(initialize_complete),
-    .data_out(data_in_datapath)
+    .data_out(data_in_datapath),
+    .move_complete(move_complete)
     );
 endmodule // main

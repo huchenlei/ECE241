@@ -19,7 +19,7 @@ force {move_x[0]} 1
 force {move_x[1]} 0
 force {move_x[2]} 0
 force {move_y[0]} 1
-force {move_y[1]} 0 1
+force {move_y[1]} 0
 force {move_y[1]} 1
 force {move_y[2]} 1
 

@@ -7,23 +7,25 @@ module control (
   input select, deselect,
   input [3:0] piece_read,
   input initialize_complete, // feed back signal from datapath
+  input move_complete, // feed back signal from datapath
+  input board_render_complete, // feed back signal from view_render
 
   output reg current_player,
   output reg winning_msg, // winning condition satisfied?
-  output reg [2:0] piece_x, piece_y, // left down corner (0,0)
-  output reg [2:0] move_x, move_y, // position piece is moving to
+  output reg [2:0] origin_x, origin_y, // left down corner (0,0)
+  output reg [2:0] destination_x, destination_y, // position piece is moving to
   output reg [3:0] piece_to_move,
   output reg [2:0] box_x, box_y,
   // control signals
-  // 00: c  ontrol
+  // 00: control
   // 01: validator
   // 10: datapath
   // 11: view
   output reg [1:0] memory_manage,
   output [5:0] address_validator,
-  output can_render,
-  output reg move_piece,
-  output reg initialize_board
+  output start_render_board,
+  output reg move_piece, // start update memory in datapath
+  output reg initialize_board // start initialze memory in datapath
   );
 
   // FSM
@@ -31,9 +33,8 @@ module control (
   reg move_valid;
   wire piece_valid;
   wire clk_reset;
-  reg box_can_move;
+  reg select_box_can_move;
   reg read_destination;
-  reg check_winning;
   wire start_validation;
   wire validate_complete;
 
@@ -48,7 +49,11 @@ module control (
               // S_VALIDATE_DESTINATION_WAIT = 6'd6,
               S_VALIDATE_DESTINATION = 6'd7,
               S_CHECK_WINNING = 6'd8,
-              S_GAME_OVER = 6'd9;
+              S_UPDATE_MEMORY = 6'd9,
+              S_UPDATE_MEMORY_WAIT = 6'd10,
+              S_UPDATE_MONITOR = 6'd11,
+              S_UPDATE_MONITOR_WAIT = 6'd12,
+              S_GAME_OVER = 6'd13;
 
 
   // validate piece
@@ -59,15 +64,9 @@ module control (
 // state table
 always @ ( * ) begin
     case (current_state)
-      S_INIT: begin
-        next_state = initialize_complete ? S_MOVE_BOX_1 : S_INIT;
-      end
-      S_MOVE_BOX_1: begin
-        next_state = select ? S_SELECT_PIECE : S_MOVE_BOX_1;
-      end
-      S_SELECT_PIECE: begin
-        next_state = S_VALIDATE_PIECE;
-      end
+      S_INIT: next_state = initialize_complete ? S_MOVE_BOX_1 : S_INIT;
+      S_MOVE_BOX_1: next_state = select ? S_SELECT_PIECE : S_MOVE_BOX_1;
+      S_SELECT_PIECE: next_state = S_VALIDATE_PIECE;
       S_VALIDATE_PIECE: begin
         if(!select) begin // make sure not get into infinite loop
           next_state = piece_valid ? S_MOVE_BOX_2 : S_MOVE_BOX_1;
@@ -86,9 +85,7 @@ always @ ( * ) begin
           else next_state = S_MOVE_BOX_2;
         end
       end
-      S_SELECT_DESTINATION: begin
-        next_state = validate_complete ? S_VALIDATE_DESTINATION : S_SELECT_DESTINATION;
-      end
+      S_SELECT_DESTINATION: next_state = validate_complete ? S_VALIDATE_DESTINATION : S_SELECT_DESTINATION;
       S_VALIDATE_DESTINATION: begin
         if(!select) begin
           next_state = move_valid ? S_CHECK_WINNING : S_MOVE_BOX_2;
@@ -97,53 +94,40 @@ always @ ( * ) begin
           next_state = S_VALIDATE_DESTINATION;
         end
       end
-      S_CHECK_WINNING: begin
-        next_state = winning ? S_GAME_OVER : S_MOVE_BOX_1;
-      end
-      S_GAME_OVER: begin
-        next_state = reset ? S_INIT : S_GAME_OVER;
-      end
+      S_CHECK_WINNING: next_state = winning ? S_GAME_OVER : S_UPDATE_MEMORY;
+      S_UPDATE_MEMORY: next_state = S_UPDATE_MEMORY_WAIT;
+      S_UPDATE_MEMORY_WAIT: next_state = move_complete ? S_UPDATE_MONITOR : S_UPDATE_MEMORY_WAIT;
+      S_UPDATE_MONITOR: next_state = S_UPDATE_MONITOR_WAIT;
+      S_UPDATE_MONITOR_WAIT: next_state = board_render_complete ? S_MOVE_BOX_1 : S_UPDATE_MONITOR_WAIT;
+      S_GAME_OVER: next_state = reset ? S_INIT : S_GAME_OVER;
       default: next_state = S_INIT;
     endcase
 end
 
 // setting signals
 assign start_validation = (memory_manage == 2'b01);
-assign can_render = (memory_manage == 2'b11)
+assign start_render_board = (memory_manage == 2'b11)
 
 always @ ( * ) begin
   // by default set all signals to 0
-  box_can_move = 1'b0;
-  check_winning = 1'b0;
+  select_box_can_move = 1'b0;
   initialize_board = 1'b0;
   move_piece = 1'b0;
-  // default grant memory access to view_render module
-  memory_manage = 2'b11;
+  // default grant memory access to control
+  memory_manage = 2'b00;
 
   case(current_state)
     S_INIT: begin
       initialize_board = 1'b1;
-      // grant memory access to datapath
-      memory_manage = 2'b10;
+      memory_manage = 2'b10; // grant memory access to datapath
     end
-    S_MOVE_BOX_1: begin
-      box_can_move = 1'b1;
-      // grant memory access to control
-      memory_manage = 2'b00;
-    end
-    S_MOVE_BOX_2: begin
-      box_can_move = 1'b1;
-      // grant memory access to control
-      memory_manage = 2'b00;
-    end
-    S_SELECT_DESTINATION: begin
-      // grant memory access to validator module
-      memory_manage = 2'b01;
-    end
-    S_CHECK_WINNING: begin
-      move_piece = 1'b1;
-      check_winning = 1'b1;
-    end
+    S_MOVE_BOX_1: select_box_can_move = 1'b1;
+    S_MOVE_BOX_2: select_box_can_move = 1'b1;
+    S_SELECT_DESTINATION: memory_manage = 2'b01; // grant memory access to validator module
+    S_UPDATE_MEMORY: move_piece = 1'b1;
+    S_UPDATE_MEMORY_WAIT: memory_manage = 2'b10; // grant datapath to access memory
+    S_UPDATE_MONITOR: start_render_board = 1'b1;
+    S_UPDATE_MONITOR_WAIT: memory_manage = 2'b11; // grant view to access memory
   endcase
 end
 
@@ -160,44 +144,44 @@ end
 always @ ( posedge clk ) begin
   case (current_state)
     S_SELECT_PIECE: begin
-      piece_x <= box_x;
-      piece_y <= box_y;
+      origin_x <= box_x;
+      origin_y <= box_y;
       piece_to_move <= piece_read; // info to datapath
     end
     S_INIT: begin
-      piece_x <= 3'b0;
-      piece_y <= 3'b0;
+      origin_x <= 3'b0;
+      origin_y <= 3'b0;
     end
     default: begin
-      piece_x <= piece_x;
-      piece_y <= piece_y;
+      origin_x <= origin_x;
+      origin_y <= origin_y;
     end
   endcase
-  $display("[SelectPiece] %d x:%d, y:%d", piece_to_move, piece_x, piece_y);
+  $display("[SelectPiece] %d x:%d, y:%d", piece_to_move, origin_x, origin_y);
 end
 
 // select destination
 always @ ( posedge clk ) begin
   case (current_state)
     S_SELECT_DESTINATION: begin
-      move_x <= box_x;
-      move_y <= box_y;
+      destination_x <= box_x;
+      destination_y <= box_y;
     end
     S_INIT: begin
-      move_x <= 3'b0;
-      move_y <= 3'b0;
+      destination_x <= 3'b0;
+      destination_y <= 3'b0;
     end
     default: begin
-      move_x <= move_x;
-      move_y <= move_y;
+      destination_x <= destination_x;
+      destination_y <= destination_y;
     end
   endcase
-  $display("[SelectDestination] %d x:%d, y:%d", piece_read, move_x, move_y);
+  $display("[SelectDestination] %d x:%d, y:%d", piece_read, destination_x, destination_y);
 end
 
 // check winning
 always @ ( posedge clk ) begin
-  if(S_VALIDATE_DESTINATION)
+  if(current_state == S_VALIDATE_DESTINATION)
     winning <= (piece_read == 4'd6) || (piece_read == 4'd12);
   if(current_state == S_INIT)
     winning <= 1'b0;
@@ -205,8 +189,8 @@ always @ ( posedge clk ) begin
 end
 
 // validate move
-move_validator mv(clk, reset, start_validation, piece_to_move, piece_x, piece_y,
-                  move_x, move_y, piece_read, address_validator,
+move_validator mv(clk, reset, start_validation, piece_to_move, origin_x, origin_y,
+                  destination_x, destination_y, piece_read, address_validator,
                   move_valid, validate_complete);
 // mocking move_validator
 // reg [2:0] move_counter;
@@ -250,7 +234,7 @@ always @ ( posedge clk ) begin
     box_x <= 3'b0;
     box_y <= 3'b0;
   end
-  if(box_can_move && frame_clk) begin
+  if(select_box_can_move && frame_clk) begin
     if(up) box_x <= box_x + 1;
     if(down) box_x <= box_x - 1;
     if(right) box_y <= box_y + 1;
