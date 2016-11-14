@@ -52,7 +52,7 @@ module control_view(
 					ld_colour=1'b1;
 				end
 				S_UPDATE_VIEW_XY: update_viewXY = 1'b1;
-				S_WAIT_MOVE :¡¡clear_viewXY = 1'b1;
+				S_WAIT_MOVE :ï¿½ï¿½clear_viewXY = 1'b1;
 				
 			endcase	
 		end	
@@ -84,12 +84,13 @@ module control_view(
 		begin: state_FFs
 			if(!resetn)
 				currentStat_select <= S_SELECT_ON;
-			else if(clear_delay)
+			else if(frame_clk)
 				currentStat_select <= nextStat_select;
-			else
-				currentStat_select <= S_SELECT_ON;
-		end 
+		end
 		
+		configrable_clock #(26'd1) c0(clk, clk_reset, frame_clk);
+		
+		/*
 		always @(posedge clk)
 		begin
 			if(clear_delay ==1'b1 || resetn == 1'b0 )
@@ -101,6 +102,7 @@ module control_view(
 		$display("delay_counter is ",delay_counter );
 		end
 		assign clear_delay = (delay_counter==30'd1000000)? 1'b1 : 1'b0;
+		*/
 		
 		//current player
 		always@(posedge clk)

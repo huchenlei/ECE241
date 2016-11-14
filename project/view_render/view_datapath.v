@@ -26,7 +26,10 @@ module datapath_view (input clk,resetn,
     else begin
         if(ld_xy)begin
             x_initial <= x_initial + 9'd28;
-            y_initial <= y_initial + 9'd28;
+				if(x_initial==9'd232) begin
+					y_initial <= y_initial + 9'd28;
+					x_initial <= 9'd8;
+				end
         end
     end
     $display("[x_initial] ",x_initial );
