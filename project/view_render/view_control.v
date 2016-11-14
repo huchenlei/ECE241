@@ -10,7 +10,7 @@ module control_view(
    wire clear_delay;
 	reg [29:0] delay_counter;
 	reg [2:0] current_state, next_state,currentStat_select,nextStat_select;		
-		localparam  S_LOAD_XY        = 3'd0,
+	localparam  S_LOAD_XY        = 3'd0,
 					S_DRAW_XY          = 3'd1,
 					S_DRAW_COLOUR      = 3'd2,
 					S_UPDATE_VIEW_XY    = 3'd3,
@@ -21,15 +21,15 @@ module control_view(
 		always@(*)
 		begin: state_table 
 				
-				case (current_state)
-					S_LOAD_XY: next_state = S_DRAW_XY;
-					S_DRAW_XY: next_state =  S_DRAW_COLOUR;
-					S_DRAW_COLOUR: next_state = clear_count? S_UPDATE_VIEW_XY : S_DRAW_XY;
-					
-					S_UPDATE_VIEW_XY: next_state = complete? S_WAIT_MOVE : S_LOAD_XY; //move select from control.v
-					S_WAIT_MOVE: next_state = moved? S_LOAD_XY : S_WAIT_MOVE;
-					
-				default:     next_state = S_REFRESH;
+      case (current_state)
+        S_LOAD_XY: next_state = S_DRAW_XY;
+        S_DRAW_XY: next_state =  S_DRAW_COLOUR;
+        S_DRAW_COLOUR: next_state = clear_count? S_UPDATE_VIEW_XY : S_DRAW_XY;
+        
+        S_UPDATE_VIEW_XY: next_state = complete? S_WAIT_MOVE : S_LOAD_XY; //move select from control.v
+        S_WAIT_MOVE: next_state = moved? S_LOAD_XY : S_WAIT_MOVE;
+        
+      default:     next_state = S_REFRESH;
 			endcase
 			$display("--------------current state is ",current_state );
 			$display("--------------next state is ",next_state );
