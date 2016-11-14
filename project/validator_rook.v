@@ -8,7 +8,7 @@
   input [2:0] move_x, move_y,
   // memory access
   input [3:0] piece_read,
-  output [5:0] address_validator,
+  output [2:0] validate_x, validate_y,
   output reg rook_valid // result
   );
 
@@ -16,7 +16,6 @@
   reg validate_path, start_path_check;
   wire path_validated;
 
-  reg [2:0] validate_x, validate_y;
   assign address_validator = {validate_x, validate_y};
 
   wire [2:0] x_dis, y_dis, product_dis, move_dir_is_x, distance;

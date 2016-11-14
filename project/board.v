@@ -1,3 +1,5 @@
+`ifndef board_m
+`define board_m
 // 8*8*4 memory array
 // input Address, DataIn[3:0], WriteEn, Clock
 // output DataOut
@@ -174,3 +176,4 @@ endmodule
 // Retrieval info: GEN_FILE: TYPE_NORMAL board_inst.v FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL board_bb.v TRUE
 // Retrieval info: LIB_FILE: altera_mf
+`endif

@@ -1,5 +1,6 @@
 module validator_bishop (
   input clk,
+  input start_validation,
   output reg bishop_complete,
   input reset,
   // path info
@@ -7,7 +8,7 @@ module validator_bishop (
   input [2:0] move_x, move_y,
   // memory access
   input [3:0] piece_read,
-  output reg [5:0] address_validator,
+  output [2:0] validate_x, validate_y,
   output reg bishop_valid
   );
   wire [2:0] x_dis, y_dis;

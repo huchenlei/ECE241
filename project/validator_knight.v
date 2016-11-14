@@ -1,12 +1,13 @@
 module validator_knight (
   input clk,
+  input start_validation,
   output reg knight_complete,
   input reset,
   input [2:0] piece_x, piece_y,
   input [2:0] move_x, move_y,
   // memory access
   input [3:0] piece_read,
-  output reg [5:0] address_validator,
+  output [2:0] validate_x, validate_y,
   output reg knight_valid
   );
 

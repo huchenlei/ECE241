@@ -15,15 +15,15 @@ module control (
   output reg [2:0] origin_x, origin_y, // left down corner (0,0)
   output reg [2:0] destination_x, destination_y, // position piece is moving to
   output reg [3:0] piece_to_move,
-  output reg [2:0] box_x, box_y,
+  output reg [2:0] box_x, box_y, // select box position
   // control signals
   // 00: control
   // 01: validator
   // 10: datapath
   // 11: view
-  output reg [1:0] memory_manage,
+  output reg [1:0] memory_manage, // memory control signal
   output [5:0] address_validator,
-  output start_render_board,
+  output start_render_board, // start board render in view_render
   output reg move_piece, // start update memory in datapath
   output reg initialize_board // start initialze memory in datapath
   );

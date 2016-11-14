@@ -118,6 +118,7 @@ module main (
     .winning_msg(winning_msg),
     .origin_x(origin_x), .origin_y(origin_y),
     .destination_x(destination_x), .destination_y(destination_y),
+    .piece_to_move(piece_to_move),
     .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .memory_manage(memory_manage),
     .address_validator(address_validator),

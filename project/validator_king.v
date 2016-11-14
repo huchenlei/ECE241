@@ -1,11 +1,12 @@
 module validator_king (
   input clk,
+  input start_validation,
   output reg king_complete,
   input reset,
   input [2:0] piece_x, piece_y,
   input [2:0] move_x, move_y,
   input [3:0] piece_read,
-  output reg [5:0] address_validator,
+  output [2:0] validate_x, validate_y,
   output reg king_valid
   );
 

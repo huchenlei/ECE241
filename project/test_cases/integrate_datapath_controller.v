@@ -46,9 +46,8 @@ module main (
   wire winning_msg, current_player, can_render;
 
   // Controller
-  wire [2:0] piece_x, piece_y;
-  wire [3:0] piece_to_move;
-  wire [2:0] move_x, move_y;
+  wire [2:0] destination_x, destination_y;
+  wire [2:0] origin_x, origin_y;
   wire move_piece, initialize_board, initialize_complete;
   // control module
   control c0(
@@ -62,8 +61,8 @@ module main (
 
     .current_player(current_player),
     .winning_msg(winning_msg),
-    .piece_x(piece_x), .piece_y(piece_y),
-    .move_x(move_x), .move_y(move_y),
+    .destination_x(destination_x), .destination_y(destination_y),
+    .origin_x(origin_x), .origin_y(origin_y),
     .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .memory_manage(memory_manage),
     .address_validator(address_validator),
@@ -76,8 +75,8 @@ module main (
   datapath d0(
     .clk(CLOCK_50),
     .reset(reset),
-    .piece_x(piece_x), .piece_y(piece_y),
-    .move_x(move_x), .move_y(move_y),
+    .destination_x(destination_x), .destination_y(destination_y),
+    .origin_x(origin_x), .origin_y(origin_y),
     .piece_to_move(piece_to_move),
     .initialize_board(initialize_board),
     .move_piece(move_piece),

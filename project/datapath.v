@@ -1,8 +1,10 @@
+`ifndef datapath_m
+`define datapath_m
 module datapath (
   input clk,
   input reset,
   input [2:0] origin_x, origin_y, // mark the selected piece
-  input [2:0] move_x, move_y, // destination coordinates
+  input [2:0] destination_x, destination_y, // destination coordinates
   input [3:0] piece_to_move,
   input initialize_board,
   input move_piece,
@@ -103,7 +105,7 @@ module datapath (
           if(datapath_x == 3'd4)
             data_out <= 4'd11; // queen
         end
-        if(datapath_y <= 3'd6 || datapath_y >= 3'd1)
+        if(datapath_y < 3'd6 && datapath_y > 3'd1)
           data_out <= 4'd0; // empty
         $display("[FSM1] filling square[%d, %d] with %d", datapath_x, datapath_y, data_out);
       end
@@ -127,9 +129,9 @@ module datapath (
         move_complete <= 1'b0;
       end
       S_SELECT_DESTINATION: begin
-        datapath_x <= move_x;
-        datapath_y <= move_y;
-        $display("[FSM2] select destination [%d, %d]", move_x, move_y);
+        datapath_x <= destination_x;
+        datapath_y <= destination_y;
+        $display("[FSM2] select destination [%d, %d]", destination_x, destination_y);
       end
       S_WRITE_DESTINATION: begin
         data_out <= piece_to_move;
@@ -165,3 +167,4 @@ module datapath (
     $display("[FSM2-move_piece] Current state is state[%d]", current_state_m);
   end
 endmodule // datapath
+`endif

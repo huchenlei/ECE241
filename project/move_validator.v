@@ -6,8 +6,8 @@ module move_validator (
   input reset,
   input start_validation,
   input [3:0] piece_to_move,
-  input [2:0] piece_x, piece_y,
-  input [2:0] move_x, move_y,
+  input [2:0] origin_x, origin_y,
+  input [2:0] destination_x, destination_y,
   input [3:0] piece_read,
 
   output reg [5:0] address_validator,
@@ -27,37 +27,37 @@ module move_validator (
   // all validators will need to acess memory
   // so that no friendly piece got miskilled
   validator_knight vkight(clk, start_validation, knight_complete, reset,
-                          piece_x, piece_y, move_x, move_y,
+                          origin_x, origin_y, destination_x, destination_y,
                           piece_read, address_knight[5:3],
                           address_knight[2:0], knight_valid);
 
   validator_king vking(clk, start_validation, king_complete, reset,
-                      piece_x, piece_y, move_x, move_y,
+                      origin_x, origin_y, destination_x, destination_y,
                       piece_read, address_king[5:3],
                       address_king[2:0], king_valid);
 
   validator_queen vqueen(clk, start_validation, queen_complete, reset,
-                          piece_x, piece_y, move_x, move_y,
+                          origin_x, origin_y, destination_x, destination_y,
                           piece_read, address_queen[5:3],
                           address_queen[2:0], queen_valid);
 
   validator_bishop vbishop(clk, start_validation, bishop_complete, reset,
-                          piece_x, piece_y, move_x, move_y,
+                          origin_x, origin_y, destination_x, destination_y,
                           piece_read, address_bishop[5:3],
                           address_bishop[2:0], bishop_valid);
 
   validator_rook vrook(clk, start_validation, rook_complete, reset,
-                        piece_x, piece_y, move_x, move_y,
+                        origin_x, origin_y, destination_x, destination_y,
                         piece_read, address_rook[5:3],
                         address_rook[2:0], rook_valid);
 
   validator_w_pawn vwpawn(clk, start_validation, w_pawn_complete, reset,
-                          piece_x, piece_y, move_x, move_y,
+                          origin_x, origin_y, destination_x, destination_y,
                           piece_read, address_w_pawn[5:3],
                           address_w_pawn[2:0], w_pawn_valid);
 
   validator_b_pawn vbpawn(clk, start_validation, b_pawn_complete, reset,
-                          piece_x, piece_y, move_x, move_y,
+                          origin_x, origin_y, destination_x, destination_y,
                           piece_read, address_b_pawn[5:3],
                           address_b_pawn[2:0], b_pawn_valid);
 
