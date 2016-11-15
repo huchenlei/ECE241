@@ -1,24 +1,23 @@
 `ifndef pic_render_m
 `define pic_render_m
 `include "configrable_clock.v"
-// only fit 1 bit and 2 bit(with 2 as alpha(transparent))
+// only fit 2 bit(with 2 as alpha(transparent))
 module pic_render (
   input clk,
   input reset,
   input start_render,
   input [8:0] base_x,
   input [7:0] base_y,
-  // colour width 1 or 2
-  input [COLOUR_WIDTH - 1 :0] pic_data,
+  input [1:0] pic_data,
 
   output [PIC_LENGTH - 1 :0] pic_address,
   output [8:0] x,
   output [7:0] y,
   output reg colour,
+  output reg writeEn,
   output reg render_complete
   );
   // default param for rendering each piece
-  parameter COLOUR_WIDTH = 2;
   parameter WIDTH = 28;
   parameter HEIGHT = 28;
   parameter WIDTH_B = 6;
@@ -66,6 +65,17 @@ module pic_render (
       S_COUNT_X: x_position <= x_position + 1;
       S_COUNT_Y: y_position <= y_position + 1;
     endcase
+  end
+
+  // deal with color output
+  always @ ( * ) begin
+    if(pic_data == 2'd2) begin
+      writeEn = 1'b0;
+    end
+    else begin
+      writeEn = 1'b1;
+      colour = (pic_data == 2'b01) ? 1'b1 : 1'b0;
+    end
   end
 
   // let complete arrive earlier a clock edge
