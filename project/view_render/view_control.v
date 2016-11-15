@@ -3,116 +3,79 @@
 	//each box is 28*28
 	//board itself is 224*224 
 module control_view(
-	input resetn, clk, clear_count,complete,if_moved,
-	output reg ld_xy,enable_count,update_viewXY,
-	           clear_viewXY,ld_colour,select,now_player_white
+	input resetn, clk,
+  input clear_count28,//clear count 28*28 from datapath
+  input board_complete,//complete loading board
+  input piece_complete,//complete loading pieces
+  input if_moved, // signal from control.v
+  output reg ld_board;
+	output reg enable_count28,
+  output reg update_view,
+  output reg select,
+  output reg colour_flash,
+  output reg now_player_white
     );
-   wire clear_delay;
-	reg [29:0] delay_counter;
-	reg [2:0] current_state, next_state,currentStat_select,nextStat_select;		
-	localparam  S_LOAD_XY        = 3'd0,
-					S_DRAW_XY          = 3'd1,
-					S_DRAW_COLOUR      = 3'd2,
-					S_UPDATE_VIEW_XY    = 3'd3,
-					S_WAIT_MOVE    =  3'd4,
-					S_SELECT_ON   = 1'd0,
-					S_SELECT_OFF  = 1'd1;
+	reg [2:0] current_state, next_state;	
+  wire frame_clk;
+	localparam  S_LOAD_BOARD   = 3'd0,
+					S_DRAW          = 3'd1,
+					S_UPDATE_VIEW  = 3'd2,
+					S_SELECT_FLASH   = 3'd3;
 		//load board
 		always@(*)
 		begin: state_table 
-				
       case (current_state)
-        S_LOAD_XY: next_state = S_DRAW_XY;
-        S_DRAW_XY: next_state =  S_DRAW_COLOUR;
-        S_DRAW_COLOUR: next_state = clear_count? S_UPDATE_VIEW_XY : S_DRAW_XY;
-        
-        S_UPDATE_VIEW_XY: next_state = complete? S_WAIT_MOVE : S_LOAD_XY; //move select from control.v
-        S_WAIT_MOVE: next_state = moved? S_LOAD_XY : S_WAIT_MOVE;
-        
-      default:     next_state = S_REFRESH;
+        S_LOAD_BOARD: next_state = board_complete? S_UPDATE_XYINI : S_LOAD_BOARD;
+        S_DRAW: next_state = clear_count28? S_UPDATE_VIEW_XY : S_DRAW;        
+        S_UPDATE_VIEW: next_state = piece_complete? S_SELECT_FLASH : S_DRAW; //move select from control.v
+        S_SELECT_FLASH: next_state = if_moved? S_LOAD_XY : S_SELECT_FLASH;
+      default:next_state = S_SELECT_FLASH;
 			endcase
 			$display("--------------current state is ",current_state );
 			$display("--------------next state is ",next_state );
 		end // state_table
-		
-		
+    
 		always @(*) 
 		begin: enable_signals
-			
-			ld_xy = 1'b0;
-			enable_count = 1'b0;
-			update_viewXY = 1'b0;
-			clear_viewXY = 1'b0;
-			ld_colour=1'b0;
+			enable_count28 = 1'b0;
+			update_view = 1'b0;
+      ld_board =1'b0;
+      select = 1'b0;
 			case(current_state)
-				S_LOAD_XY: ld_xy = 1'b1;
-				S_DRAW_XY: enable_count = 1'b1;
-				S_DRAW_COLOUR: begin
-					enable_count = 1'b0;
-					ld_colour=1'b1;
+        S_LOAD_BOARD: ld_board =1'b1;
+				S_DRAW: enable_count28 = 1'b1;
+				S_UPDATE_VIEW: update_view = 1'b1;
+				S_SELECT_FLASH: begin
+          select = 1'b1;
+          enable_count28 = 1'b1;
 				end
-				S_UPDATE_VIEW_XY: update_viewXY = 1'b1;
-				S_WAIT_MOVE :��clear_viewXY = 1'b1;
-				
 			endcase	
 		end	
 		
 		always@(posedge clk)
 		begin: state_FFs
 			if(!resetn)
-				current_state <= S_WAIT_MOVE;
+				current_state <= S_LOAD_BOARD;
 			else
 				current_state <= next_state;
 		end 
-		//separate state table for select flash
-		always@(*)
-		begin
-			case (currentStat_select)
-				S_SELECT_ON:begin
-					nextStat_select = S_SELECT_OFF;
-					select = 1'b1;
-				end
-				begin
-					S_SELECT_OFF:nextStat_select = S_SELECT_ON;
-					select = 1'b0;
-				end
-			endcase
-		    $display("***currentStat_select ",current_state );
-			$display("***nextStat_select",next_state );
-		end
+		
 		always@(posedge clk)
 		begin: state_FFs
 			if(!resetn)
-				currentStat_select <= S_SELECT_ON;
+				colour_flash <= 1'b0;
 			else if(frame_clk)
-				currentStat_select <= nextStat_select;
+				colour_flash <= ~colour_flash;
 		end
 		
-		configrable_clock #(26'd1) c0(clk, clk_reset, frame_clk);
-		
-		/*
-		always @(posedge clk)
-		begin
-			if(clear_delay ==1'b1 || resetn == 1'b0 )
-				delay_counter <= 30'd0;
-			else if(enable_delay == 1'b1)
-				delay_counter <= delay_counter + 1'b1;
-				
-		$display("clear_delay is ",clear_delay );
-		$display("delay_counter is ",delay_counter );
-		end
-		assign clear_delay = (delay_counter==30'd1000000)? 1'b1 : 1'b0;
-		*/
-		
+		configrable_clock #(26'd1) c0(clk, resetn, frame_clk);
+	
 		//current player
-		always@(posedge clk)
+		/*always@(posedge clk)
 		begin: state_FFs
 			if(current_player == 1'b0) //black
 				now_player_white = 1'b0;
 			else
 				now_player_white = 1'b1;
-		end 
-		
-		
+		end*/
  endmodule
-  

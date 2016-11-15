@@ -11,7 +11,7 @@
 	input [2:0] box_x,//
 	inout [2:0] box_y,//selected box, flash
 	input [3:0] pieceFromMem,
-	output color,
+	output colour,
 	output [8:0] x_out,
 	output [7:0] y_out,
 	output [2:0] view_x,view_y
@@ -21,20 +21,18 @@
 	//output reg writeEn,
 	);
 	
-	wire clear_count,complete,ld_xy,enable_count,update_viewXY,
-		clear_viewXY,ld_colour,select,now_player_white;
+	wire clear_count28,board_complete,piece_complete,if_moved,
+        ld_board,enable_count28,update_view,select,colour_flash,now_player_white;
 	
-	control_view c0(resetn, clk, clear_count,complete,if_moved,
-					ld_xy,enable_count,update_viewXY,
-					clear_viewXY,ld_colour,select,now_player_white);
+	control_view c0(resetn, clk,clear_count28,board_complete,piece_complete,if_moved,
+        ld_board,enable_count28,update_view,select,colour_flash,now_player_white);
 	
 	datapath_view d0(clk,resetn,
-				ld_xy,enable_count,update_viewXY,
-				clear_viewXY,ld_colour,select,now_player_white,
+				ld_board,enable_count28,update_view,select,colour_flash,now_player_white,
 				box_in_x,box_in_y,//8*8
 				pieceFromMem,
-				color,
-				clear_count, // clear count of 28*28 box
+				colour,
+				clear_count28,board_complete,piece_complete,
 				x_out,y_out, 
 				view_x,view_y);
  endmodule
