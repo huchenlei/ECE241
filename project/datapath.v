@@ -24,13 +24,16 @@ module datapath (
   localparam  S_SETUP = 3'd0,
               S_INIT_SQUARE = 3'd1,
               S_INIT_SQUARE_WAIT = 3'd2,
+              // should swap ROW and COL here
+              // mis definition
+              // logically does not matter
               S_COUNT_ROW = 3'd3,
               S_COUNT_COL = 3'd4,
               S_COMPLETE = 3'd5;
   // clock for memory setting delay (initialing)
   wire reset_clock, count_complete;
   assign reset_clock = (current_state == S_INIT_SQUARE);
-  configrable_clock #(26'd3) clock0(clk, reset_clock, count_complete);
+  configrable_clock #(26'd1) clock0(clk, reset_clock, count_complete);
 
   always @ ( * ) begin
     case (current_state)
@@ -66,8 +69,8 @@ module datapath (
 
   // clock for memory setting delay (moving piece)
   wire reset_clock_fsm2, count_complete_fsm2;
-  assign reset_clock = (current_state_m == S_WRITE_DESTINATION || current_state_m == S_ERASE_ORIGIN);
-  configrable_clock #(26'd3) clock0(clk, reset_clock_fsm2, count_complete_fsm2);
+  assign reset_clock_fsm2 = (current_state_m == S_WRITE_DESTINATION || current_state_m == S_ERASE_ORIGIN);
+  configrable_clock #(26'd1) clock1(clk, reset_clock_fsm2, count_complete_fsm2);
 
   always @ ( * ) begin
     case (current_state_m)
