@@ -21,7 +21,7 @@ run 10 ns
 # avoid looping
 force {initialize_board} 0
 
-run 200 ns
+run 3000 ns
 
 # move piece
 force {move_piece} 1

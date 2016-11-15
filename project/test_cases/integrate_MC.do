@@ -13,7 +13,7 @@ force {KEY} 1111
 force {SW} 0000000000
 
 # let datapath initialize
-run 200 ns
+run 3000 ns
 
 # move select box
 force {KEY[1]} 0
@@ -45,4 +45,4 @@ force {SW[0]} 1
 run 10 ns
 force{SW[0]} 0
 
-run 100 ns
+run 600 ns

@@ -9,7 +9,7 @@ module validator_w_pawn (
   // memory access
   input [3:0] piece_read,
   output [2:0] validate_x, validate_y,
-  output reg queen_valid // result
+  output reg w_pawn_valid // result
   );
 
   wire [2:0] x_dis, y_dis, product_dis;
@@ -17,5 +17,7 @@ module validator_w_pawn (
   assign y_dis = (move_y > piece_y) ? (move_y - piece_y) : (piece_y - move_y);
   assign product_dis = x_dis * y_dis;
   // to be done
-
+  always @ ( * ) begin
+    w_pawn_valid = 1'b1;
+  end
 endmodule // validator_w_pawn

@@ -13,9 +13,14 @@ force {selected_piece} 0000
 
 # initiate everything
 force {initialize_complete} 0
+force {move_complete} 0
+force {board_render_complete} 0
 run 20 ns
 
 force {initialize_complete} 1
+run 10 ns
+
+force {initialize_complete} 0
 
 # moving the selecting box
 force {up} 1
@@ -46,9 +51,9 @@ force {select} 0
 run 10 ns
 
 # mocking the destination square (white king)#12
-force {selected_piece} 1100
+#force {selected_piece} 1100
 # mocking the empty case for another test
-#force {selected_piece} 0011
+force {selected_piece} 0011
 
 # in s_move 2
 force {up} 1
@@ -70,5 +75,9 @@ run 10 ns
 force {select} 0
 run 100 ns
 
-# should back to init
-# game over
+force {move_complete} 1
+run 10 ns
+
+force {move_complete} 0
+force {board_render_complete} 1
+run 10 ns
