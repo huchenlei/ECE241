@@ -64,12 +64,9 @@ module view_render (
     // by default set everything to 0
     board_render_start = 1'b0;
     square_render_start = 1'b0;
-    writeEn = 1'b0;
     case (current_state)
       S_RENDER_BACKGROUND: board_render_start = 1'b1;
       S_RENDER_SQUARE: square_render_start = 1'b1;
-      S_RENDER_BACKGROUND_WAIT: writeEn = 1'b1;
-      S_RENDER_SQUARE_WAIT: writeEn = 1'b1;
     endcase
   end
 
@@ -100,20 +97,22 @@ module view_render (
   wire [8:0] x_board, x_knight_w; //etc...
   wire [7:0] y_board, y_knight_w; //etc...
   wire colour_board, colour_knight_w;
+  wire wren_board, wren_w_knight;
   wire knight_w_complete;
 
-  // COLOUR_WIDTH, WIDTH, HEIGHT, WIDTH_B, HEIGHT_B, PIC_LENGTH
-  pic_render #(1, 320, 240, 9, 8, 17) pBK(clk, reset, board_render_start, 9'd0, 8'd0
+  // WIDTH, HEIGHT, WIDTH_B, HEIGHT_B, PIC_LENGTH
+  pic_render #(320, 240, 9, 8, 17) pBK(clk, reset, board_render_start, 9'd0, 8'd0
                                           board_data, board_address, x_board, y_board,
-                                          colour_board, board_render_complete);
+                                          colour_board, wren_board, _render_complete);
   pic_render pwknight(clk, reset, square_render_start, x_coordinate, y_coordinate,
                       knight_w_data, knight_w_address, x_knight_w, y_knight_w,
-                      colour_knight_w, knight_w_complete);
+                      colour_knight_w, wren_w_knight, knight_w_complete);
   // and many other pic render modules here
   always @ ( * ) begin
     if(current_state == S_RENDER_SQUARE_WAIT) begin
       case (piece_read)
         4'd8: begin // render a white knight
+          writeEn = wren_w_knight;
           x = x_knight_w;
           y = y_knight_w;
           colour = colour_knight_w;
@@ -122,9 +121,13 @@ module view_render (
       endcase
     end
     else if(current_state == S_RENDER_BACKGROUND_WAIT) begin
+      writeEn = wren_board;
       x = x_board;
       y = y_board;
       colour = colour_board;
+    end
+    else begin
+
     end
   end
 

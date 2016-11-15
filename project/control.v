@@ -23,7 +23,7 @@ module control (
   // 11: view
   output reg [1:0] memory_manage, // memory control signal
   output [5:0] address_validator,
-  output start_render_board, // start board render in view_render
+  output reg start_render_board, // start board render in view_render
   output reg move_piece, // start update memory in datapath
   output reg initialize_board // start initialze memory in datapath
   );
@@ -106,13 +106,13 @@ end
 
 // setting signals
 assign start_validation = (memory_manage == 2'b01);
-assign start_render_board = (memory_manage == 2'b11)
 
 always @ ( * ) begin
   // by default set all signals to 0
   select_box_can_move = 1'b0;
   initialize_board = 1'b0;
   move_piece = 1'b0;
+  start_render_board = 1'b0;
   // default grant memory access to control
   memory_manage = 2'b00;
 
@@ -121,8 +121,14 @@ always @ ( * ) begin
       initialize_board = 1'b1;
       memory_manage = 2'b10; // grant memory access to datapath
     end
-    S_MOVE_BOX_1: select_box_can_move = 1'b1;
-    S_MOVE_BOX_2: select_box_can_move = 1'b1;
+    S_MOVE_BOX_1: begin
+      // might need to grant memory access to view
+      // memory_manage = 2'b11;
+      select_box_can_move = 1'b1;
+    end
+    S_MOVE_BOX_2: begin
+      select_box_can_move = 1'b1;
+    end
     S_SELECT_DESTINATION: memory_manage = 2'b01; // grant memory access to validator module
     S_UPDATE_MEMORY: move_piece = 1'b1;
     S_UPDATE_MEMORY_WAIT: memory_manage = 2'b10; // grant datapath to access memory
