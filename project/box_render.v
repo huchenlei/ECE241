@@ -72,6 +72,11 @@ module box_render (
       end
       S_COUNT_Y: y_position <= y_position + 1;
     endcase
+    $display("-----------------");
+    $display("Current State %d", current_state);
+    $display("WriteEN:%b", writeEn);
+    $display("x:%d, y:%d", x, y);
+    $display("Colour:%b", colour);
   end
 
   // draw box
