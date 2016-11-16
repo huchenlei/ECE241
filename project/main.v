@@ -45,16 +45,14 @@ module main (
   wire [3:0] data_in_datapath;
   wire [1:0] memory_manage;
   wire [3:0] piece_read;
+  
   // memory module
   memory_access ma(
     address_control, address_validator, address_datapath, address_view,
     data_in_datapath,
-    CLOCK_50, writeEn,
+    CLOCK_50,
     memory_manage, piece_read
     );
-
-  // Initialize picture holding memory modules here...
-
 
   // View
   // VGA module from lab7
@@ -81,7 +79,7 @@ module main (
   defparam VGA.MONOCHROME = "TRUE";
   defparam VGA.BACKGROUND_IMAGE = "chess_pics/board_240p.mif";
 
-  wire winning_msg, current_player, start_render_board, board_render_complete;
+  wire winning_msg, current_player;
 
   view_render v0(
     .clk(CLOCK_50),
@@ -90,11 +88,9 @@ module main (
     .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .current_player(current_player),
     .winning_msg(winning_msg),
-    .start_render_board(start_render_board),
 
     .x(x), .y(y), .colour(colour),
     .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0]),
-    .board_render_complete(board_render_complete)
     );
 
   // Controller
@@ -111,7 +107,6 @@ module main (
     .select(SW[0]), .deselect(SW[1]),
     .piece_read(piece_read),
     .initialize_complete(initialize_complete),
-    .board_render_complete(board_render_complete),
     .move_complete(move_complete),
 
     .current_player(current_player),
@@ -124,7 +119,6 @@ module main (
     .address_validator(address_validator),
     .move_piece(move_piece),
     .initialize_board(initialize_board),
-    .start_render_board(start_render_board)
     );
 
   // datapath module

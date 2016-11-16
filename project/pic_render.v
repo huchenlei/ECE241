@@ -1,9 +1,9 @@
 `ifndef pic_render_m
 `define pic_render_m
 `include "configrable_clock.v"
-`include "vga_adapter/vga_adapter.v"
+// `include "vga_adapter/vga_adapter.v"
 // only fit 2 bit(with 2 as alpha(transparent))
-module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_address, x, y, 
+module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_address, x, y,
 							colour, writeEn, render_complete);
   // default param for rendering each piece
   parameter WIDTH = 28;
@@ -11,6 +11,7 @@ module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_addre
   parameter WIDTH_B = 5;
   parameter HEIGHT_B = 5;
   parameter PIC_LENGTH = 10;
+
   input clk;
   input reset;
   input start_render;
@@ -24,7 +25,7 @@ module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_addre
   output reg writeEn;
   output reg render_complete;
   output [PIC_LENGTH - 1 :0] pic_address;
-  
+
   reg [WIDTH_B - 1:0] x_position; // relative position
   reg [HEIGHT_B - 1 :0] y_position; // used for iterating through picture
   assign pic_address = (y_position * WIDTH) + x_position;
@@ -63,7 +64,7 @@ module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_addre
         x_position <= 0;
         y_position <= 0;
       end
-      S_COUNT_X: begin 
+      S_COUNT_X: begin
 			if(x_position == WIDTH - 1) x_position <= 0;
 			else x_position <= x_position + 1;
 		end
