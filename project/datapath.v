@@ -64,7 +64,7 @@ module datapath (
               S_WRITE_DESTINATION = 3'd1,
               S_WRITE_DESTINATION_WAIT = 3'd2,
               S_ERASE_ORIGIN = 3'd3,
-              S_ERASE_ORIGIN_WAIT = 3'd4;
+              S_ERASE_ORIGIN_WAIT = 3'd4,
               S_MOVE_COMPLETE = 3'd5;
 
   // clock for memory setting delay (moving piece)
@@ -75,7 +75,7 @@ module datapath (
   always @ ( * ) begin
     case (current_state_m)
       S_MOVE_WAIT:
-        next_state_m = move_piece ? S_SELECT_DESTINATION : S_MOVE_WAIT;
+        next_state_m = move_piece ? S_WRITE_DESTINATION : S_MOVE_WAIT;
       S_WRITE_DESTINATION:
         next_state_m = S_WRITE_DESTINATION_WAIT;
       S_WRITE_DESTINATION_WAIT:
@@ -85,7 +85,7 @@ module datapath (
       S_ERASE_ORIGIN_WAIT:
         next_state_m = count_complete_fsm2 ? S_MOVE_COMPLETE : S_ERASE_ORIGIN_WAIT;
       S_MOVE_COMPLETE:
-        next_state = S_MOVE_WAIT;
+        next_state_m = S_MOVE_WAIT;
       default: next_state_m = S_MOVE_WAIT;
     endcase
   end
@@ -128,19 +128,19 @@ module datapath (
         end
         if(datapath_y < 3'd6 && datapath_y > 3'd1)
           data_out <= 4'd0; // empty
-        $display("[FSM1] filling square[%d, %d] with %d", datapath_x, datapath_y, data_out);
+//        $display("[FSM1] filling square[%d, %d] with %d", datapath_x, datapath_y, data_out);
       end
       S_COUNT_ROW: begin
         datapath_x <= datapath_x + 1;
-        $display("[FSM1] incrementing datapath_x %d", datapath_x);
+//        $display("[FSM1] incrementing datapath_x %d", datapath_x);
       end
       S_COUNT_COL: begin
         datapath_y <= datapath_y + 1;
-        $display("[FSM1] incrementing datapath_y %d", datapath_y);
+//        $display("[FSM1] incrementing datapath_y %d", datapath_y);
       end
       S_COMPLETE: begin
         initialize_complete <= 1'b1;
-        $display("[FSM1] initialize_complete");
+//        $display("[FSM1] initialize_complete");
       end
     endcase
 
@@ -171,8 +171,8 @@ module datapath (
       current_state <= S_SETUP;
     else
       current_state <= next_state;
-    $display("--------------------------");
-    $display("[FSM1-initialize] Current state is state[%d]", current_state);
+//    $display("--------------------------");
+//    $display("[FSM1-initialize] Current state is state[%d]", current_state);
   end
 
   always @ ( posedge clk ) begin

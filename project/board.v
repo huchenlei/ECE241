@@ -1,12 +1,7 @@
-`ifndef board_m
-`define board_m
-// 8*8*4 memory array
-// input Address, DataIn[3:0], WriteEn, Clock
-// output DataOut
 // megafunction wizard: %RAM: 1-PORT%
 // GENERATION: STANDARD
 // VERSION: WM1.0
-// MODULE: altsyncram
+// MODULE: altsyncram 
 
 // ============================================================
 // File Name: board.v
@@ -24,18 +19,18 @@
 
 
 //Copyright (C) 1991-2016 Altera Corporation. All rights reserved.
-//Your use of Altera Corporation's design tools, logic functions
-//and other software and tools, and its AMPP partner logic
-//functions, and any output files from any of the foregoing
-//(including device programming or simulation files), and any
-//associated documentation or information are expressly subject
-//to the terms and conditions of the Altera Program License
+//Your use of Altera Corporation's design tools, logic functions 
+//and other software and tools, and its AMPP partner logic 
+//functions, and any output files from any of the foregoing 
+//(including device programming or simulation files), and any 
+//associated documentation or information are expressly subject 
+//to the terms and conditions of the Altera Program License 
 //Subscription Agreement, the Altera Quartus Prime License Agreement,
-//the Altera MegaCore Function License Agreement, or other
-//applicable license agreement, including, without limitation,
-//that your use is for the sole purpose of programming logic
-//devices manufactured by Altera and sold by Altera or its
-//authorized distributors.  Please refer to the applicable
+//the Altera MegaCore Function License Agreement, or other 
+//applicable license agreement, including, without limitation, 
+//that your use is for the sole purpose of programming logic 
+//devices manufactured by Altera and sold by Altera or its 
+//authorized distributors.  Please refer to the applicable 
 //agreement for further details.
 
 
@@ -98,8 +93,8 @@ module board (
 		altsyncram_component.numwords_a = 64,
 		altsyncram_component.operation_mode = "SINGLE_PORT",
 		altsyncram_component.outdata_aclr_a = "NONE",
-		altsyncram_component.outdata_reg_a = "CLOCK0",
-		altsyncram_component.power_up_uninitialized = "FALSE",
+		altsyncram_component.outdata_reg_a = "UNREGISTERED",
+		altsyncram_component.power_up_uninitialized = "TRUE",
 		altsyncram_component.read_during_write_mode_port_a = "NEW_DATA_NO_NBE_READ",
 		altsyncram_component.widthad_a = 6,
 		altsyncram_component.width_a = 4,
@@ -125,7 +120,7 @@ endmodule
 // Retrieval info: PRIVATE: DataBusSeparated NUMERIC "1"
 // Retrieval info: PRIVATE: IMPLEMENT_IN_LES NUMERIC "0"
 // Retrieval info: PRIVATE: INIT_FILE_LAYOUT STRING "PORT_A"
-// Retrieval info: PRIVATE: INIT_TO_SIM_X NUMERIC "0"
+// Retrieval info: PRIVATE: INIT_TO_SIM_X NUMERIC "1"
 // Retrieval info: PRIVATE: INTENDED_DEVICE_FAMILY STRING "Cyclone V"
 // Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "0"
 // Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
@@ -136,7 +131,7 @@ endmodule
 // Retrieval info: PRIVATE: READ_DURING_WRITE_MODE_PORT_A NUMERIC "3"
 // Retrieval info: PRIVATE: RegAddr NUMERIC "1"
 // Retrieval info: PRIVATE: RegData NUMERIC "1"
-// Retrieval info: PRIVATE: RegOutput NUMERIC "1"
+// Retrieval info: PRIVATE: RegOutput NUMERIC "0"
 // Retrieval info: PRIVATE: SYNTH_WRAPPER_GEN_POSTFIX STRING "0"
 // Retrieval info: PRIVATE: SingleClock NUMERIC "1"
 // Retrieval info: PRIVATE: UseDQRAM NUMERIC "1"
@@ -153,8 +148,8 @@ endmodule
 // Retrieval info: CONSTANT: NUMWORDS_A NUMERIC "64"
 // Retrieval info: CONSTANT: OPERATION_MODE STRING "SINGLE_PORT"
 // Retrieval info: CONSTANT: OUTDATA_ACLR_A STRING "NONE"
-// Retrieval info: CONSTANT: OUTDATA_REG_A STRING "CLOCK0"
-// Retrieval info: CONSTANT: POWER_UP_UNINITIALIZED STRING "FALSE"
+// Retrieval info: CONSTANT: OUTDATA_REG_A STRING "UNREGISTERED"
+// Retrieval info: CONSTANT: POWER_UP_UNINITIALIZED STRING "TRUE"
 // Retrieval info: CONSTANT: READ_DURING_WRITE_MODE_PORT_A STRING "NEW_DATA_NO_NBE_READ"
 // Retrieval info: CONSTANT: WIDTHAD_A NUMERIC "6"
 // Retrieval info: CONSTANT: WIDTH_A NUMERIC "4"
@@ -174,6 +169,5 @@ endmodule
 // Retrieval info: GEN_FILE: TYPE_NORMAL board.cmp FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL board.bsf FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL board_inst.v FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL board_bb.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL board_bb.v FALSE
 // Retrieval info: LIB_FILE: altera_mf
-`endif

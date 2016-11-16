@@ -1,3 +1,5 @@
+
+`include "board.v"
 module memory_access (
   input [5:0] address_control, address_validator,
               address_datapath, address_view,
@@ -15,7 +17,7 @@ module memory_access (
   );
 
   wire [5:0] address;
-  board b(address, data_in_datapath, writeEn, clk, piece_read);
+  board b(address, clk, data_in_datapath, writeEn, piece_read);
 
   reg [5:0] address_selected;
   assign address = address_selected;
@@ -29,5 +31,13 @@ module memory_access (
       2'd3: address_selected = address_view;
       default: address_selected = address_control;
     endcase
+	 
+  end
+  
+  always @( posedge clk) begin
+//	$display("-----MemoryAccess------");
+//	$display("control signal: %b", control_signal);
+//	$display("writeEn: %b", writeEn);
+//	$display("Piece_Read/Write: %d", piece_read);
   end
 endmodule // memory_access

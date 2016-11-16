@@ -9,7 +9,8 @@ module control (
   input initialize_complete, // feed back signal from datapath
   input move_complete, // feed back signal from datapath
   input board_render_complete, // feed back signal from view_render
-
+  
+  output reg writeEn,
   output reg current_player,
   output reg winning_msg, // winning condition satisfied?
   output reg [2:0] origin_x, origin_y, // left down corner (0,0)
@@ -115,11 +116,13 @@ always @ ( * ) begin
   start_render_board = 1'b0;
   // default grant memory access to control
   memory_manage = 2'b00;
+  writeEn = 1'b0;
 
   case(current_state)
     S_INIT: begin
-      initialize_board = 1'b1;
+      initialize_board = 1'b1;		
       memory_manage = 2'b10; // grant memory access to datapath
+		writeEn = 1'b1;
     end
     S_MOVE_BOX_1: begin
       // might need to grant memory access to view
@@ -131,7 +134,10 @@ always @ ( * ) begin
     end
     S_SELECT_DESTINATION: memory_manage = 2'b01; // grant memory access to validator module
     S_UPDATE_MEMORY: move_piece = 1'b1;
-    S_UPDATE_MEMORY_WAIT: memory_manage = 2'b10; // grant datapath to access memory
+    S_UPDATE_MEMORY_WAIT: begin
+		memory_manage = 2'b10; // grant datapath to access memory
+		writeEn = 1'b1; // grant datapath to write memory
+	 end
     S_UPDATE_MONITOR: start_render_board = 1'b1;
     S_UPDATE_MONITOR_WAIT: memory_manage = 2'b11; // grant view to access memory
   endcase
@@ -182,7 +188,7 @@ always @ ( posedge clk ) begin
       destination_y <= destination_y;
     end
   endcase
-  $display("[SelectDestination] %d x:%d, y:%d", piece_read, destination_x, destination_y);
+//  $display("[SelectDestination] %d x:%d, y:%d", piece_read, destination_x, destination_y);
 end
 
 // check winning
@@ -191,26 +197,26 @@ always @ ( posedge clk ) begin
     winning <= (piece_read == 4'd6) || (piece_read == 4'd12);
   if(current_state == S_INIT)
     winning <= 1'b0;
-  $display("[CheckWinning] winning is %b", winning);
+//  $display("[CheckWinning] winning is %b", winning);
 end
 
 // validate move
-move_validator mv(clk, reset, start_validation, piece_to_move, origin_x, origin_y,
-                  destination_x, destination_y, piece_read, address_validator,
-                  move_valid, validate_complete);
+//move_validator mv(clk, reset, start_validation, piece_to_move, origin_x, origin_y,
+//                  destination_x, destination_y, piece_read, address_validator,
+//                  move_valid, validate_complete);
 // mocking move_validator
-// reg [2:0] move_counter;
-// assign validate_complete = move_counter == 3'b111;
-// always @ ( posedge clk ) begin
-//   if(clk_reset) move_counter <= 3'b0;
-//   else begin
-//     if(memory_manage == 2'b1) begin
-//       $display("[Mocking Validator]");
-//       move_counter <= move_counter + 1;
-//     end
-//   end
-//   move_valid <= (move_counter == 3'b111);
-// end
+ reg [2:0] move_counter;
+ assign validate_complete = move_counter == 3'b111;
+ always @ ( posedge clk ) begin
+   if(clk_reset) move_counter <= 3'b0;
+   else begin
+     if(memory_manage == 2'b1) begin
+       $display("[Mocking Validator]");
+       move_counter <= move_counter + 1;
+     end
+   end
+   move_valid <= (move_counter == 3'b111);
+ end
 
 // setting state
 always @ ( posedge clk ) begin

@@ -1,29 +1,30 @@
 `ifndef pic_render_m
 `define pic_render_m
 `include "configrable_clock.v"
+`include "vga_adapter/vga_adapter.v"
 // only fit 2 bit(with 2 as alpha(transparent))
-module pic_render (
-  input clk,
-  input reset,
-  input start_render,
-  input [8:0] base_x,
-  input [7:0] base_y,
-  input [1:0] pic_data,
-
-  output [PIC_LENGTH - 1 :0] pic_address,
-  output [8:0] x,
-  output [7:0] y,
-  output reg colour,
-  output reg writeEn,
-  output reg render_complete
-  );
+module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_address, x, y, 
+							colour, writeEn, render_complete);
   // default param for rendering each piece
   parameter WIDTH = 28;
   parameter HEIGHT = 28;
-  parameter WIDTH_B = 6;
-  parameter HEIGHT_B = 6;
+  parameter WIDTH_B = 5;
+  parameter HEIGHT_B = 5;
   parameter PIC_LENGTH = 10;
+  input clk;
+  input reset;
+  input start_render;
+  input [8:0] base_x;
+  input [7:0] base_y;
+  input [1:0] pic_data;
 
+  output [8:0] x;
+  output [7:0] y;
+  output reg colour;
+  output reg writeEn;
+  output reg render_complete;
+  output [PIC_LENGTH - 1 :0] pic_address;
+  
   reg [WIDTH_B - 1:0] x_position; // relative position
   reg [HEIGHT_B - 1 :0] y_position; // used for iterating through picture
   assign pic_address = (y_position * WIDTH) + x_position;
@@ -49,8 +50,8 @@ module pic_render (
       S_INIT: next_state = start_render ? S_RENDER_PIXEL : S_INIT;
       S_RENDER_PIXEL: next_state = S_RENDER_PIXEL_WAIT;
       S_RENDER_PIXEL_WAIT: next_state = count_complete ? S_COUNT_X : S_RENDER_PIXEL_WAIT;
-      S_COUNT_X: next_state = (x_position == WIDTH) ? S_COUNT_Y : S_RENDER_PIXEL;
-      S_COUNT_Y: next_state = (y_position == HEIGHT) ? S_COMPLETE : S_RENDER_PIXEL;
+      S_COUNT_X: next_state = (x_position == WIDTH - 1) ? S_COUNT_Y : S_RENDER_PIXEL;
+      S_COUNT_Y: next_state = (y_position == HEIGHT - 1) ? S_COMPLETE : S_RENDER_PIXEL;
       S_COMPLETE: next_state = S_INIT;
       default: next_state = S_INIT;
     endcase
@@ -62,8 +63,13 @@ module pic_render (
         x_position <= 0;
         y_position <= 0;
       end
-      S_COUNT_X: x_position <= x_position + 1;
-      S_COUNT_Y: y_position <= y_position + 1;
+      S_COUNT_X: begin 
+			if(x_position == WIDTH - 1) x_position <= 0;
+			else x_position <= x_position + 1;
+		end
+      S_COUNT_Y: begin
+			y_position <= y_position + 1;
+		end
     endcase
   end
 
@@ -91,6 +97,13 @@ module pic_render (
       current_state <= S_INIT;
     else
       current_state <= next_state;
+	$display("---------------------");
+	$display("current state is %d", current_state);
+	$display("x:%d, y:%d", x, y);
+	$display("colour %d", colour);
+	$display("pic_data %b", pic_data);
+	$display("wirteEn %b", writeEn);
+	$display("pic_add %d", pic_address);
   end
 endmodule // pic_render
 `endif
