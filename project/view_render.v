@@ -80,7 +80,7 @@ module view_render (
       S_COUNT_COL: next_state = (view_x == 3'd7) ? S_COUNT_COL : S_RENDER_SQUARE;
       S_COUNT_ROW: next_state = (view_y == 3'd7) ? S_RENDER_BOX : S_RENDER_SQUARE;
       S_RENDER_BOX: next_state = S_RENDER_BOX_WAIT;
-      S_RENDER_BOX_WAIT: next_state = box_render_complete ? S_COMPLETE
+      S_RENDER_BOX_WAIT: next_state = box_render_complete ? S_COMPLETE;
       S_COMPLETE: next_state = S_INIT;
       default: next_state = S_INIT;
     endcase
