@@ -26,6 +26,7 @@ module control (
   output [5:0] address_validator,
   output start_render_board,
   output reg move_piece, // start update memory in datapath
+  output reset_clock, // reset the clock for box blinking
   output reg initialize_board // start initialze memory in datapath
   );
 
@@ -33,7 +34,6 @@ module control (
   reg winning;
   reg move_valid;
   wire piece_valid;
-  wire clk_reset;
   reg select_box_can_move;
   reg read_destination;
   reg start_validation;
@@ -59,7 +59,7 @@ module control (
   // validate piece
   // [BUG]: The player could only control his/her own piece
   assign piece_valid = (piece_read == 4'b0) ? 1'b0 : 1'b1;
-  assign clk_reset = reset || (current_state == S_INIT);
+  assign reset_clock = reset || (current_state == S_INIT);
 
 // state table
 always @ ( * ) begin
@@ -208,7 +208,7 @@ end
  reg [2:0] move_counter;
  assign validate_complete = move_counter == 3'b111;
  always @ ( posedge clk ) begin
-   if(clk_reset) move_counter <= 3'b0;
+   if(reset_clock) move_counter <= 3'b0;
    else begin
      if(memory_manage == 2'b1) begin
        $display("[Mocking Validator]");
@@ -228,9 +228,9 @@ end
 
 wire frame_clk;
 // 4Hz clock for not so fast select-box moving
-//configrable_clock #(26'd12500000) c0(clk, reset, frame_clk);
+//configrable_clock #(26'd12500000) c0(clk, reset_clock, frame_clk);
 // high frequency clk for testing
-configrable_clock #(26'd1) c0(clk, clk_reset, frame_clk);
+configrable_clock #(26'd1) c0(clk, reset_clock, frame_clk);
 // select box
 always @ ( posedge clk ) begin
   if(current_state == S_INIT) begin
@@ -243,35 +243,29 @@ always @ ( posedge clk ) begin
     if(right) box_y <= box_y + 1;
     if(left) box_y <= box_y - 1;
   end
-  
+
 end
 
-  // log module
-  wire write_log;
-  configrable_clock #(26'd1) clog(clk, reset_clock, write_log);
-  always @(posedge clk) begin
-//	if(write_log) begin
-	   $display("-----------------Control----------------------");
-		$display("[Controller] Current state is state[%d]", next_state);
-//	end
-	case(current_state)
-    S_INIT: $display("Init");
-    S_MOVE_BOX_1: begin
-      $display("[SelectBox1] Current position [x:%d][y:%d]", box_x, box_y);
-    end
-    S_MOVE_BOX_2: begin
-      $display("[SelectBox2] Current position [x:%d][y:%d]", box_x, box_y);
-    end
-	 S_SELECT_PIECE: begin
-		$display("selecting piece");
-	 end
-	 
-//    S_SELECT_DESTINATION: start_validation = 1'b1;
-//    S_SELECT_DESTINATION_WAIT: memory_manage = 2'b01; // grant memory access to validator module
-//    S_UPDATE_MEMORY: move_piece = 1'b1;
-//    S_UPDATE_MEMORY_WAIT: memory_manage = 2'b10; // grant datapath to access memory
-  endcase
-  end
-
+  // log block
+//   wire write_log;
+//   configrable_clock #(26'd1) clog(clk, reset_clock, write_log);
+//   always @(posedge clk) begin
+// //	if(write_log) begin
+// 	   $display("-----------------Control----------------------");
+// 		$display("[Controller] Current state is state[%d]", next_state);
+// //	end
+// 	case(current_state)
+//     S_INIT: $display("Init");
+//     S_MOVE_BOX_1: begin
+//       $display("[SelectBox1] Current position [x:%d][y:%d]", box_x, box_y);
+//     end
+//     S_MOVE_BOX_2: begin
+//       $display("[SelectBox2] Current position [x:%d][y:%d]", box_x, box_y);
+//     end
+// 	 S_SELECT_PIECE: begin
+// 		$display("selecting piece");
+// 	 end
+//   endcase
+//   end
 endmodule // control
 `endif

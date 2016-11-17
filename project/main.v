@@ -45,7 +45,7 @@ module main (
   wire [3:0] data_in_datapath;
   wire [1:0] memory_manage;
   wire [3:0] piece_read;
-  
+
   // memory module
   memory_access ma(
     address_control, address_validator, address_datapath, address_view,
@@ -79,26 +79,31 @@ module main (
   defparam VGA.MONOCHROME = "TRUE";
   defparam VGA.BACKGROUND_IMAGE = "chess_pics/board_240p.mif";
 
-  wire winning_msg, current_player;
-
+  // from control to view render
+  wire winning_msg, current_player, reset_clock, start_render_board;
+  // to control from view render
+  wire board_render_complete;
   view_render v0(
     .clk(CLOCK_50),
     .reset(reset),
+    .reset_clock(reset_clock),
     .piece_read(piece_read),
     .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .current_player(current_player),
     .winning_msg(winning_msg),
+    .start_render_board(start_render_board),
 
     .x(x), .y(y), .colour(colour),
     .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0]),
+    .board_render_complete(board_render_complete)
     );
 
   // Controller
+  // wires between control and datapath
   wire [2:0] origin_x, origin_y;
   wire [3:0] piece_to_move;
   wire [2:0] destination_x, destination_y;
   wire move_piece, move_complete, initialize_board, initialize_complete;
-  // control module
   control c0(
     .clk(CLOCK_50),
     .reset(reset),
@@ -108,6 +113,7 @@ module main (
     .piece_read(piece_read),
     .initialize_complete(initialize_complete),
     .move_complete(move_complete),
+    .board_render_complete(board_render_complete),
 
     .current_player(current_player),
     .winning_msg(winning_msg),
@@ -117,7 +123,9 @@ module main (
     .box_x(address_control[5:3]), .box_y(address_control[2:0]),
     .memory_manage(memory_manage),
     .address_validator(address_validator),
+    .start_render_board(start_render_board),
     .move_piece(move_piece),
+    .reset_clock(reset_clock),
     .initialize_board(initialize_board),
     );
 
