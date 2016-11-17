@@ -1,24 +1,24 @@
 `ifndef view_render_m
 `define view_render_m
 
-`include "knight_w.v"
-`include "pawn_w.v"
-`include "king_w.v"
-`include "queen_w.v"
-`include "rook_w.v"
-`include "bishop_w.v"
-`include "knight_b.v"
-`include "pawn_b.v"
-`include "king_b.v"
-`include "queen_b.v"
-`include "rook_b.v"
-`include "bishop_b.v"
-`include "board_rom_top.v"
-`include "board_rom_bottom.v"
-
-`include "configrable_clock.v"
-`include "box_render.v"
-`include "pic_render.v"
+//`include "knight_w.v"
+//`include "pawn_w.v"
+//`include "king_w.v"
+//`include "queen_w.v"
+//`include "rook_w.v"
+//`include "bishop_w.v"
+//`include "knight_b.v"
+//`include "pawn_b.v"
+//`include "king_b.v"
+//`include "queen_b.v"
+//`include "rook_b.v"
+//`include "bishop_b.v"
+//`include "board_rom_top.v"
+//`include "board_rom_bottom.v"
+//
+//`include "configrable_clock.v"
+//`include "box_render.v"
+//`include "pic_render.v"
 
 module view_render (
   input clk,
@@ -184,16 +184,16 @@ module view_render (
   // mux all piece rendering outputs
   wire [8:0] x_board_top, x_board_bottom, x_knight_w, x_pawn_w, x_king_w,
             x_queen_w, x_rook_w, x_bishop_w, x_knight_b, x_pawn_b, x_king_b,
-            x_quuen_b, x_rook_b, x_bishop_b;
+            x_queen_b, x_rook_b, x_bishop_b;
   wire [7:0] y_board_top, y_board_bottom, y_knight_w, y_pawn_w, y_king_w,
             y_queen_w, y_rook_w, y_bishop_w, y_knight_b, y_pawn_b, y_king_b,
-            y_quuen_b, y_rook_b, y_bishop_b;
+            y_queen_b, y_rook_b, y_bishop_b;
   wire colour_board_top, colour_board_bottom, colour_knight_w, colour_pawn_w, colour_king_w,
       colour_queen_w, colour_rook_w, colour_bishop_w, colour_knight_b, colour_pawn_b, colour_king_b,
-      colour_quuen_b, colour_rook_b, colour_bishop_b;
+      colour_queen_b, colour_rook_b, colour_bishop_b;
   wire wren_board_top, wren_board_bottom, wren_knight_w, wren_pawn_w, wren_king_w,
       wren_queen_w, wren_rook_w, wren_bishop_w, wren_knight_b, wren_pawn_b, wren_king_b,
-      wren_quuen_b, wren_rook_b, wren_bishop_b;
+      wren_queen_b, wren_rook_b, wren_bishop_b;
   wire knight_w_complete, pawn_w_complete, king_w_complete,
         queen_w_complete, rook_w_complete, bishop_w_complete,
         knight_b_complete, pawn_b_complete, king_b_complete,
@@ -209,124 +209,124 @@ module view_render (
   // white pieces
   pic_render pwknight(clk, reset, square_render_start, x_coordinate, y_coordinate,
                       knight_w_data, knight_w_address, x_knight_w, y_knight_w,
-                      colour_knight_w, wren_w_knight, knight_w_complete);
+                      colour_knight_w, wren_knight_w, knight_w_complete);
   pic_render pwpawn(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     pawn_w_data, pawn_w_address, x_pawn_w, y_pawn_w,
-                    colour_pawn_w, wren_w_pawn, pawn_w_complete);
+                    colour_pawn_w, wren_pawn_w, pawn_w_complete);
   pic_render pwking(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     king_w_data, king_w_address, x_king_w, y_king_w,
-                    colour_king_w, wren_w_king, king_w_complete);
+                    colour_king_w, wren_king_w, king_w_complete);
   pic_render pwqueen(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     queen_w_data, queen_w_address, x_queen_w, y_queen_w,
-                    colour_queen_w, wren_w_queen, queen_w_complete);
+                    colour_queen_w, wren_queen_w, queen_w_complete);
   pic_render pwrook(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     rook_w_data, rook_w_address, x_rook_w, y_rook_w,
-                    colour_rook_w, wren_w_rook, rook_w_complete);
+                    colour_rook_w, wren_rook_w, rook_w_complete);
   pic_render pwbishop(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     bishop_w_data, bishop_w_address, x_bishop_w, y_bishop_w,
-                    colour_bishop_w, wren_w_bishop, bishop_w_complete);
+                    colour_bishop_w, wren_bishop_w, bishop_w_complete);
   // black pieces
   pic_render pbpawn(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     pawn_b_data, pawn_b_address, x_pawn_b, y_pawn_b,
-                    colour_pawn_b, wren_b_pawn, pawn_b_complete);
+                    colour_pawn_b, wren_pawn_b, pawn_b_complete);
   pic_render pbknight(clk, reset, square_render_start, x_coordinate, y_coordinate,
-                    knight_w_data, knight_w_address, x_knight_w, y_knight_w,
-                    colour_knight_w, wren_w_knight, knight_w_complete);
+                    knight_b_data, knight_b_address, x_knight_b, y_knight_b,
+                    colour_knight_b, wren_knight_b, knight_b_complete);
   pic_render pbking(clk, reset, square_render_start, x_coordinate, y_coordinate,
-                    king_w_data, king_w_address, x_king_w, y_king_w,
-                    colour_king_w, wren_w_king, king_w_complete);
+                    king_b_data, king_b_address, x_king_b, y_king_b,
+                    colour_king_b, wren_king_b, king_b_complete);
   pic_render pbqueen(clk, reset, square_render_start, x_coordinate, y_coordinate,
-                    queen_w_data, queen_w_address, x_queen_w, y_queen_w,
-                    colour_queen_w, wren_w_queen, queen_w_complete);
+                    queen_b_data, queen_b_address, x_queen_b, y_queen_b,
+                    colour_queen_b, wren_queen_b, queen_b_complete);
   pic_render pbrook(clk, reset, square_render_start, x_coordinate, y_coordinate,
-                    rook_w_data, rook_w_address, x_rook_w, y_rook_w,
-                    colour_rook_w, wren_w_rook, rook_w_complete);
+                    rook_b_data, rook_b_address, x_rook_b, y_rook_b,
+                    colour_rook_b, wren_rook_b, rook_b_complete);
   pic_render pbbishop(clk, reset, square_render_start, x_coordinate, y_coordinate,
-                    bishop_w_data, bishop_w_address, x_bishop_w, y_bishop_w,
-                    colour_bishop_w, wren_w_bishop, bishop_w_complete);
+                    bishop_b_data, bishop_b_address, x_bishop_b, y_bishop_b,
+                    colour_bishop_b, wren_bishop_b, bishop_b_complete);
 
   always @ ( * ) begin
     if(current_state == S_RENDER_SQUARE_WAIT) begin
       case (piece_read)
         4'd8: begin // render a white knight
-          writeEn = wren_w_knight;
+          writeEn = wren_knight_w;
           x = x_knight_w;
           y = y_knight_w;
           colour = colour_knight_w;
           square_render_complete = knight_w_complete;
         end
         4'd7: begin // render a white pawn
-          writeEn = wren_w_pawn;
+          writeEn = wren_pawn_w;
           x = x_pawn_w;
           y = y_pawn_w;
           colour = colour_pawn_w;
           square_render_complete = pawn_w_complete;
         end
         4'd12: begin // render a white king
-          writeEn = wren_w_king;
+          writeEn = wren_king_w;
           x = x_king_w;
           y = y_king_w;
           colour = colour_king_w;
           square_render_complete = king_w_complete;
         end
         4'd11: begin // render a white queen
-          writeEn = wren_w_queen;
+          writeEn = wren_queen_w;
           x = x_queen_w;
           y = y_queen_w;
           colour = colour_queen_w;
           square_render_complete = queen_w_complete;
         end
         4'd10: begin // render a white rook
-          writeEn = wren_w_rook;
+          writeEn = wren_rook_w;
           x = x_rook_w;
           y = y_rook_w;
           colour = colour_rook_w;
           square_render_complete = rook_w_complete;
         end
         4'd9: begin // render a white bishop
-          writeEn = wren_w_bishop;
+          writeEn = wren_bishop_w;
           x = x_bishop_w;
           y = y_bishop_w;
           colour = colour_bishop_w;
           square_render_complete = bishop_w_complete;
         end
         4'd1: begin // render a black pawn
-          writeEn = wren_b_pawn;
+          writeEn = wren_pawn_b;
           x = x_pawn_b;
           y = y_pawn_b;
           colour = colour_pawn_b;
           square_render_complete = pawn_b_complete;
         end
         4'd2: begin // render a black knight
-          writeEn = wren_b_knight;
+          writeEn = wren_knight_b;
           x = x_knight_b;
           y = y_knight_b;
           colour = colour_knight_b;
           square_render_complete = knight_b_complete;
         end
         4'd6: begin // render a black king
-          writeEn = wren_b_king;
+          writeEn = wren_king_b;
           x = x_king_b;
           y = y_king_b;
           colour = colour_king_b;
           square_render_complete = king_b_complete;
         end
         4'd5: begin // render a black queen
-          writeEn = wren_b_queen;
+          writeEn = wren_queen_b;
           x = x_queen_b;
           y = y_queen_b;
           colour = colour_queen_b;
           square_render_complete = queen_b_complete;
         end
         4'd4: begin // render a black rook
-          writeEn = wren_b_rook;
+          writeEn = wren_rook_b;
           x = x_rook_b;
           y = y_rook_b;
           colour = colour_rook_b;
           square_render_complete = rook_b_complete;
         end
         4'd3: begin // render a black bishop
-          writeEn = wren_b_bishop;
+          writeEn = wren_bishop_b;
           x = x_bishop_b;
           y = y_bishop_b;
           colour = colour_bishop_b;
