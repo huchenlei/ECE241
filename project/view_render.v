@@ -36,6 +36,7 @@ module view_render (
   output reg colour,
   output reg writeEn,
   output reg [2:0] view_x, view_y,
+  output erase_complete,
   output reg board_render_complete
   );
 
@@ -112,6 +113,8 @@ module view_render (
               S_RENDER_BOX = 4'd9,
               S_RENDER_BOX_WAIT = 4'd10,
               S_COMPLETE = 4'd11;
+              S_ERASE_BOX = 4'd12;
+              S_ERASE_BOX_WAIT = 4'd13;
 
   always @ ( * ) begin
     case (current_state)
@@ -126,7 +129,14 @@ module view_render (
       S_COUNT_ROW: next_state = (view_y == 3'd7) ? S_RENDER_BOX : S_RENDER_SQUARE;
       S_RENDER_BOX: next_state = S_RENDER_BOX_WAIT;
       S_RENDER_BOX_WAIT: next_state = box_render_complete ? S_COMPLETE : S_RENDER_BOX_WAIT;
-      S_COMPLETE: next_state = re_render_box_position ? S_INIT : S_RENDER_BOX;
+      S_COMPLETE: begin
+        if(start_render_board)
+          next_state = S_RENDER_BACKGROUND_TOP;
+        else
+          next_state = re_render_box_position ? S_ERASE_BOX : S_RENDER_BOX;
+      end
+      S_ERASE_BOX: next_state = S_ERASE_BOX_WAIT;
+      S_ERASE_BOX_WAIT: next_state = erase_complete ? S_RENDER_BOX : S_ERASE_BOX_WAIT;
       default: next_state = S_INIT;
     endcase
   end
@@ -178,8 +188,9 @@ module view_render (
   wire colour_box;
   wire wren_box;
   // box x is on 8*8; x_box is on 224 * 224
-  box_render br(clk, reset, box_render_start, box_x, box_y,
-                box_on, x_box, y_box, colour_box, wren_box, box_render_complete);
+  box_render br(clk, reset, box_render_start, start_erase, box_x, box_y,
+                box_on, x_box, y_box, colour_box, wren_box,
+                box_render_complete, erase_complete);
 
   // mux all piece rendering outputs
   wire [8:0] x_board_top, x_board_bottom, x_knight_w, x_pawn_w, x_king_w,

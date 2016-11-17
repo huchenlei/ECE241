@@ -10,6 +10,7 @@ module control (
   input initialize_complete, // feed back signal from datapath
   input move_complete, // feed back signal from datapath
   input board_render_complete,
+  input erase_complete, // feed back from view (erase the box)
 
   output reg current_player,
   output reg winning_msg, // winning condition satisfied?
@@ -28,7 +29,7 @@ module control (
   output re_render_box_position,
   output reg move_piece, // start update memory in datapath
   output reset_clock, // reset the clock for box blinking
-  output reg initialize_board // start initialze memory in datapath
+  output reg initialize_board, // start initialze memory in datapath
   );
 
   // FSM
@@ -44,17 +45,19 @@ module control (
 
   localparam  S_INIT = 6'd0,
               S_INIT_WAIT = 6'd1,
-              S_MOVE_BOX_1 = 6'd2,
-              S_SELECT_PIECE = 6'd3,
-              S_VALIDATE_PIECE = 6'd4,
-              S_MOVE_BOX_2 = 6'd5,
-              S_SELECT_DESTINATION = 6'd6,
-              S_SELECT_DESTINATION_WAIT = 6'd7,
-              S_VALIDATE_DESTINATION = 6'd8,
-              S_CHECK_WINNING = 6'd9,
-              S_UPDATE_MEMORY = 6'd10,
-              S_UPDATE_MEMORY_WAIT = 6'd11,
-              S_GAME_OVER = 6'd12;
+              S_UPDATE_MONITOR = 6'd2,
+              S_UPDATE_MONITOR_WAIT = 6'd3,
+              S_MOVE_BOX_1 = 6'd4,
+              S_SELECT_PIECE = 6'd5,
+              S_VALIDATE_PIECE = 6'd6,
+              S_MOVE_BOX_2 = 6'd7,
+              S_SELECT_DESTINATION = 6'd8,
+              S_SELECT_DESTINATION_WAIT = 6'd9,
+              S_VALIDATE_DESTINATION = 6'd10,
+              S_CHECK_WINNING = 6'd11,
+              S_UPDATE_MEMORY = 6'd12,
+              S_UPDATE_MEMORY_WAIT = 6'd13,
+              S_GAME_OVER = 6'd14;
 
 
   // validate piece
@@ -67,10 +70,11 @@ module control (
 always @ ( * ) begin
     case (current_state)
       S_INIT: next_state = S_INIT_WAIT;
-      S_INIT_WAIT: next_state = initialize_complete ? S_MOVE_BOX_1: S_INIT_WAIT;
+      S_INIT_WAIT: next_state = initialize_complete ? S_UPDATE_MONITOR: S_INIT_WAIT;
+      S_UPDATE_MONITOR: next_state = S_UPDATE_MONITOR_WAIT;
+      S_UPDATE_MONITOR_WAIT: next_state = board_render_complete ? S_MOVE_BOX_1 : S_UPDATE_MONITOR_WAIT;
       S_MOVE_BOX_1: begin
-        if(select && board_render_complete)
-          // take back memory access only when render complete
+        if(select && erase_complete)
           next_state = S_SELECT_PIECE;
         else
           next_state = S_MOVE_BOX_1;
@@ -86,7 +90,7 @@ always @ ( * ) begin
       end
       S_MOVE_BOX_2: begin
         if(!deselect) begin
-          if(select && board_render_complete)
+          if(select && erase_complete)
             next_state = S_SELECT_DESTINATION;
           else
             next_state = S_MOVE_BOX_2;
@@ -109,14 +113,13 @@ always @ ( * ) begin
       end
       S_CHECK_WINNING: next_state = winning ? S_GAME_OVER : S_UPDATE_MEMORY;
       S_UPDATE_MEMORY: next_state = S_UPDATE_MEMORY_WAIT;
-      S_UPDATE_MEMORY_WAIT: next_state = move_complete ? S_MOVE_BOX_1 : S_UPDATE_MEMORY_WAIT;
+      S_UPDATE_MEMORY_WAIT: next_state = move_complete ? S_UPDATE_MONITOR : S_UPDATE_MEMORY_WAIT;
       S_GAME_OVER: next_state = reset ? S_INIT : S_GAME_OVER;
       default: next_state = S_INIT;
     endcase
 end
 
 // setting signals
-assign start_render_board = (memory_manage == 2'b11);
 
 always @ ( * ) begin
   // by default set all signals to 0
@@ -124,20 +127,17 @@ always @ ( * ) begin
   initialize_board = 1'b0;
   move_piece = 1'b0;
   start_validation = 1'b0;
+  start_render_board = 1'b0;
   // default grant memory access to control
   memory_manage = 2'b00;
 
   case(current_state)
     S_INIT: initialize_board = 1'b1;
     S_INIT_WAIT: memory_manage = 2'b10; // grant memory access to datapath
-    S_MOVE_BOX_1: begin
-      memory_manage = 2'b11; // grant memory access to view
-      select_box_can_move = 1'b1;
-    end
-    S_MOVE_BOX_2: begin
-      memory_manage = 2'b11;
-      select_box_can_move = 1'b1;
-    end
+    S_UPDATE_MONITOR: start_render_board = 1'b1;
+    S_UPDATE_MONITOR_WAIT: memory_manage = 2'b11; // grant memory access to view
+    S_MOVE_BOX_1: select_box_can_move = 1'b1;
+    S_MOVE_BOX_2: select_box_can_move = 1'b1;
     S_SELECT_DESTINATION: start_validation = 1'b1;
     S_SELECT_DESTINATION_WAIT: memory_manage = 2'b01; // grant memory access to validator module
     S_UPDATE_MEMORY: move_piece = 1'b1;
@@ -229,10 +229,10 @@ always @ ( posedge clk ) begin
 end
 
 wire frame_clk;
-// 4Hz clock for not so fast select-box moving
-//configrable_clock #(26'd12500000) c0(clk, reset_clock, frame_clk);
+// 1Hz clock for not so fast select-box moving
+configrable_clock #(26'd50000000) c0(clk, reset_clock, frame_clk);
 // high frequency clk for testing
-configrable_clock #(26'd1) c0(clk, reset_clock, frame_clk);
+// configrable_clock #(26'd1) c0(clk, reset_clock, frame_clk);
 // select box
 assign re_render_box_position = (current_state == S_MOVE_BOX_1 || current_state == S_MOVE_BOX_2) &&
                                 (frame_clk && (up || down || right || left));

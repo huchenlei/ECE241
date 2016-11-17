@@ -83,7 +83,7 @@ module main (
   wire winning_msg, current_player, reset_clock, start_render_board,
         re_render_box_position;
   // to control from view render
-  wire board_render_complete;
+  wire board_render_complete, erase_complete;
   view_render v0(
     .clk(CLOCK_50),
     .reset(reset),
@@ -97,6 +97,7 @@ module main (
 
     .x(x), .y(y), .colour(colour),
     .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0]),
+    .erase_complete(erase_complete),
     .board_render_complete(board_render_complete)
     );
 
@@ -116,6 +117,7 @@ module main (
     .initialize_complete(initialize_complete),
     .move_complete(move_complete),
     .board_render_complete(board_render_complete),
+    .erase_complete(erase_complete),
 
     .current_player(current_player),
     .winning_msg(winning_msg),
