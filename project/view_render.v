@@ -228,19 +228,19 @@ module view_render (
   pic_render pbpawn(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     pawn_b_data, pawn_b_address, x_pawn_b, y_pawn_b,
                     colour_pawn_b, wren_b_pawn, pawn_b_complete);
-  pic_render pwknight(clk, reset, square_render_start, x_coordinate, y_coordinate,
+  pic_render pbknight(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     knight_w_data, knight_w_address, x_knight_w, y_knight_w,
                     colour_knight_w, wren_w_knight, knight_w_complete);
-  pic_render pwking(clk, reset, square_render_start, x_coordinate, y_coordinate,
+  pic_render pbking(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     king_w_data, king_w_address, x_king_w, y_king_w,
                     colour_king_w, wren_w_king, king_w_complete);
-  pic_render pwqueen(clk, reset, square_render_start, x_coordinate, y_coordinate,
+  pic_render pbqueen(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     queen_w_data, queen_w_address, x_queen_w, y_queen_w,
                     colour_queen_w, wren_w_queen, queen_w_complete);
-  pic_render pwrook(clk, reset, square_render_start, x_coordinate, y_coordinate,
+  pic_render pbrook(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     rook_w_data, rook_w_address, x_rook_w, y_rook_w,
                     colour_rook_w, wren_w_rook, rook_w_complete);
-  pic_render pwbishop(clk, reset, square_render_start, x_coordinate, y_coordinate,
+  pic_render pbbishop(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     bishop_w_data, bishop_w_address, x_bishop_w, y_bishop_w,
                     colour_bishop_w, wren_w_bishop, bishop_w_complete);
 

@@ -183,12 +183,12 @@ module datapath (
     // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~");
     // $display("[FSM2-move_piece] Current state is state[%d]", current_state_m);
   end
-  
+
 //  always @(posedge clk) begin:
 //		$display("move complete?:%b", move_complete);
 //		if(current_state_m == S_WRITE_DESTINATION)
 //			$display("[datapath] move working");
-//			
+//
 //  end
 endmodule // datapath
 `endif
