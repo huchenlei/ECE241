@@ -1,7 +1,6 @@
 `ifndef pic_render_m
 `define pic_render_m
 `include "configrable_clock.v"
-// `include "vga_adapter/vga_adapter.v"
 // only fit 2 bit(with 2 as alpha(transparent))
 module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_address, x, y,
 							colour, writeEn, render_complete);
@@ -69,7 +68,8 @@ module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_addre
 			else x_position <= x_position + 1;
 		end
       S_COUNT_Y: begin
-			y_position <= y_position + 1;
+			if(y_position == HEIGHT - 1) y_position <= 0;
+			else y_position <= y_position + 1;
 		end
     endcase
   end
@@ -98,13 +98,13 @@ module pic_render (clk, reset, start_render, base_x, base_y, pic_data, pic_addre
       current_state <= S_INIT;
     else
       current_state <= next_state;
-	$display("---------------------");
-	$display("current state is %d", current_state);
-	$display("x:%d, y:%d", x, y);
-	$display("colour %d", colour);
-	$display("pic_data %b", pic_data);
-	$display("wirteEn %b", writeEn);
-	$display("pic_add %d", pic_address);
+//	$display("---------------------");
+//	$display("current state is %d", current_state);
+//	$display("x:%d, y:%d", x, y);
+//	$display("colour %d", colour);
+//	$display("pic_data %b", pic_data);
+//	$display("wirteEn %b", writeEn);
+//	$display("pic_add %d", pic_address);
   end
 endmodule // pic_render
 `endif

@@ -97,7 +97,7 @@ module datapath (
         datapath_x <= 3'b0;
         datapath_y <= 3'b0;
         initialize_complete <= 1'b0;
-        $display("[FSM1] setting up");
+//        $display("[FSM1] setting up");
       end
       S_INIT_SQUARE: begin
         if(datapath_y == 3'd1) data_out <= 4'd1; // black pawn
@@ -183,5 +183,12 @@ module datapath (
     // $display("~~~~~~~~~~~~~~~~~~~~~~~~~~");
     // $display("[FSM2-move_piece] Current state is state[%d]", current_state_m);
   end
+  
+//  always @(posedge clk) begin:
+//		$display("move complete?:%b", move_complete);
+//		if(current_state_m == S_WRITE_DESTINATION)
+//			$display("[datapath] move working");
+//			
+//  end
 endmodule // datapath
 `endif

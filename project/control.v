@@ -1,5 +1,6 @@
 `ifndef control_m
 `define control_m
+`include "configrable_clock.v"
 module control (
   input clk,
   input reset,
@@ -71,7 +72,6 @@ always @ ( * ) begin
           next_state = S_SELECT_PIECE;
         else
           next_state = S_MOVE_BOX_1;
-        end
       end
       S_SELECT_PIECE: next_state = S_VALIDATE_PIECE;
       S_VALIDATE_PIECE: begin
@@ -114,7 +114,7 @@ always @ ( * ) begin
 end
 
 // setting signals
-assign start_render_board = (memory_manage = 2'b11);
+assign start_render_board = (memory_manage == 2'b11);
 
 always @ ( * ) begin
   // by default set all signals to 0
@@ -169,7 +169,7 @@ always @ ( posedge clk ) begin
       origin_y <= origin_y;
     end
   endcase
-  $display("[SelectPiece] %d x:%d, y:%d", piece_to_move, origin_x, origin_y);
+//  $display("[SelectPiece] %d x:%d, y:%d", piece_to_move, origin_x, origin_y);
 end
 
 // select destination
@@ -215,7 +215,7 @@ end
        move_counter <= move_counter + 1;
      end
    end
-   move_valid <= (move_counter == 3'b111);
+   move_valid <= 1'b1;
  end
 
 // setting state
@@ -224,15 +224,6 @@ always @ ( posedge clk ) begin
     current_state <= S_INIT;
   else
     current_state <= next_state;
-  $display("---------------------------------------");
-  $display("[Controller] Current state is state[%d]", next_state);
-  $display("[Controller] Current player is %b", current_player);
-  $display("[Memory] memory_manage:%b", memory_manage);
-  // $display("[Signal] select:%b", select);
-  // $display("[Signal] deselect:%b", deselect);
-  $display("[Signal] piece_valid:%b", piece_valid);
-  $display("[Signal] move_valid:%b", move_valid);
-  $display("[Signal] validate_complete:%b", validate_complete);
 end
 
 wire frame_clk;
@@ -252,8 +243,35 @@ always @ ( posedge clk ) begin
     if(right) box_y <= box_y + 1;
     if(left) box_y <= box_y - 1;
   end
-  $display("[SelectBox] Current position [x:%d][y:%d]", box_x, box_y);
+  
 end
+
+  // log module
+  wire write_log;
+  configrable_clock #(26'd1) clog(clk, reset_clock, write_log);
+  always @(posedge clk) begin
+//	if(write_log) begin
+	   $display("-----------------Control----------------------");
+		$display("[Controller] Current state is state[%d]", next_state);
+//	end
+	case(current_state)
+    S_INIT: $display("Init");
+    S_MOVE_BOX_1: begin
+      $display("[SelectBox1] Current position [x:%d][y:%d]", box_x, box_y);
+    end
+    S_MOVE_BOX_2: begin
+      $display("[SelectBox2] Current position [x:%d][y:%d]", box_x, box_y);
+    end
+	 S_SELECT_PIECE: begin
+		$display("selecting piece");
+	 end
+	 
+//    S_SELECT_DESTINATION: start_validation = 1'b1;
+//    S_SELECT_DESTINATION_WAIT: memory_manage = 2'b01; // grant memory access to validator module
+//    S_UPDATE_MEMORY: move_piece = 1'b1;
+//    S_UPDATE_MEMORY_WAIT: memory_manage = 2'b10; // grant datapath to access memory
+  endcase
+  end
 
 endmodule // control
 `endif

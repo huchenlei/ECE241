@@ -1,4 +1,10 @@
 `include "configrable_clock.v"
+`include "knight_w.v"
+`include "pawn_w.v"
+`include "board_rom_top.v"
+`include "board_rom_bottom.v"
+`include "box_render.v"
+`include "pic_render.v"
 module view_render (
   input clk,
   input reset,
@@ -7,12 +13,14 @@ module view_render (
   input [2:0] box_x, box_y, // position of the select box
   input current_player,
   input winning_msg,
+  input start_render_board,
 
   output reg [8:0] x,
   output reg [7:0] y,
   output reg colour,
   output reg writeEn,
-  output reg [2:0] view_x, view_y,
+  output reg [2:0] view_x, view_y,  
+  output reg board_render_complete
   );
 
   // controlling select box blinking
@@ -23,7 +31,7 @@ module view_render (
     if(reset_clock)
       box_on <= 1'b0;
     if(flip_signal)
-      box_on <= box_on + 1;
+      box_on <= box_on + 1'b1;
   end
 
   // knight picture
@@ -37,16 +45,18 @@ module view_render (
   // background picture
   // 320x240 bigger than 65536(max memory size Quartus could provide)
   // use 2 65535 instead
-  wire [16:0] board_address_top, board_data_bottom;
+  wire [15:0] board_address_top, board_address_bottom;
   wire [1:0] board_data_top, board_data_bottom;
   board_rom_top background_top(board_address_top, clk, board_data_top);
   board_rom_bottom background_bottom(board_address_bottom, clk, board_data_bottom);
 
   reg board_top_render_start, board_bottom_render_start,
       square_render_start, box_render_start;
-  reg board_top_render_complete, board_bottom_render_complete,
-      square_render_complete, box_render_complete;
-  wire x_coordinate, y_coordinate;
+  wire board_top_render_complete, board_bottom_render_complete,
+       box_render_complete;
+  wire [8:0] x_coordinate; 
+  wire [7:0] y_coordinate;
+  reg square_render_complete;
   // convert from 8*8 to 224*224
   // there is 8 pixel bezzle on each edge of the board
   // each square is 28*28 pixel big
@@ -70,17 +80,20 @@ module view_render (
 
   always @ ( * ) begin
     case (current_state)
-      S_INIT: next_state = start_render_board ? S_RENDER_BACKGROUND : S_INIT;
+      S_INIT: begin
+//			if(flip_signal)
+				next_state = start_render_board ? S_RENDER_BACKGROUND_TOP : S_INIT;
+		end	
       S_RENDER_BACKGROUND_TOP: next_state = S_RENDER_BACKGROUND_TOP_WAIT;
       S_RENDER_BACKGROUND_TOP_WAIT: next_state = board_top_render_complete ? S_RENDER_BACKGROUND_BOTTOM : S_RENDER_BACKGROUND_TOP_WAIT;
       S_RENDER_BACKGROUND_BOTTOM: next_state = S_RENDER_BACKGROUND_BOTTOM_WAIT;
       S_RENDER_BACKGROUND_BOTTOM_WAIT: next_state = board_bottom_render_complete ? S_RENDER_SQUARE : S_RENDER_BACKGROUND_BOTTOM_WAIT;
       S_RENDER_SQUARE: next_state = S_RENDER_SQUARE_WAIT;
       S_RENDER_SQUARE_WAIT: next_state = square_render_complete ? S_COUNT_COL : S_RENDER_SQUARE_WAIT;
-      S_COUNT_COL: next_state = (view_x == 3'd7) ? S_COUNT_COL : S_RENDER_SQUARE;
+      S_COUNT_COL: next_state = (view_x == 3'd7) ? S_COUNT_ROW : S_RENDER_SQUARE;
       S_COUNT_ROW: next_state = (view_y == 3'd7) ? S_RENDER_BOX : S_RENDER_SQUARE;
       S_RENDER_BOX: next_state = S_RENDER_BOX_WAIT;
-      S_RENDER_BOX_WAIT: next_state = box_render_complete ? S_COMPLETE;
+      S_RENDER_BOX_WAIT: next_state = box_render_complete ? S_COMPLETE : S_RENDER_BOX_WAIT;
       S_COMPLETE: next_state = S_INIT;
       default: next_state = S_INIT;
     endcase
@@ -92,11 +105,15 @@ module view_render (
     board_top_render_start = 1'b0;
     board_bottom_render_start = 1'b0;
     square_render_start = 1'b0;
+	 box_render_start = 1'b0;
+	 board_render_complete = 1'b0;
 
     case (current_state)
       S_RENDER_BACKGROUND_TOP: board_top_render_start = 1'b1;
       S_RENDER_BACKGROUND_BOTTOM: board_bottom_render_start = 1'b1;
       S_RENDER_SQUARE: square_render_start = 1'b1;
+		S_RENDER_BOX: box_render_start = 1'b1;
+		S_COMPLETE: board_render_complete = 1'b1; 
     endcase
   end
 
@@ -122,10 +139,12 @@ module view_render (
     else
       current_state <= next_state;
   end
+  
+  
 
   // render the select box
   wire [8:0] x_box;
-  wire [9:0] y_box;
+  wire [7:0] y_box;
   wire colour_box;
   wire wren_box;
   // box x is on 8*8; x_box is on 224 * 224
@@ -140,7 +159,7 @@ module view_render (
   wire knight_w_complete, pawn_w_complete;
 
   // WIDTH, HEIGHT, WIDTH_B, HEIGHT_B, PIC_LENGTH
-  pic_render #(320, 120, 9, 7, 16) pBK_top(clk, reset, board_top_render_start, 9'd0, 8'd0
+  pic_render #(320, 120, 9, 7, 16) pBK_top(clk, reset, board_top_render_start, 9'd0, 8'd0,
                                             board_data_top, board_address_top, x_board_top, y_board_top,
                                             colour_board_top, wren_board_top, board_top_render_complete);
   pic_render #(320, 120, 9, 7, 16) pBK_bottom(clk, reset, board_bottom_render_start, 9'd0, 8'd120,
@@ -171,6 +190,13 @@ module view_render (
           colour = colour_pawn_w;
           square_render_complete = pawn_w_complete;
         end
+		  default: begin
+		    writeEn = 1'b0;
+			 x = 9'b0;
+			 y = 8'b0;
+			 colour = 1'b0;
+			 square_render_complete = 1'b1;
+		  end
         // other pieces here
       endcase
     end
@@ -192,5 +218,44 @@ module view_render (
       y = y_box;
       colour = colour_box;
     end
+	 else begin
+		writeEn = 1'b0;
+		x = 9'b0;
+		y = 8'b0;
+		colour = 1'b0;
+	 end
+		
   end
+  
+  // log module
+//  wire write_log;
+//  configrable_clock #(26'd1000) clog(clk, reset_clock, write_log);
+//  always @(posedge clk) begin
+//	if(write_log) begin
+//	  $display("---------------view_render--------------");
+//	  $display("Current state: %d", current_state);
+//	  $display("x:%d, y:%d", x, y);
+//	  $display("writeEn:%b", writeEn);
+//	  $display("Writing colour:%b", colour);
+//	end
+//	if(board_bottom_render_complete) begin
+//		$display("Bottom complete!");
+//		$display("current_state", current_state);
+//		$display("next_state", next_state);
+//	end
+//	if(board_top_render_complete)
+//		$display("Top complete!");
+//	if(current_state >= S_RENDER_SQUARE && current_state != S_RENDER_SQUARE_WAIT && current_state != S_RENDER_BOX_WAIT) begin
+//		$display("---------------view_render2--------------");
+//		$display("Current state: %d", current_state);
+////		$display("")
+//	end
+//	if(current_state == S_RENDER_SQUARE)
+//		$display("[RENDER SQUARE]Reading %d from x:%d, y:%d", piece_read, view_x, view_y);
+//	if(current_state == S_RENDER_BOX)
+//		$display("PIECES render complete!");
+//	if(current_state == S_COMPLETE)
+//		$display("Everything DONE!!!!!!!!!!!!!!!!!!!!!");
+//  end
+  
 endmodule // view_render
