@@ -29,6 +29,7 @@ module view_render (
   input current_player,
   input winning_msg,
   input start_render_board,
+  input re_render_box_position,
 
   output reg [8:0] x,
   output reg [7:0] y,
@@ -125,7 +126,7 @@ module view_render (
       S_COUNT_ROW: next_state = (view_y == 3'd7) ? S_RENDER_BOX : S_RENDER_SQUARE;
       S_RENDER_BOX: next_state = S_RENDER_BOX_WAIT;
       S_RENDER_BOX_WAIT: next_state = box_render_complete ? S_COMPLETE : S_RENDER_BOX_WAIT;
-      S_COMPLETE: next_state = S_INIT;
+      S_COMPLETE: next_state = re_render_box_position ? S_INIT : S_RENDER_BOX;
       default: next_state = S_INIT;
     endcase
   end

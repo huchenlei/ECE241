@@ -25,6 +25,7 @@ module control (
   output reg [1:0] memory_manage, // memory control signal
   output [5:0] address_validator,
   output start_render_board,
+  output re_render_box_position,
   output reg move_piece, // start update memory in datapath
   output reset_clock, // reset the clock for box blinking
   output reg initialize_board // start initialze memory in datapath
@@ -60,6 +61,7 @@ module control (
   // [BUG]: The player could only control his/her own piece
   assign piece_valid = (piece_read == 4'b0) ? 1'b0 : 1'b1;
   assign reset_clock = reset || (current_state == S_INIT);
+
 
 // state table
 always @ ( * ) begin
@@ -232,6 +234,8 @@ wire frame_clk;
 // high frequency clk for testing
 configrable_clock #(26'd1) c0(clk, reset_clock, frame_clk);
 // select box
+assign re_render_box_position = (current_state == S_MOVE_BOX_1 || current_state == S_MOVE_BOX_2) &&
+                                (frame_clk && (up || down || right || left));
 always @ ( posedge clk ) begin
   if(current_state == S_INIT) begin
     box_x <= 3'b0;

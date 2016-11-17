@@ -32,7 +32,7 @@ module main (
 
   wire reset;
   wire resetn;
-  wire color;
+  wire colour;
   wire [8:0] x;
   wire [7:0] y;
   wire writeEn;
@@ -80,7 +80,8 @@ module main (
   defparam VGA.BACKGROUND_IMAGE = "chess_pics/board_240p.mif";
 
   // from control to view render
-  wire winning_msg, current_player, reset_clock, start_render_board;
+  wire winning_msg, current_player, reset_clock, start_render_board,
+        re_render_box_position;
   // to control from view render
   wire board_render_complete;
   view_render v0(
@@ -92,6 +93,7 @@ module main (
     .current_player(current_player),
     .winning_msg(winning_msg),
     .start_render_board(start_render_board),
+    .re_render_box_position(re_render_box_position),
 
     .x(x), .y(y), .colour(colour),
     .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0]),
@@ -127,6 +129,7 @@ module main (
     .move_piece(move_piece),
     .reset_clock(reset_clock),
     .initialize_board(initialize_board),
+    .re_render_box_position(re_render_box_position)
     );
 
   // datapath module
