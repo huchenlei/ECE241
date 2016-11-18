@@ -19,15 +19,18 @@ module main (
   input [3:0] KEY,
   input CLOCK_50,
 
+  // standard output
+  output [9:0] LEDR,
+  output [6:0] HEX0, HEX1, HEX2, HEX3, HEX4, HEX5,
   // VGA output
-	output			VGA_CLK,   				//	VGA Clock
-	output			VGA_HS,					//	VGA H_SYNC
-	output			VGA_VS,					//	VGA V_SYNC
-	output			VGA_BLANK_N,				//	VGA BLANK
-	output			VGA_SYNC_N,				//	VGA SYNC
-	output	[9:0]	VGA_R,   				//	VGA Red[9:0]
-	output	[9:0]	VGA_G,	 				//	VGA Green[9:0]
-	output	[9:0]	VGA_B   				//	VGA Blue[9:0]
+  output        VGA_CLK,           //  VGA Clock
+  output        VGA_HS,          //  VGA H_SYNC
+  output        VGA_VS,          //  VGA V_SYNC
+  output        VGA_BLANK_N,        //  VGA BLANK
+  output        VGA_SYNC_N,        //  VGA SYNC
+  output  [9:0]  VGA_R,           //  VGA Red[9:0]
+  output  [9:0]  VGA_G,           //  VGA Green[9:0]
+  output  [9:0]  VGA_B           //  VGA Blue[9:0]
   );
 
   wire reset;
@@ -57,9 +60,9 @@ module main (
   // View
   // VGA module from lab7
   // Create an Instance of a VGA controller - there can be only one!
-	// Define the number of colours as well as the initial background
-	// image file (.MIF) for the controller.
-	vga_adapter VGA(
+  // Define the number of colours as well as the initial background
+  // image file (.MIF) for the controller.
+  vga_adapter VGA(
     .resetn(resetn),
     .clock(CLOCK_50),
     .colour(colour),
@@ -107,6 +110,8 @@ module main (
   wire [3:0] piece_to_move;
   wire [2:0] destination_x, destination_y;
   wire move_piece, move_complete, initialize_board, initialize_complete;
+  // wire for debug
+  wire [3:0] control_state;
   control c0(
     .clk(CLOCK_50),
     .reset(reset),
@@ -131,7 +136,8 @@ module main (
     .move_piece(move_piece),
     .reset_clock(reset_clock),
     .initialize_board(initialize_board),
-    .re_render_box_position(re_render_box_position)
+    .re_render_box_position(re_render_box_position),
+    .current_state_display(control_state)
     );
 
   // datapath module
@@ -149,4 +155,40 @@ module main (
     .data_out(data_in_datapath),
     .move_complete(move_complete)
     );
+
+    // debug display
+    hex_decoder h0({1'b0, address_control[5:3]}, HEX0);
+    hex_decoder h1({1'b0, address_control[2:0]}, HEX1);
+    hex_decoder h2(piece_read, HEX2);
+    hex_decoder h3(piece_to_move, HEX3);
+    hex_decoder h4(data_in_datapath, HEX4);
+    hex_decoder h5(control_state, HEX5);
+    assign LEDR[0] = current_player;
+    assign LEDR[1] = winning_msg;
 endmodule // main
+
+module hex_decoder(hex_digit, segments);
+    input [3:0] hex_digit;
+    output reg [6:0] segments;
+
+    always @(*)
+        case (hex_digit)
+            4'h0: segments = 7'b100_0000;
+            4'h1: segments = 7'b111_1001;
+            4'h2: segments = 7'b010_0100;
+            4'h3: segments = 7'b011_0000;
+            4'h4: segments = 7'b001_1001;
+            4'h5: segments = 7'b001_0010;
+            4'h6: segments = 7'b000_0010;
+            4'h7: segments = 7'b111_1000;
+            4'h8: segments = 7'b000_0000;
+            4'h9: segments = 7'b001_1000;
+            4'hA: segments = 7'b000_1000;
+            4'hB: segments = 7'b000_0011;
+            4'hC: segments = 7'b100_0110;
+            4'hD: segments = 7'b010_0001;
+            4'hE: segments = 7'b000_0110;
+            4'hF: segments = 7'b000_1110;
+            default: segments = 7'h7f;
+        endcase
+endmodule

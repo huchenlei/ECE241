@@ -30,6 +30,7 @@ module control (
   output reg move_piece, // start update memory in datapath
   output reset_clock, // reset the clock for box blinking
   output reg initialize_board, // start initialze memory in datapath
+  output [3:0] current_state_display
   );
 
   // FSM
@@ -64,7 +65,7 @@ module control (
   // [BUG]: The player could only control his/her own piece
   assign piece_valid = (piece_read == 4'b0) ? 1'b0 : 1'b1;
   assign reset_clock = reset || (current_state == S_INIT);
-
+  assign current_state_display = current_state[3:0];
 
 // state table
 always @ ( * ) begin
@@ -74,7 +75,8 @@ always @ ( * ) begin
       S_UPDATE_MONITOR: next_state = S_UPDATE_MONITOR_WAIT;
       S_UPDATE_MONITOR_WAIT: next_state = board_render_complete ? S_MOVE_BOX_1 : S_UPDATE_MONITOR_WAIT;
       S_MOVE_BOX_1: begin
-        if(select && erase_complete)
+        // if(select && erase_complete)
+        if(select)
           next_state = S_SELECT_PIECE;
         else
           next_state = S_MOVE_BOX_1;
@@ -90,7 +92,8 @@ always @ ( * ) begin
       end
       S_MOVE_BOX_2: begin
         if(!deselect) begin
-          if(select && erase_complete)
+          // if(select && erase_complete)
+          if(select)
             next_state = S_SELECT_DESTINATION;
           else
             next_state = S_MOVE_BOX_2;
