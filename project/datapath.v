@@ -131,11 +131,13 @@ module datapath (
 //        $display("[FSM1] filling square[%d, %d] with %d", datapath_x, datapath_y, data_out);
       end
       S_COUNT_ROW: begin
-        datapath_x <= datapath_x + 1;
+        if(!(datapath_y == 3'd7 && datapath_x == 3'd7))
+          datapath_x <= datapath_x + 1;
 //        $display("[FSM1] incrementing datapath_x %d", datapath_x);
       end
       S_COUNT_COL: begin
-        datapath_y <= datapath_y + 1;
+        if(datapath_y != 3'd7) // avoid writing (0,0) the value of (7,7)
+          datapath_y <= datapath_y + 1;
 //        $display("[FSM1] incrementing datapath_y %d", datapath_y);
       end
       S_COMPLETE: begin
