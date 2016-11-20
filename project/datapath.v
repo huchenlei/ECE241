@@ -14,7 +14,8 @@ module datapath (
   output reg [2:0] datapath_x, datapath_y,
   output reg [3:0] data_out,
   output reg initialize_complete,
-  output reg move_complete
+  output reg move_complete,
+  output reg writeEn
   );
 
   // FSM1
@@ -91,6 +92,7 @@ module datapath (
   end
 
   always @ ( posedge clk ) begin
+    writeEn <= 1'b0;
     // initiate board
     case (current_state)
       S_SETUP: begin
@@ -130,6 +132,7 @@ module datapath (
           data_out <= 4'd0; // empty
 //        $display("[FSM1] filling square[%d, %d] with %d", datapath_x, datapath_y, data_out);
       end
+		S_INIT_SQUARE_WAIT: writeEn <= 1'b1;
       S_COUNT_ROW: begin
         if(!(datapath_y == 3'd7 && datapath_x == 3'd7))
           datapath_x <= datapath_x + 1;
@@ -157,12 +160,14 @@ module datapath (
         data_out <= piece_to_move;
         // $display("[FSM2] write destination as %d", piece_to_move);
       end
+		S_WRITE_DESTINATION_WAIT: writeEn = 1'b1;
       S_ERASE_ORIGIN: begin
         datapath_x <= origin_x;
         datapath_y <= origin_y;
         data_out <= 4'b0;
         // $display("[FSM2] erasing origin");
       end
+		S_ERASE_ORIGIN_WAIT: writeEn = 1'b1;
       S_MOVE_COMPLETE:
         move_complete <= 1'b1;
     endcase

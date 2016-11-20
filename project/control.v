@@ -11,7 +11,12 @@ module control (
   input initialize_complete, // feed back signal from datapath
   input move_complete, // feed back signal from datapath
   input board_render_complete,
+  input start_render_board_received, // feed back from view
   input erase_complete, // feed back from view (erase the box)
+  // breakpoints used for debugging
+  input break_point1,
+  input break_point2,
+  input break_point3,
 
   output reg current_player,
   output reg winning_msg, // winning condition satisfied?
@@ -31,7 +36,7 @@ module control (
   output reg move_piece, // start update memory in datapath
   output reset_clock, // reset the clock for box blinking
   output reg initialize_board, // start initialze memory in datapath
-  output [3:0] current_state_display
+  output [3:0] current_state_display // for debugging
   );
 
   // FSM
@@ -45,7 +50,8 @@ module control (
 
   reg [5:0] current_state, next_state;
 
-  localparam  S_INIT = 6'd0,
+  localparam  S_PRE_INIT = 6'd15;
+              S_INIT = 6'd0,
               S_INIT_WAIT = 6'd1,
               S_UPDATE_MONITOR = 6'd2,
               S_UPDATE_MONITOR_WAIT = 6'd3,
@@ -63,18 +69,25 @@ module control (
 
 
   // validate piece
-  // [BUG]: The player could only control his/her own piece
-  assign piece_valid = (piece_read == 4'b0) ? 1'b0 : 1'b1;
+  piece_validator pv(current_player, piece_read, piece_valid);
+
   assign reset_clock = reset || (current_state == S_INIT);
+  // debugging
   assign current_state_display = current_state[3:0];
 
 // state table
 always @ ( * ) begin
     case (current_state)
+      // show the entrance background
+      S_PRE_INIT: next_state = (up || down || right || left) ? S_INIT : S_PRE_INIT;
+      // initialize memory
       S_INIT: next_state = S_INIT_WAIT;
       S_INIT_WAIT: next_state = initialize_complete ? S_UPDATE_MONITOR: S_INIT_WAIT;
-      S_UPDATE_MONITOR: next_state = S_UPDATE_MONITOR_WAIT;
+      // update monitor based on memory status
+      // until the signal is received, continuously sending the start signal
+      S_UPDATE_MONITOR: next_state = start_render_board_received ? S_UPDATE_MONITOR_WAIT : S_UPDATE_MONITOR;
       S_UPDATE_MONITOR_WAIT: next_state = board_render_complete ? S_MOVE_BOX_1 : S_UPDATE_MONITOR_WAIT;
+      // moving select box
       S_MOVE_BOX_1: begin
         // if(select && erase_complete)
         if(select)
@@ -82,39 +95,35 @@ always @ ( * ) begin
         else
           next_state = S_MOVE_BOX_1;
       end
-      S_SELECT_PIECE: next_state = S_VALIDATE_PIECE;
-      S_VALIDATE_PIECE: begin
-        if(!select) begin // make sure not get into infinite loop
-          next_state = piece_valid ? S_MOVE_BOX_2 : S_MOVE_BOX_1;
-        end
-        else begin
-          next_state = S_VALIDATE_PIECE;
-        end
-      end
+      // get current selected piece to piece_to_move
+      // player need to turn off select(SW[0])
+      S_SELECT_PIECE: next_state = select ? S_SELECT_PIECE : S_VALIDATE_PIECE;
+      // find whether the piece is valid(valid => select destination: invalid => select piece_to_move)
+      S_VALIDATE_PIECE: next_state = piece_valid ? S_MOVE_BOX_2 : S_MOVE_BOX_1;
+      // moving select box
       S_MOVE_BOX_2: begin
-        if(!deselect) begin
-          // if(select && erase_complete)
-          if(select)
-            next_state = S_SELECT_DESTINATION;
-          else
-            next_state = S_MOVE_BOX_2;
-        end
-        else begin
-          // jump back if deselect piece
-          if(!select) next_state = S_MOVE_BOX_1;
-          else next_state = S_MOVE_BOX_2;
-        end
+      // possibly problematic part
+        // if(~deselect) begin
+        //   // if(select && erase_complete)
+        //   if(select)
+        //     next_state = S_SELECT_DESTINATION;
+        //   else
+        //     next_state = S_MOVE_BOX_2;
+        // end
+        // else begin
+        //   // jump back if deselect piece
+        //   if(!select) next_state = S_MOVE_BOX_1;
+        //   else next_state = S_MOVE_BOX_2;
+        // end
+        next_state = select ? S_SELECT_DESTINATION : S_MOVE_BOX_2;
       end
-      S_SELECT_DESTINATION: next_state = S_SELECT_DESTINATION_WAIT;
+      // start validate destination && get current position to destination
+      // player need to turn off select(SW[0])
+      S_SELECT_DESTINATION: next_state = select ? S_SELECT_DESTINATION :S_SELECT_DESTINATION_WAIT;
+      // wait validator to complete
       S_SELECT_DESTINATION_WAIT: next_state = validate_complete ? S_VALIDATE_DESTINATION : S_SELECT_DESTINATION_WAIT;
-      S_VALIDATE_DESTINATION: begin
-        if(!select) begin
-          next_state = move_valid ? S_CHECK_WINNING : S_MOVE_BOX_2;
-        end
-        else begin
-          next_state = S_VALIDATE_DESTINATION;
-        end
-      end
+      // validate the destination choice
+      S_VALIDATE_DESTINATION: next_state = move_valid ? S_CHECK_WINNING : S_MOVE_BOX_2;
       S_CHECK_WINNING: next_state = winning ? S_GAME_OVER : S_UPDATE_MEMORY;
       S_UPDATE_MEMORY: next_state = S_UPDATE_MEMORY_WAIT;
       S_UPDATE_MEMORY_WAIT: next_state = move_complete ? S_UPDATE_MONITOR : S_UPDATE_MEMORY_WAIT;
@@ -200,29 +209,28 @@ end
 // check winning
 always @ ( posedge clk ) begin
   if(current_state == S_VALIDATE_DESTINATION)
-    winning <= (piece_read == 4'd6) || (piece_read == 4'd12);
+    winning <= ((piece_read == 4'd6) || (piece_read == 4'd12));
   if(current_state == S_INIT)
     winning <= 1'b0;
-//  $display("[CheckWinning] winning is %b", winning);
 end
 
 // validate move
-//move_validator mv(clk, reset, start_validation, piece_to_move, origin_x, origin_y,
-//                  destination_x, destination_y, piece_read, address_validator,
-//                  move_valid, validate_complete);
+move_validator mv(clk, reset, start_validation, piece_to_move, origin_x, origin_y,
+                 destination_x, destination_y, piece_read, address_validator,
+                 move_valid, validate_complete);
 // mocking move_validator
- reg [2:0] move_counter;
- assign validate_complete = move_counter == 3'b111;
- always @ ( posedge clk ) begin
-   if(reset_clock) move_counter <= 3'b0;
-   else begin
-     if(memory_manage == 2'b1) begin
-       $display("[Mocking Validator]");
-       move_counter <= move_counter + 1;
-     end
-   end
-   move_valid <= 1'b1;
- end
+ // reg [2:0] move_counter;
+ // assign validate_complete = move_counter == 3'b111;
+ // always @ ( posedge clk ) begin
+ //   if(reset_clock) move_counter <= 3'b0;
+ //   else begin
+ //     if(memory_manage == 2'b1) begin
+ //       $display("[Mocking Validator]");
+ //       move_counter <= move_counter + 1;
+ //     end
+ //   end
+ //   move_valid <= 1'b1;
+ // end
 
 // setting state
 always @ ( posedge clk ) begin
@@ -233,8 +241,8 @@ always @ ( posedge clk ) begin
 end
 
 wire frame_clk;
-// 1Hz clock for not so fast select-box moving
-configrable_clock #(26'd50000000) c0(clk, reset_clock, frame_clk);
+// 2Hz clock for not so fast select-box moving
+configrable_clock #(26'd25000000) c0(clk, reset_clock, frame_clk);
 // high frequency clk for testing
 // configrable_clock #(26'd1) c0(clk, reset_clock, frame_clk);
 // select box
@@ -246,10 +254,10 @@ always @ ( posedge clk ) begin
     box_y <= 3'b0;
   end
   if(select_box_can_move && frame_clk) begin
-    if(up) box_x <= box_x + 1;
-    if(down) box_x <= box_x - 1;
-    if(right) box_y <= box_y + 1;
-    if(left) box_y <= box_y - 1;
+    if(up) box_x <= box_y + 1;
+    if(down) box_x <= box_y - 1;
+    if(right) box_y <= box_x + 1;
+    if(left) box_y <= box_x - 1;
   end
 
 end

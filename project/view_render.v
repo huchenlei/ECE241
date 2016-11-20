@@ -37,12 +37,13 @@ module view_render (
   output reg writeEn,
   output reg [2:0] view_x, view_y,
   output erase_complete,
-  output reg board_render_complete
+  output reg board_render_complete,
+  output reg start_render_board_received
   );
 
   // controlling select box blinking
   wire flip_signal;
-  configrable_clock #(26'd50000000) clock_view(clk, reset_clock, flip_signal);
+  configrable_clock #(26'd25000000) clock_view(clk, reset_clock, flip_signal);
   reg box_on;
   always @ ( posedge clk ) begin
     if(reset_clock)
@@ -50,6 +51,7 @@ module view_render (
     if(flip_signal)
       box_on <= box_on + 1'b1;
   end
+	
 
   // necessary wires
   wire [9:0] knight_w_address, pawn_w_address, king_w_address,
@@ -88,6 +90,7 @@ module view_render (
 
   reg board_top_render_start, board_bottom_render_start,
       square_render_start, box_render_start;
+  reg start_erase;
   wire board_top_render_complete, board_bottom_render_complete,
        box_render_complete;
   wire [8:0] x_coordinate;
@@ -112,13 +115,17 @@ module view_render (
               S_COUNT_ROW = 4'd8,
               S_RENDER_BOX = 4'd9,
               S_RENDER_BOX_WAIT = 4'd10,
-              S_COMPLETE = 4'd11;
-              S_ERASE_BOX = 4'd12;
+              S_COMPLETE = 4'd11,
+              S_ERASE_BOX = 4'd12,
               S_ERASE_BOX_WAIT = 4'd13;
 
   always @ ( * ) begin
+    start_render_board_received = 1'b0;
     case (current_state)
-      S_INIT: next_state = start_render_board ? S_RENDER_BACKGROUND_TOP : S_INIT;
+      S_INIT: begin
+			start_render_board_received = 1'b1;
+			next_state = start_render_board ? S_RENDER_BACKGROUND_TOP : S_INIT;
+		end
       S_RENDER_BACKGROUND_TOP: next_state = S_RENDER_BACKGROUND_TOP_WAIT;
       S_RENDER_BACKGROUND_TOP_WAIT: next_state = board_top_render_complete ? S_RENDER_BACKGROUND_BOTTOM : S_RENDER_BACKGROUND_TOP_WAIT;
       S_RENDER_BACKGROUND_BOTTOM: next_state = S_RENDER_BACKGROUND_BOTTOM_WAIT;
@@ -130,8 +137,10 @@ module view_render (
       S_RENDER_BOX: next_state = S_RENDER_BOX_WAIT;
       S_RENDER_BOX_WAIT: next_state = box_render_complete ? S_COMPLETE : S_RENDER_BOX_WAIT;
       S_COMPLETE: begin
-        if(start_render_board)
+        if(start_render_board) begin
           next_state = S_RENDER_BACKGROUND_TOP;
+			 start_render_board_received = 1'b1;
+		  end
         else
           next_state = re_render_box_position ? S_ERASE_BOX : S_RENDER_BOX;
       end
@@ -146,6 +155,7 @@ module view_render (
     // by default set everything to 0
     board_top_render_start = 1'b0;
     board_bottom_render_start = 1'b0;
+	 start_erase = 1'b0;
     square_render_start = 1'b0;
     box_render_start = 1'b0;
     board_render_complete = 1'b0;
@@ -156,6 +166,7 @@ module view_render (
       S_RENDER_SQUARE: square_render_start = 1'b1;
       S_RENDER_BOX: box_render_start = 1'b1;
       S_COMPLETE: board_render_complete = 1'b1;
+		S_ERASE_BOX: start_erase = 1'b1;
     endcase
   end
 
@@ -379,16 +390,16 @@ module view_render (
   end
 
   // log block
-//  wire write_log;
-//  configrable_clock #(26'd1000) clog(clk, reset_clock, write_log);
-//  always @(posedge clk) begin
-//  if(write_log) begin
-//    $display("---------------view_render--------------");
-//    $display("Current state: %d", current_state);
-//    $display("x:%d, y:%d", x, y);
-//    $display("writeEn:%b", writeEn);
-//    $display("Writing colour:%b", colour);
-//  end
+  wire write_log;
+  configrable_clock #(26'd10000) clog(clk, reset_clock, write_log);
+  always @(posedge clk) begin
+  if(write_log) begin
+    $display("---------------view_render--------------");
+    $display("Current state: %d", current_state);
+    $display("x:%d, y:%d", x, y);
+    $display("writeEn:%b", writeEn);
+    $display("Writing colour:%b", colour);
+  end
 //  if(board_bottom_render_complete) begin
 //    $display("Bottom complete!");
 //    $display("current_state", current_state);
@@ -405,9 +416,9 @@ module view_render (
 //    $display("[RENDER SQUARE]Reading %d from x:%d, y:%d", piece_read, view_x, view_y);
 //  if(current_state == S_RENDER_BOX)
 //    $display("PIECES render complete!");
-//  if(current_state == S_COMPLETE)
-//    $display("Everything DONE!!!!!!!!!!!!!!!!!!!!!");
-//  end
+  if(current_state == S_COMPLETE)
+    $display("[ViewRender]Everything DONE!!!!!!!!!!!!!!!!!!!!!");
+  end
 
 endmodule // view_render
 `endif

@@ -48,12 +48,13 @@ module main (
   wire [3:0] data_in_datapath;
   wire [1:0] memory_manage;
   wire [3:0] piece_read;
-
+  // from datapath to memory access
+  wire wren_board;
   // memory module
   memory_access ma(
     address_control, address_validator, address_datapath, address_view,
     data_in_datapath,
-    CLOCK_50,
+    CLOCK_50, wren_board,
     memory_manage, piece_read
     );
 
@@ -86,7 +87,7 @@ module main (
   wire winning_msg, current_player, reset_clock, start_render_board,
         re_render_box_position;
   // to control from view render
-  wire board_render_complete, erase_complete;
+  wire start_render_board_received, board_render_complete, erase_complete;
   view_render v0(
     .clk(CLOCK_50),
     .reset(reset),
@@ -101,7 +102,8 @@ module main (
     .x(x), .y(y), .colour(colour),
     .writeEn(writeEn), .view_x(address_view[5:3]), .view_y(address_view[2:0]),
     .erase_complete(erase_complete),
-    .board_render_complete(board_render_complete)
+    .board_render_complete(board_render_complete),
+    .start_render_board_received(start_render_board_received)
     );
 
   // Controller
@@ -123,6 +125,10 @@ module main (
     .move_complete(move_complete),
     .board_render_complete(board_render_complete),
     .erase_complete(erase_complete),
+    .start_render_board_received(start_render_board_received),
+    .break_point1(SW[8]),
+    .break_point2(SW[7]),
+    .break_point3(SW[6]),
 
     .current_player(current_player),
     .winning_msg(winning_msg),
@@ -153,15 +159,16 @@ module main (
     .datapath_x(address_datapath[5:3]), .datapath_y(address_datapath[2:0]),
     .initialize_complete(initialize_complete),
     .data_out(data_in_datapath),
-    .move_complete(move_complete)
+    .move_complete(move_complete),
+    .writeEn(wren_board)
     );
 
     // debug display
-    hex_decoder h0({1'b0, address_control[5:3]}, HEX0);
-    hex_decoder h1({1'b0, address_control[2:0]}, HEX1);
-    hex_decoder h2(piece_read, HEX2);
-    hex_decoder h3(piece_to_move, HEX3);
-    hex_decoder h4(data_in_datapath, HEX4);
+    hex_decoder h0({1'b0, origin_y}, HEX0);
+    hex_decoder h1({1'b0, origin_x}, HEX1);
+    hex_decoder h2({1'b0, destination_y}, HEX2);
+    hex_decoder h3({1'b0, destination_x}, HEX3);
+    hex_decoder h4(piece_to_move, HEX4);
     hex_decoder h5(control_state, HEX5);
     assign LEDR[0] = current_player;
     assign LEDR[1] = winning_msg;

@@ -8,13 +8,13 @@ module piece_validator (
   );
   always @ ( * ) begin
     if(current_player == 1'b0) begin // black
-      if(piece_read > 4'b0 && piece_read < 4'b7)
+      if(piece_read > 4'd0 && piece_read < 4'd7)
         piece_valid = 1'b1;
       else
         piece_valid = 1'b0;
     end
     else begin // white
-      if(piece_read > 4'b6 && piece_read < 4'b13)
+      if(piece_read > 4'd6 && piece_read < 4'd13)
         piece_valid = 1'b1;
       else
         piece_valid = 1'b0;

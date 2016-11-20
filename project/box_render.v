@@ -26,13 +26,13 @@ module box_render (
   reg erase;
 
   // identify the colour of square
-  wire square_colour;
+  wire square_colour, colour_to_use;
   wire [9:0] square_identifier, xy_sum;
   assign xy_sum = box_x + box_y;
   assign square_identifier = xy_sum / 2;
-  assign colour_to_use = ((square_identifier * 2) == xy_sum); // colour_to_use = ! square_colour
+  assign colour_to_use = ~((square_identifier * 2) == xy_sum); // colour_to_use = ! square_colour
 
-  assign colour = (box_on && ~erase) ? colour_to_use : ~colour_to_use;
+  assign colour = (box_on && ~erase) ? ~colour_to_use : colour_to_use;
 
   // FSM
   reg [2:0] current_state, next_state;
