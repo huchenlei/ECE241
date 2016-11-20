@@ -70,6 +70,7 @@ module control (
 
 
   // validate piece
+  // check legal
   piece_validator pv(current_player, piece_read, piece_valid);
 
   assign reset_clock = reset || (current_state == S_PRE_INIT);
@@ -142,6 +143,7 @@ always @ ( * ) begin
   move_piece = 1'b0;
   start_validation = 1'b0;
   start_render_board = 1'b0;
+  winning_msg = 1'b0;
   // default grant memory access to control
   memory_manage = 2'b00;
 
@@ -156,6 +158,7 @@ always @ ( * ) begin
     S_SELECT_DESTINATION_WAIT: memory_manage = 2'b01; // grant memory access to validator module
     S_UPDATE_MEMORY: move_piece = 1'b1;
     S_UPDATE_MEMORY_WAIT: memory_manage = 2'b10; // grant datapath to access memory
+    S_GAME_OVER: winning_msg = 1'b1;
   endcase
 end
 
@@ -216,8 +219,10 @@ always @ ( posedge clk ) begin
     winning <= 1'b0;
 end
 
+wire current_player_mv;
+assign current_player_mv = current_player;
 // validate move
-move_validator mv(clk, reset, start_validation, piece_to_move, origin_x, origin_y,
+move_validator mv(clk, reset, start_validation, current_player_mv, piece_to_move, origin_x, origin_y,
                  destination_x, destination_y, piece_read, address_validator,
                  move_valid, validate_complete);
 // mocking move_validator

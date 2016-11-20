@@ -51,7 +51,7 @@ module view_render (
     if(flip_signal)
       box_on <= box_on + 1'b1;
   end
-	
+
 
   // necessary wires
   wire [9:0] knight_w_address, pawn_w_address, king_w_address,
@@ -78,7 +78,12 @@ module view_render (
   rook_b rb(rook_b_address, clk, rook_b_data);
   bishop_b bb(bishop_b_address, clk, bishop_b_data);
 
-  // other picture modules here...
+  // winning msg
+  // each picture 320*120 size
+  wire [15:0] b_win_address, w_win_address;
+  wire [1:0] b_win_data, w_win_data;
+  black_win bwin(b_win_address, clk, b_win_data);
+  white_win wwin(w_win_address, clk, w_win_data);
 
   // background picture
   // 320x240 bigger than 65536(max memory size Quartus could provide)
@@ -89,13 +94,14 @@ module view_render (
   board_rom_bottom background_bottom(board_address_bottom, clk, board_data_bottom);
 
   reg board_top_render_start, board_bottom_render_start,
-      square_render_start, box_render_start;
+      square_render_start, box_render_start, b_win_render_start,
+      w_win_render_start;
   reg start_erase;
   wire board_top_render_complete, board_bottom_render_complete,
        box_render_complete;
   wire [8:0] x_coordinate;
   wire [7:0] y_coordinate;
-  reg square_render_complete;
+  reg square_render_complete, win_render_complete;
   // convert from 8*8 to 224*224
   // there is 8 pixel bezzle on each edge of the board
   // each square is 28*28 pixel big
@@ -117,15 +123,17 @@ module view_render (
               S_RENDER_BOX_WAIT = 4'd10,
               S_COMPLETE = 4'd11,
               S_ERASE_BOX = 4'd12,
-              S_ERASE_BOX_WAIT = 4'd13;
+              S_ERASE_BOX_WAIT = 4'd13,
+              S_RENDER_WIN_MSG = 4'd14,
+              S_RENDER_WIN_MSG_WAIT = 4'd15;
 
   always @ ( * ) begin
     start_render_board_received = 1'b0;
     case (current_state)
       S_INIT: begin
-			start_render_board_received = 1'b1;
-			next_state = start_render_board ? S_RENDER_BACKGROUND_TOP : S_INIT;
-		end
+        start_render_board_received = 1'b1;
+        next_state = start_render_board ? S_RENDER_BACKGROUND_TOP : S_INIT;
+      end
       S_RENDER_BACKGROUND_TOP: next_state = S_RENDER_BACKGROUND_TOP_WAIT;
       S_RENDER_BACKGROUND_TOP_WAIT: next_state = board_top_render_complete ? S_RENDER_BACKGROUND_BOTTOM : S_RENDER_BACKGROUND_TOP_WAIT;
       S_RENDER_BACKGROUND_BOTTOM: next_state = S_RENDER_BACKGROUND_BOTTOM_WAIT;
@@ -139,13 +147,18 @@ module view_render (
       S_COMPLETE: begin
         if(start_render_board) begin
           next_state = S_RENDER_BACKGROUND_TOP;
-			 start_render_board_received = 1'b1;
-		  end
+          start_render_board_received = 1'b1;
+        end
+        if(winning_msg) begin
+          next_state = S_RENDER_WIN_MSG;
+        end
         else
           next_state = re_render_box_position ? S_ERASE_BOX : S_RENDER_BOX;
       end
       S_ERASE_BOX: next_state = S_ERASE_BOX_WAIT;
       S_ERASE_BOX_WAIT: next_state = erase_complete ? S_RENDER_BOX : S_ERASE_BOX_WAIT;
+      S_RENDER_WIN_MSG: next_state = S_RENDER_WIN_MSG_WAIT;
+      S_RENDER_WIN_MSG_WAIT: next_state = win_render_complete ? S_INIT : S_RENDER_WIN_MSG_WAIT;
       default: next_state = S_INIT;
     endcase
   end
@@ -155,9 +168,11 @@ module view_render (
     // by default set everything to 0
     board_top_render_start = 1'b0;
     board_bottom_render_start = 1'b0;
-	 start_erase = 1'b0;
+    start_erase = 1'b0;
     square_render_start = 1'b0;
     box_render_start = 1'b0;
+    b_win_render_start = 1'b0;
+    w_win_render_start = 1'b0;
     board_render_complete = 1'b0;
 
     case (current_state)
@@ -166,7 +181,13 @@ module view_render (
       S_RENDER_SQUARE: square_render_start = 1'b1;
       S_RENDER_BOX: box_render_start = 1'b1;
       S_COMPLETE: board_render_complete = 1'b1;
-		S_ERASE_BOX: start_erase = 1'b1;
+      S_ERASE_BOX: start_erase = 1'b1;
+      S_RENDER_WIN_MSG: begin
+        if(current_player == 1'b0) // black win
+          b_win_render_start = 1'b1;
+        else
+          w_win_render_start = 1'b1;
+      end
     endcase
   end
 
@@ -206,20 +227,21 @@ module view_render (
   // mux all piece rendering outputs
   wire [8:0] x_board_top, x_board_bottom, x_knight_w, x_pawn_w, x_king_w,
             x_queen_w, x_rook_w, x_bishop_w, x_knight_b, x_pawn_b, x_king_b,
-            x_queen_b, x_rook_b, x_bishop_b;
+            x_queen_b, x_rook_b, x_bishop_b, x_b_win, x_w_win;
   wire [7:0] y_board_top, y_board_bottom, y_knight_w, y_pawn_w, y_king_w,
             y_queen_w, y_rook_w, y_bishop_w, y_knight_b, y_pawn_b, y_king_b,
-            y_queen_b, y_rook_b, y_bishop_b;
+            y_queen_b, y_rook_b, y_bishop_b, y_b_win, y_w_win;
   wire colour_board_top, colour_board_bottom, colour_knight_w, colour_pawn_w, colour_king_w,
       colour_queen_w, colour_rook_w, colour_bishop_w, colour_knight_b, colour_pawn_b, colour_king_b,
-      colour_queen_b, colour_rook_b, colour_bishop_b;
+      colour_queen_b, colour_rook_b, colour_bishop_b, colour_b_win, colour_w_win;
   wire wren_board_top, wren_board_bottom, wren_knight_w, wren_pawn_w, wren_king_w,
       wren_queen_w, wren_rook_w, wren_bishop_w, wren_knight_b, wren_pawn_b, wren_king_b,
-      wren_queen_b, wren_rook_b, wren_bishop_b;
+      wren_queen_b, wren_rook_b, wren_bishop_b, wren_b_win, wren_w_win;
   wire knight_w_complete, pawn_w_complete, king_w_complete,
         queen_w_complete, rook_w_complete, bishop_w_complete,
         knight_b_complete, pawn_b_complete, king_b_complete,
-        queen_b_complete, rook_b_complete, bishop_b_complete;
+        queen_b_complete, rook_b_complete, bishop_b_complete,
+        b_win_complete, w_win_complete;
 
   // WIDTH, HEIGHT, WIDTH_B, HEIGHT_B, PIC_LENGTH
   pic_render #(320, 120, 9, 7, 16) pBK_top(clk, reset, board_top_render_start, 9'd0, 8'd0,
@@ -266,7 +288,11 @@ module view_render (
   pic_render pbbishop(clk, reset, square_render_start, x_coordinate, y_coordinate,
                     bishop_b_data, bishop_b_address, x_bishop_b, y_bishop_b,
                     colour_bishop_b, wren_bishop_b, bishop_b_complete);
-
+  // winning msg
+  pic_render pbwin(clk, reset, b_win_render_start, 9'd0, 8'd60, b_win_data, b_win_address,
+                    x_b_win, y_b_win, colour_b_win, wren_b_win, b_win_complete);
+  pic_render pbwin(clk, reset, w_win_render_start, 9'd0, 8'd60, w_win_data, w_win_address,
+                    x_w_win, y_w_win, colour_w_win, wren_w_win, w_win_complete);
   always @ ( * ) begin
     if(current_state == S_RENDER_SQUARE_WAIT) begin
       case (piece_read)
@@ -380,6 +406,22 @@ module view_render (
       x = x_box;
       y = y_box;
       colour = colour_box;
+    end
+    else if(current_state == S_RENDER_WIN_MSG_WAIT) begin
+      if(current_player == 1'b0) begin // black wins
+        writeEn = wren_b_win;
+        x = x_b_win;
+        y = y_b_win;
+        colour = colour_b_win;
+        win_render_complete = b_win_complete;
+      end
+      else begin // white wins
+        writeEn = wren_w_win;
+        x = x_w_win;
+        y = y_w_win;
+        colour = colour_w_win;
+        win_render_complete = w_win_complete;
+      end
     end
    else begin
     writeEn = 1'b0;

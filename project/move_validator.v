@@ -11,6 +11,7 @@ module move_validator (
   input clk,
   input reset,
   input start_validation,
+  input current_player,
   input [3:0] piece_to_move,
   input [2:0] origin_x, origin_y,
   input [2:0] destination_x, destination_y,

@@ -81,7 +81,7 @@ module main (
     .VGA_CLK(VGA_CLK));
   defparam VGA.RESOLUTION = "320x240";
   defparam VGA.MONOCHROME = "TRUE";
-  defparam VGA.BACKGROUND_IMAGE = "chess_pics/board_240p.mif";
+  defparam VGA.BACKGROUND_IMAGE = "chess_pics/welcome_page.mif";
 
   // from control to view render
   wire winning_msg, current_player, reset_clock, start_render_board,
