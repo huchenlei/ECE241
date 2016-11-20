@@ -1,6 +1,7 @@
 `ifndef control_m
 `define control_m
 `include "configrable_clock.v"
+`include "piece_validator.v"
 module control (
   input clk,
   input reset,
