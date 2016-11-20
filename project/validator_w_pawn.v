@@ -19,5 +19,6 @@ module validator_w_pawn (
   // to be done
   always @ ( * ) begin
     w_pawn_valid = 1'b1;
+	 w_pawn_complete = 1'b1;
   end
 endmodule // validator_w_pawn

@@ -26,7 +26,7 @@ module validator_king (
       else
         king_valid = 1'b0;
     end
-    $display("[King] x_dis:%d y_dis:%d", x_dis, y_dis);
+//    $display("[King] x_dis:%d y_dis:%d", x_dis, y_dis);
     king_complete = 1'b1;
   end
 endmodule // validator_king

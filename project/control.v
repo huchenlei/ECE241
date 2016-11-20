@@ -2,6 +2,7 @@
 `define control_m
 `include "configrable_clock.v"
 `include "piece_validator.v"
+`include "move_validator.v"
 module control (
   input clk,
   input reset,
@@ -31,7 +32,7 @@ module control (
   // 11: view
   output reg [1:0] memory_manage, // memory control signal
   output [5:0] address_validator,
-  output start_render_board,
+  output reg start_render_board,
   output re_render_box_position,
   output reg move_piece, // start update memory in datapath
   output reset_clock, // reset the clock for box blinking
@@ -41,7 +42,7 @@ module control (
 
   // FSM
   reg winning;
-  reg move_valid;
+  wire move_valid;
   wire piece_valid;
   reg select_box_can_move;
   reg read_destination;
@@ -50,7 +51,7 @@ module control (
 
   reg [5:0] current_state, next_state;
 
-  localparam  S_PRE_INIT = 6'd15;
+  localparam  S_PRE_INIT = 6'd15,
               S_INIT = 6'd0,
               S_INIT_WAIT = 6'd1,
               S_UPDATE_MONITOR = 6'd2,
@@ -71,7 +72,7 @@ module control (
   // validate piece
   piece_validator pv(current_player, piece_read, piece_valid);
 
-  assign reset_clock = reset || (current_state == S_INIT);
+  assign reset_clock = reset || (current_state == S_PRE_INIT);
   // debugging
   assign current_state_display = current_state[3:0];
 
@@ -128,7 +129,7 @@ always @ ( * ) begin
       S_UPDATE_MEMORY: next_state = S_UPDATE_MEMORY_WAIT;
       S_UPDATE_MEMORY_WAIT: next_state = move_complete ? S_UPDATE_MONITOR : S_UPDATE_MEMORY_WAIT;
       S_GAME_OVER: next_state = reset ? S_INIT : S_GAME_OVER;
-      default: next_state = S_INIT;
+      default: next_state = S_PRE_INIT;
     endcase
 end
 
@@ -208,8 +209,9 @@ end
 
 // check winning
 always @ ( posedge clk ) begin
-  if(current_state == S_VALIDATE_DESTINATION)
+  if(current_state == S_SELECT_DESTINATION)
     winning <= ((piece_read == 4'd6) || (piece_read == 4'd12));
+//	 $display("piece read: %d", piece_read);
   if(current_state == S_INIT)
     winning <= 1'b0;
 end
@@ -242,9 +244,9 @@ end
 
 wire frame_clk;
 // 2Hz clock for not so fast select-box moving
-configrable_clock #(26'd25000000) c0(clk, reset_clock, frame_clk);
+//configrable_clock #(26'd25000000) c0(clk, reset_clock, frame_clk);
 // high frequency clk for testing
-// configrable_clock #(26'd1) c0(clk, reset_clock, frame_clk);
+ configrable_clock #(26'd1) c0(clk, reset_clock, frame_clk);
 // select box
 assign re_render_box_position = (current_state == S_MOVE_BOX_1 || current_state == S_MOVE_BOX_2) &&
                                 (frame_clk && (up || down || right || left));
@@ -254,22 +256,32 @@ always @ ( posedge clk ) begin
     box_y <= 3'b0;
   end
   if(select_box_can_move && frame_clk) begin
-    if(up) box_x <= box_y + 1;
-    if(down) box_x <= box_y - 1;
-    if(right) box_y <= box_x + 1;
-    if(left) box_y <= box_x - 1;
+    if(up) box_y <= box_y + 1;
+    if(down) box_y <= box_y - 1;
+    if(right) box_x <= box_x + 1;
+    if(left) box_x <= box_x - 1;
   end
-
 end
 
   // log block
-//   wire write_log;
-//   configrable_clock #(26'd1) clog(clk, reset_clock, write_log);
-//   always @(posedge clk) begin
-// //	if(write_log) begin
-// 	   $display("-----------------Control----------------------");
-// 		$display("[Controller] Current state is state[%d]", next_state);
-// //	end
+   wire write_log;
+   configrable_clock #(26'd10) clog(clk, reset_clock, write_log);
+   always @(posedge clk) begin
+ 	if(write_log) begin
+ 	   $display("-----------------Control----------------------");
+ 	   $display("[Controller] Current state is state[%d]", next_state);
+		if(current_state == S_MOVE_BOX_1)
+	     $display("reading %d from %d, %d", piece_read, box_x, box_y);
+ 	end
+	if(current_state > 6'd8)
+     $display("Current state is state %d", current_state);
+	if(current_state == S_CHECK_WINNING)
+	  $display("Winning:%b", winning);
+	if(current_state == S_VALIDATE_DESTINATION)
+	  $display("%d From %d, %d to %d, %d", piece_to_move, origin_x, origin_y, destination_x, destination_y);
+
+//	if(current_state == 6'd8)
+//	  $display("select: %b", select);
 // 	case(current_state)
 //     S_INIT: $display("Init");
 //     S_MOVE_BOX_1: begin
@@ -282,6 +294,6 @@ end
 // 		$display("selecting piece");
 // 	 end
 //   endcase
-//   end
+   end
 endmodule // control
 `endif

@@ -26,7 +26,7 @@ module validator_queen (
       // queen can move either straight or diagonal
       queen_valid = (x_dis == y_dis) || (product_dis == 0);
     end
-    $display("[Queen] x_dis:%d y_dis:%d", x_dis, y_dis);
+//    $display("[Queen] x_dis:%d y_dis:%d", x_dis, y_dis);
     queen_complete = 1'b1;
   end
 endmodule // validator_queen

@@ -26,7 +26,7 @@ module validator_knight (
       else
         knight_valid = 1'b0;
     end
-    $display("[Knight] x_dis:%d y_dis:%d", x_dis, y_dis);
+//    $display("[Knight] x_dis:%d y_dis:%d", x_dis, y_dis);
     knight_complete = 1'b1;
   end
 endmodule // validator_knight

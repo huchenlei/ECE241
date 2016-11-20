@@ -8,15 +8,14 @@
   input [2:0] move_x, move_y,
   // memory access
   input [3:0] piece_read,
-  output [2:0] validate_x, validate_y,
+  
+  output reg [2:0] validate_x, validate_y,
   output reg rook_valid // result
   );
 
   // memory access signal
   reg validate_path, start_path_check;
   wire path_validated;
-
-  assign address_validator = {validate_x, validate_y};
 
   wire [2:0] x_dis, y_dis, product_dis, move_dir_is_x, distance;
   assign x_dis = (move_x > piece_x) ? (move_x - piece_x) : (piece_x - move_x);
@@ -53,8 +52,8 @@
       current_state <= S_WAIT_FOR_MEMORY;
     else
       current_state <= next_state;
-    $display("-----------------------------------------");
-    $display("[RookValidator] Current state is state[%d]", next_state);
+//    $display("-----------------------------------------");
+//    $display("[RookValidator] Current state is state[%d]", next_state);
   end
 
   // setting signals
@@ -93,8 +92,8 @@
       path_counter <= 3'b0;
     else
       path_counter <= path_counter + 1;
-    $display("[path_counter] %d", path_counter);
-    $display("[validate_box] x:%d, y:%d there is %d in the square", validate_x, validate_y, piece_read);
+//    $display("[path_counter] %d", path_counter);
+//    $display("[validate_box] x:%d, y:%d there is %d in the square", validate_x, validate_y, piece_read);
   end
 
   // access memory
@@ -116,7 +115,7 @@
       impedance_found <= 1'b1;
     if(validate_path)
       impedance_found <= 1'b0;
-    $display("[Validate]impedance_found: %b", impedance_found);
+//    $display("[Validate]impedance_found: %b", impedance_found);
   end
 
   //result loading

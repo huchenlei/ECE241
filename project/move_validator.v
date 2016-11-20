@@ -1,6 +1,12 @@
 `ifndef move_validator_m
 `define move_validator_m
-
+`include "validator_w_pawn.v"
+`include "validator_b_pawn.v"
+`include "validator_rook.v"
+`include "validator_knight.v"
+`include "validator_bishop.v"
+`include "validator_king.v"
+`include "validator_queen.v"
 module move_validator (
   input clk,
   input reset,
@@ -93,7 +99,7 @@ module move_validator (
       address_validator = address_queen;
       validate_complete = queen_complete;
     end
-    if(piece_to_move == 4'd6 || piece_to_move == 4'd12) beginn
+    if(piece_to_move == 4'd6 || piece_to_move == 4'd12) begin
       move_valid = king_valid;
       address_validator = address_king;
       validate_complete = queen_complete;

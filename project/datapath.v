@@ -96,10 +96,12 @@ module datapath (
     // initiate board
     case (current_state)
       S_SETUP: begin
-        datapath_x <= 3'b0;
-        datapath_y <= 3'b0;
+        // only if moving fsm is also waiting
+  		  if(current_state_m == S_MOVE_WAIT) begin
+            datapath_x <= 3'b0;
+            datapath_y <= 3'b0;
+  		  end
         initialize_complete <= 1'b0;
-//        $display("[FSM1] setting up");
       end
       S_INIT_SQUARE: begin
         if(datapath_y == 3'd1) data_out <= 4'd1; // black pawn
@@ -160,14 +162,14 @@ module datapath (
         data_out <= piece_to_move;
         // $display("[FSM2] write destination as %d", piece_to_move);
       end
-		S_WRITE_DESTINATION_WAIT: writeEn = 1'b1;
+		S_WRITE_DESTINATION_WAIT: writeEn <= 1'b1;
       S_ERASE_ORIGIN: begin
         datapath_x <= origin_x;
         datapath_y <= origin_y;
         data_out <= 4'b0;
         // $display("[FSM2] erasing origin");
       end
-		S_ERASE_ORIGIN_WAIT: writeEn = 1'b1;
+		S_ERASE_ORIGIN_WAIT: writeEn <= 1'b1;
       S_MOVE_COMPLETE:
         move_complete <= 1'b1;
     endcase
@@ -191,11 +193,15 @@ module datapath (
     // $display("[FSM2-move_piece] Current state is state[%d]", current_state_m);
   end
 
-//  always @(posedge clk) begin:
+  always @(posedge clk) begin
 //		$display("move complete?:%b", move_complete);
-//		if(current_state_m == S_WRITE_DESTINATION)
-//			$display("[datapath] move working");
-//
-//  end
+		if(current_state_m == S_WRITE_DESTINATION)
+			$display("[datapath] writing destination: %d to %d, %d", piece_to_move, destination_x, destination_y);
+		if(current_state_m == S_WRITE_DESTINATION_WAIT)
+		  $display("[datapath] confirm writing destination: %d to %d, %d", piece_to_move, datapath_x, datapath_y);
+		if(current_state_m == S_ERASE_ORIGIN)
+		  $display("[datapath] erasing destination: %d, %d", origin_x, origin_y);
+
+  end
 endmodule // datapath
 `endif
