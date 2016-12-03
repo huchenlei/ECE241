@@ -113,9 +113,9 @@ module datapath (
             data_out <= 4'd2; // knight
           if(datapath_x == 3'd2 || datapath_x == 3'd5)
             data_out <= 4'd3; // bishop
-          if(datapath_x == 3'd3)
-            data_out <= 4'd6; // king
           if(datapath_x == 3'd4)
+            data_out <= 4'd6; // king
+          if(datapath_x == 3'd3)
             data_out <= 4'd5; // queen
         end
         if(datapath_y == 3'd7) begin // white
@@ -126,9 +126,9 @@ module datapath (
           if(datapath_x == 3'd2 || datapath_x == 3'd5)
             data_out <= 4'd9; // bishop
           if(datapath_x == 3'd3)
-            data_out <= 4'd12; // king
+            data_out <= 4'd11; // king
           if(datapath_x == 3'd4)
-            data_out <= 4'd11; // queen
+            data_out <= 4'd12; // queen
         end
         if(datapath_y < 3'd6 && datapath_y > 3'd1)
           data_out <= 4'd0; // empty

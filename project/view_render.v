@@ -149,11 +149,15 @@ module view_render (
           next_state = S_RENDER_BACKGROUND_TOP;
           start_render_board_received = 1'b1;
         end
-        if(winning_msg) begin
+        else if(winning_msg) begin
           next_state = S_RENDER_WIN_MSG;
         end
-        else
-          next_state = re_render_box_position ? S_ERASE_BOX : S_RENDER_BOX;
+        else if (re_render_box_position) begin
+          next_state = S_ERASE_BOX;
+		  end
+		  else begin
+		    next_state = S_RENDER_BOX;
+		  end
       end
       S_ERASE_BOX: next_state = S_ERASE_BOX_WAIT;
       S_ERASE_BOX_WAIT: next_state = erase_complete ? S_RENDER_BOX : S_ERASE_BOX_WAIT;
@@ -183,7 +187,7 @@ module view_render (
       S_COMPLETE: board_render_complete = 1'b1;
       S_ERASE_BOX: start_erase = 1'b1;
       S_RENDER_WIN_MSG: begin
-        if(current_player == 1'b0) // black win
+        if(current_player == 1'b1) // black win
           b_win_render_start = 1'b1;
         else
           w_win_render_start = 1'b1;
@@ -289,10 +293,10 @@ module view_render (
                     bishop_b_data, bishop_b_address, x_bishop_b, y_bishop_b,
                     colour_bishop_b, wren_bishop_b, bishop_b_complete);
   // winning msg
-  pic_render pbwin(clk, reset, b_win_render_start, 9'd0, 8'd60, b_win_data, b_win_address,
-                    x_b_win, y_b_win, colour_b_win, wren_b_win, b_win_complete);
-  pic_render pbwin(clk, reset, w_win_render_start, 9'd0, 8'd60, w_win_data, w_win_address,
-                    x_w_win, y_w_win, colour_w_win, wren_w_win, w_win_complete);
+  pic_render #(320, 120, 9, 7, 16) pbwin(clk, reset, b_win_render_start, 9'd0, 8'd60, b_win_data, b_win_address,
+                                         x_b_win, y_b_win, colour_b_win, wren_b_win, b_win_complete);
+  pic_render #(320, 120, 9, 7, 16) pwwin(clk, reset, w_win_render_start, 9'd0, 8'd60, w_win_data, w_win_address,
+                                         x_w_win, y_w_win, colour_w_win, wren_w_win, w_win_complete);
   always @ ( * ) begin
     if(current_state == S_RENDER_SQUARE_WAIT) begin
       case (piece_read)
@@ -408,7 +412,7 @@ module view_render (
       colour = colour_box;
     end
     else if(current_state == S_RENDER_WIN_MSG_WAIT) begin
-      if(current_player == 1'b0) begin // black wins
+      if(current_player == 1'b1) begin // black wins
         writeEn = wren_b_win;
         x = x_b_win;
         y = y_b_win;

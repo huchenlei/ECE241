@@ -16,7 +16,7 @@
 */
 module main (
   input [9:0] SW,
-  input [3:0] KEY,
+  input [8:0] KEY,
   input CLOCK_50,
 
   // standard output
@@ -113,13 +113,13 @@ module main (
   wire [2:0] destination_x, destination_y;
   wire move_piece, move_complete, initialize_board, initialize_complete;
   // wire for debug
-  wire [3:0] control_state;
+//  wire [3:0] control_state;
   control c0(
     .clk(CLOCK_50),
     .reset(reset),
     // vim hjkl style moving
-    .up(~KEY[1]), .down(~KEY[2]), .left(~KEY[3]), .right(~KEY[0]),
-    .select(SW[0]), .deselect(SW[1]),
+    .up(SW[1]), .down(SW[2]), .left(SW[3]), .right(SW[0]),
+    .select(~KEY[0]), .deselect(~KEY[1]),
     .piece_read(piece_read),
     .initialize_complete(initialize_complete),
     .move_complete(move_complete),
@@ -143,7 +143,7 @@ module main (
     .reset_clock(reset_clock),
     .initialize_board(initialize_board),
     .re_render_box_position(re_render_box_position),
-    .current_state_display(control_state)
+    .current_state_display(LEDR[8:0])
     );
 
   // datapath module
@@ -168,10 +168,11 @@ module main (
     hex_decoder h1({1'b0, origin_x}, HEX1);
     hex_decoder h2({1'b0, destination_y}, HEX2);
     hex_decoder h3({1'b0, destination_x}, HEX3);
-    hex_decoder h4(piece_to_move, HEX4);
-    hex_decoder h5(control_state, HEX5);
-    assign LEDR[0] = current_player;
-    assign LEDR[1] = winning_msg;
+    hex_decoder h4(piece_read, HEX4);
+    hex_decoder h5(piece_to_move, HEX5);
+    assign LEDR[9] = current_player;
+//    assign LEDR[1] = winning_msg;
+//	 assign LEDR[2] = SW[0];
 endmodule // main
 
 module hex_decoder(hex_digit, segments);
